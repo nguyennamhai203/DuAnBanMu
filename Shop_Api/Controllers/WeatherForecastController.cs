@@ -1,9 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shop_Api;
-using Shop_Models.Heplers;
 
-namespace Shop_API.Controllers
+namespace Shop_Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -22,7 +19,6 @@ namespace Shop_API.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        [Authorize(Roles =AppRole.KhachHang)]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

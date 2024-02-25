@@ -3,9 +3,9 @@ using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace Shop_API.AppDbContext
+namespace Shop_Api.AppDbContext
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<NguoiDung,ChucVu,Guid>
     {
         public ApplicationDbContext()
         {

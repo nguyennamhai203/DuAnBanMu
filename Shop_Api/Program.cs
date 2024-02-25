@@ -4,20 +4,20 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
-using Shop_API.AppDbContext;
+using Shop_Api.AppDbContext;
 using Shop_Models.Entities;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Shop_API.Repository.IRepository;
-using Shop_API.Repository;
+//using Shop_API.Repository.IRepository;
+//using Shop_API.Repository;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddIdentity<NguoiDung, IdentityRole>()
+builder.Services.AddIdentity<NguoiDung, ChucVu>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
@@ -27,15 +27,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+//builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 
 
 builder.Services.AddScoped<UserManager<NguoiDung>>();
 builder.Services.AddScoped<SignInManager<NguoiDung>>();
-builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
-builder.Services.AddScoped<IKhuyenMaiRepository, KhuyenMaiRepository>();
-builder.Services.AddScoped<IGioHangChiTietRepository, GioHangChiTietRepository>();
+//builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+//builder.Services.AddScoped<IKhuyenMaiRepository, KhuyenMaiRepository>();
+//builder.Services.AddScoped<IGioHangChiTietRepository, GioHangChiTietRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
