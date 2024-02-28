@@ -15,6 +15,7 @@ namespace Shop_Models.Entities
         [Key]
         public Guid Guid { get; set; }
         public Guid ChiTietSanPhamId { get; set; }
+        public Guid HoaDonId { get; set; }
         public int SoLuong { get; set; }
         public double GiaBan { get; set; }
         public virtual HoaDon? HoaDon { get; set; }
