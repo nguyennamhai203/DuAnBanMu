@@ -11,7 +11,7 @@ namespace Shop_Models.Dto
     {
         [Required]
         //[DataType(DataType.EmailAddress)]
-        public string? Email { get; set; }
+        public string? NameAccount { get; set; }
         [Required]
         //[DataType(DataType.Password)]
         public string? Password { get; set; }

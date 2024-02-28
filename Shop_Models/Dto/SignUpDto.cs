@@ -22,6 +22,7 @@ namespace Shop_Models.Dto
         public string? UserName { get; set; } 
         [Required]
         public string? PassWord { get; set; } 
+        public string? SDT { get; set; } 
         [Required]
         public string? ConfirmPassWord { get; set; } 
     }

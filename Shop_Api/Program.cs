@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Identity;
 //using Shop_API.Repository.IRepository;
 //using Shop_API.Repository;
 using Microsoft.OpenApi.Models;
+using Shop_Api.Repository.IRepository;
+using Shop_Api.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,15 +29,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
-//builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 
 
 builder.Services.AddScoped<UserManager<NguoiDung>>();
 builder.Services.AddScoped<SignInManager<NguoiDung>>();
-//builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
-//builder.Services.AddScoped<IKhuyenMaiRepository, KhuyenMaiRepository>();
-//builder.Services.AddScoped<IGioHangChiTietRepository, GioHangChiTietRepository>();
+builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+builder.Services.AddScoped<IKhuyenMaiRepository, KhuyenMaiRepository>();
+builder.Services.AddScoped<IGioHangChiTietRepository, GioHangChiTietRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
