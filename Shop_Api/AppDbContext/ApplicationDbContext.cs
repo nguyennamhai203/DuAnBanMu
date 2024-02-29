@@ -36,6 +36,22 @@ namespace Shop_Api.AppDbContext
         public virtual DbSet<Voucher> Vouchers { get; set; }
         public virtual DbSet<XuatXu> XuatXus { get; set; }
 
-
+        /*protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<Voucher>().HasData(
+                new Voucher
+                {
+                    Guid = Guid.NewGuid(),
+                    MaVoucher = "test",
+                    TenVoucher = "test",
+                    PhanTramGiam = 10,
+                    SoLuong = 1,
+                    NgayBatDau = new DateTime(2000, 1, 23),
+                    NgayHetHan = new DateTime(2024, 2, 25),
+                    TrangThai = 1
+                }
+            );
+        }*/
     }
 }
