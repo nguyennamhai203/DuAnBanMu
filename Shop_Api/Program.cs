@@ -38,6 +38,10 @@ builder.Services.AddScoped<SignInManager<NguoiDung>>();
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 builder.Services.AddScoped<IKhuyenMaiRepository, KhuyenMaiRepository>();
 builder.Services.AddScoped<IGioHangChiTietRepository, GioHangChiTietRepository>();
+builder.Services.AddScoped<IChatLieuRepository, ChatLieuRepository>();
+builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
+builder.Services.AddScoped<IChiTietKhuyenMaiRepository, ChiTietKhuyenMaiRepository>();
+builder.Services.AddScoped<IChiTietSanPhamRepository, ChiTietSanPhamRepository>();
 
 builder.Services.AddAuthentication(options =>
 {
