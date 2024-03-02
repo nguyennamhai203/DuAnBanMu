@@ -12,7 +12,7 @@ namespace Shop_Models.Entities
     public class Loai
     {
         [Key]
-        public Guid Guid { get; set; }
+        public Guid Id { get; set; }
         public string? MaLoai { get; set; }
         public string? TenLoai { get; set; }
         public int TrangThai { get; set; }

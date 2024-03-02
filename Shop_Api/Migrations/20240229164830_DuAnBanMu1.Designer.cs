@@ -12,8 +12,8 @@ using Shop_Api.AppDbContext;
 namespace Shop_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240226184156_s")]
-    partial class s
+    [Migration("20240229164830_DuAnBanMu1")]
+    partial class DuAnBanMu1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -419,7 +419,7 @@ namespace Shop_Api.Migrations
                     b.Property<double>("GiaBan")
                         .HasColumnType("float");
 
-                    b.Property<Guid?>("HoaDonId")
+                    b.Property<Guid>("HoaDonId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("SoLuong")
@@ -468,7 +468,7 @@ namespace Shop_Api.Migrations
 
             modelBuilder.Entity("Shop_Models.Entities.Loai", b =>
                 {
-                    b.Property<Guid>("Guid")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -481,7 +481,7 @@ namespace Shop_Api.Migrations
                     b.Property<int>("TrangThai")
                         .HasColumnType("int");
 
-                    b.HasKey("Guid");
+                    b.HasKey("Id");
 
                     b.ToTable("Loai");
                 });
@@ -971,7 +971,9 @@ namespace Shop_Api.Migrations
 
                     b.HasOne("Shop_Models.Entities.HoaDon", "HoaDon")
                         .WithMany()
-                        .HasForeignKey("HoaDonId");
+                        .HasForeignKey("HoaDonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ChiTietSanPham");
 
