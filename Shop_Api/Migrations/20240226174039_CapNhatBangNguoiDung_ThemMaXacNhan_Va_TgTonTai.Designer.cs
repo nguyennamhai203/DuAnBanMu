@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop_Api.AppDbContext;
 
@@ -11,9 +12,10 @@ using Shop_Api.AppDbContext;
 namespace Shop_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240226174039_CapNhatBangNguoiDung_ThemMaXacNhan_Va_TgTonTai")]
+    partial class CapNhatBangNguoiDung_ThemMaXacNhan_Va_TgTonTai
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -417,7 +419,7 @@ namespace Shop_Api.Migrations
                     b.Property<double>("GiaBan")
                         .HasColumnType("float");
 
-                    b.Property<Guid>("HoaDonId")
+                    b.Property<Guid?>("HoaDonId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("SoLuong")
@@ -576,6 +578,7 @@ namespace Shop_Api.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("VerificationCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("VerificationCodeExpiry")
@@ -969,9 +972,7 @@ namespace Shop_Api.Migrations
 
                     b.HasOne("Shop_Models.Entities.HoaDon", "HoaDon")
                         .WithMany()
-                        .HasForeignKey("HoaDonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HoaDonId");
 
                     b.Navigation("ChiTietSanPham");
 
