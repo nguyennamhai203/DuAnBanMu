@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Shop_Api.Migrations
 {
-    public partial class DB_v1 : Migration
+    public partial class cuongvt : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -37,6 +37,8 @@ namespace Shop_Api.Migrations
                     SoDienThoai = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GioiTinh = table.Column<bool>(type: "bit", nullable: true),
+                    VerificationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VerificationCodeExpiry = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -515,9 +517,9 @@ namespace Shop_Api.Migrations
                 {
                     Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ChiTietSanPhamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    HoaDonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false),
-                    GiaBan = table.Column<double>(type: "float", nullable: false),
-                    HoaDonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    GiaBan = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -532,7 +534,8 @@ namespace Shop_Api.Migrations
                         name: "FK_HoaDonChiTiet_HoaDon_HoaDonId",
                         column: x => x.HoaDonId,
                         principalTable: "HoaDon",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
