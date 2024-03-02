@@ -13,7 +13,7 @@
 * [ASP.NET CORE][https://dotnet.microsoft.com/en-us/apps/aspnet]
 
 ### Installation
-1. Clone the repo
+1. Clone the repository
    ```sh
    git clone https://github.com/nguyennamhai203/DuAnBanMu.git
    ```
