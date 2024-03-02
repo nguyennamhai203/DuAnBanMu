@@ -10,7 +10,7 @@
 ### Built With
 * [![Angular][Angular.io]][Angular-url]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [ASP.NET CORE][https://dotnet.microsoft.com/en-us/apps/aspnet][ASP.NET-url]
+* [ASP.NET CORE][https://dotnet.microsoft.com/en-us/apps/aspnet]
 
 ### Installation
 1. Clone the repo
