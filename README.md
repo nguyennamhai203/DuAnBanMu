@@ -29,7 +29,7 @@ This is an example of how to list things you need to use the software and how to
    ```
 3. Enter your API in `appsetting.json`
    ``` js
-   const API_KEY = 'ENTER YOUR API';
+   builder.Services.AddScoped(Interface,Implement);
    ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
