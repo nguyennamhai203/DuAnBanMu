@@ -49,7 +49,7 @@ namespace Shop_Api.Controllers
             var result = await _ptttRepository.UpdateAsync(id, phuongThucThanhToan);
             return StatusCode(result.Code, result);
         }
-
+        // hhhhh
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResponseDto>> Delete(Guid id)
         {
