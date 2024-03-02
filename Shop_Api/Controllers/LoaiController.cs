@@ -53,7 +53,7 @@ namespace Shop_Api.Controllers
             var result = await _loaiRepository.UpdateAsync(id,loai);
             return StatusCode(result.Code, result);
         }
-
+        //ssssssss
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResponseDto>> Delete(Guid id)
         {

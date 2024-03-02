@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop_Api.AppDbContext;
 
@@ -11,9 +12,10 @@ using Shop_Api.AppDbContext;
 namespace Shop_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240229085445_update-data-xuat-xu")]
+    partial class updatedataxuatxu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -466,7 +468,7 @@ namespace Shop_Api.Migrations
 
             modelBuilder.Entity("Shop_Models.Entities.Loai", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("Guid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -479,7 +481,7 @@ namespace Shop_Api.Migrations
                     b.Property<int>("TrangThai")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Guid");
 
                     b.ToTable("Loai");
                 });
@@ -774,19 +776,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("Voucher");
-
-                    b.HasData(
-                        new
-                        {
-                            Guid = new Guid("f27e6385-975b-4bfb-9b8f-e6bc6bba0fee"),
-                            MaVoucher = "test",
-                            NgayBatDau = new DateTime(2000, 1, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayHetHan = new DateTime(2024, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            PhanTramGiam = 10,
-                            SoLuong = 1,
-                            TenVoucher = "test",
-                            TrangThai = 1
-                        });
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.XuatXu", b =>
@@ -807,6 +796,15 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("XuatXu");
+
+                    b.HasData(
+                        new
+                        {
+                            Guid = new Guid("235674e2-f8b9-4b8a-8c74-42553912bbc8"),
+                            MaXuatXu = "XX01",
+                            TenXuatXu = "VietNam",
+                            TrangThai = 1
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
