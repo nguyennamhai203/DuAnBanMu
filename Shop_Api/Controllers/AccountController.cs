@@ -49,19 +49,24 @@ namespace Shop_Api.Controllers
             else return Unauthorized();
         }
 
-        [HttpPost("Mail")]
+        [HttpPost("MailToAdmin")]
         public IActionResult Mail(string mail, string subjectt, string mess)
         {
             var result = _accountRepository.SendEmailAsync(mail, subjectt, mess);
-            return Ok("oke");
+            if (result.Result==true)
+            {
+                return Ok("oke");
+            }
+            return BadRequest("No");
         }
 
-        [HttpPost("xac")]
+        [HttpPost("XacNhan")]
         public async Task<IActionResult> Xac(SignUpDto model, string mail, string codeconfirm)
         {
-            var result = await _accountRepository.XacNhanTaoTkChoNhanVienAsync(model,codeconfirm,mail);
-            if (result != null) { 
-            return Ok(result); 
+            var result = await _accountRepository.XacNhanTaoTkChoNhanVienAsync(model, codeconfirm, mail);
+            if (result != null)
+            {
+                return Ok(result);
             }
             return BadRequest(result);
         }
