@@ -50,6 +50,10 @@ builder.Services.AddScoped<IXuatXuRepository, XuatXuRepository>();
 builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
 builder.Services.AddScoped<ISanPhamYeuThichRepository, SanPhamYeuThichRepository>();
 builder.Services.AddScoped<IGioHangRepository, GioHangRepository>();
+builder.Services.AddScoped<IAnhRepository, AnhRepository>();
+builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
+builder.Services.AddScoped<IMauSacRepository, MauSacRepository>();
+builder.Services.AddScoped<IPhuongThucThanhToanChiTietRepository, PhuongThucThanhToanChiTietRepository>();
 
 
 builder.Services.AddAuthentication(options =>
