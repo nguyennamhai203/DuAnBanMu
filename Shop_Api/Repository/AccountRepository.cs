@@ -42,7 +42,7 @@ namespace Shop_Api.Repository
             _roleManager = roleManager;
             _context = context;
         }
-        public async Task<string> LoginAsync(LoginDto model)
+        public async Task<LoginResponseDto> LoginAsync(LoginDto model)
         {
             var user = await _userManager.FindByNameAsync(model.NameAccount);
 
@@ -50,7 +50,12 @@ namespace Shop_Api.Repository
 
             if (user == null || !passWordVaild)
             {
-                return string.Empty;
+                return new LoginResponseDto
+                {
+                    Message = "Thông tin tai khoan khong chinh xac",
+                    Success = false,
+                    Code = 405,
+                };
             }
             var authClamis = new List<Claim>
             {
@@ -59,9 +64,11 @@ namespace Shop_Api.Repository
             };
 
             var userRoles = await _userManager.GetRolesAsync(user);
+            string roleUser = "";
             foreach (var role in userRoles)
             {
                 authClamis.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                roleUser= role;
             }
 
             var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -74,7 +81,15 @@ namespace Shop_Api.Repository
                 signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
                 );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            //return new JwtSecurityTokenHandler().WriteToken(token);
+            return new LoginResponseDto
+            {
+                Token= new JwtSecurityTokenHandler().WriteToken(token),
+                Result = user,
+                Role = roleUser,
+                Success = true,
+                Code = 200,
+            };
         }
 
 
@@ -294,7 +309,7 @@ namespace Shop_Api.Repository
             // Tiếp tục thực hiện đăng ký người dùng
             var user = new NguoiDung
             {
-                MaNguoiDung =  GenerateUserIdAsync(model.TenNguoiDung),
+                MaNguoiDung = GenerateUserIdAsync(model.TenNguoiDung),
                 TenNguoiDung = model.TenNguoiDung,
                 UserName = model.UserName,
                 Email = model.Email,
@@ -414,8 +429,8 @@ namespace Shop_Api.Repository
                     //        Message = "Số điện thoại không hợp lệ."
                     //    };
                     //} 
-                    
-                    
+
+
                     //if (taotknhanvien.Message == "Email đã được sử dụng để đăng ký. Vui lòng sử dụng email khác.")
                     //{
                     //    return new ResponseDto
@@ -437,7 +452,7 @@ namespace Shop_Api.Repository
                         Message = "Thành công"
                     };
                 }
-                else  return new ResponseDto
+                else return new ResponseDto
                 {
                     IsSuccess = false,
                     Code = 400,

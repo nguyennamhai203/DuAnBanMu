@@ -31,9 +31,9 @@ namespace Shop_Api.Controllers
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             var result = await _accountRepository.LoginAsync(loginDto);
-            if (string.IsNullOrEmpty(result))
+            if (result.Success==false)
             {
-                return Unauthorized();
+                return BadRequest(result);
             }
             return Ok(result);
         }

@@ -1,21 +1,71 @@
 ﻿using AdminApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Shop_Models.Dto;
 using System.Diagnostics;
+using System.Text;
 
 namespace AdminApp.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IHttpClientFactory _httpClientFactory;
+        Uri _url = new Uri("https://localhost:7050");
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
         }
 
         public IActionResult Index()
         {
-            return View();
+            //var accessToken = HttpContext.Session.GetString("AccessToken");
+            //var accessRole = HttpContext.Session.GetString("Result");
+            //if (!string.IsNullOrEmpty(accessToken) && accessRole=="Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            //{
+                return View();
+            //}
+            //else
+            //{
+            //    return View("Login");
+            //}
+        }
+
+        public IActionResult Login(/*string ReturnUrl = "/"*/)
+        {
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                return View("Index");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> LoginWithJWT(string username, string password)
+        {
+            LoginDto login = new LoginDto();
+            login.NameAccount = username;
+            login.Password = password;
+            var apiUrl = $"/api/Account/Login";
+            var httpclient = _httpClientFactory.CreateClient("BeHat");
+            var requestdata = new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
+            var respone = await httpclient.PostAsync(apiUrl, requestdata);
+            var jsonRespone = await respone.Content.ReadAsStringAsync();
+            var info = JsonConvert.DeserializeObject<LoginResponseDto>(jsonRespone);
+
+
+            if (respone.IsSuccessStatusCode)
+            {
+                HttpContext.Session.SetString("AccessToken", jsonRespone);
+
+                HttpContext.Session.SetString("Result", info.Role);
+                return RedirectToAction("Index", "Home");
+            }
+            else return BadRequest("Error");
         }
 
         public IActionResult Privacy()

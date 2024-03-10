@@ -6,7 +6,7 @@ namespace Shop_Api.Repository.IRepository
     public interface IAccountRepository
     {
         public Task<IdentityResult> SignUpAsync(SignUpDto model);
-        public Task<string> LoginAsync(LoginDto model);
+        public Task<LoginResponseDto> LoginAsync(LoginDto model);
 
         Task<bool> SendEmailAsync(string email, string subject, string message);
 
