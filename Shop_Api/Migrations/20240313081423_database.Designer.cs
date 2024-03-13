@@ -12,8 +12,8 @@ using Shop_Api.AppDbContext;
 namespace Shop_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240229084125_gendata")]
-    partial class gendata
+    [Migration("20240313081423_database")]
+    partial class database
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -468,7 +468,7 @@ namespace Shop_Api.Migrations
 
             modelBuilder.Entity("Shop_Models.Entities.Loai", b =>
                 {
-                    b.Property<Guid>("Guid")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -481,7 +481,7 @@ namespace Shop_Api.Migrations
                     b.Property<int>("TrangThai")
                         .HasColumnType("int");
 
-                    b.HasKey("Guid");
+                    b.HasKey("Id");
 
                     b.ToTable("Loai");
                 });

@@ -23,6 +23,7 @@ namespace Shop_Api.AppDbContext
         public virtual DbSet<GioHang> GioHangs { get; set; }
         public virtual DbSet<GioHangChiTiet> GioHangChiTiets { get; set; }
         public virtual DbSet<HoaDon> HoaDons { get; set; }
+        public virtual DbSet<HoaDonChiTiet> HoaDonChiTiets { get; set; }
         public virtual DbSet<Khuyenmai> KhuyenMais { get; set; }
         public virtual DbSet<Loai> Loais { get; set; }
         public virtual DbSet<MauSac> MauSacs { get; set; }
