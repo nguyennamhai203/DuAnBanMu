@@ -111,9 +111,9 @@ namespace Shop_Api.Repository
         {
             var user = new NguoiDung
             {
-                MaNguoiDung = GenerateUserIdAsync(model.TenNguoiDung),
+                MaNguoiDung = GenerateUserIdAsync(model.UserName),
                 TenNguoiDung = model.TenNguoiDung,
-                UserName = model.TenNguoiDung,
+                UserName = model.UserName,
                 Email = model.Email,
                 SoDienThoai = model.SDT
             };
@@ -143,17 +143,17 @@ namespace Shop_Api.Repository
 
 
         // Hàm tạo mã người dùng từ tên người dùng
-        private string GenerateUserIdAsync(string tenNguoiDung)
+        private string GenerateUserIdAsync(string userName)
         {
             // Lấy danh sách mã người dùng hiện có
             var existingUserIds = _context.NguoiDungs
-                                                .Where(u => u.TenNguoiDung == tenNguoiDung)
+                                                .Where(u => u.UserName == userName)
                                                 .Select(u => u.MaNguoiDung)
                                                 .ToList();
 
             // Tìm chỉ số duy nhất cho mã người dùng mới
             int index = 1;
-            string userId = tenNguoiDung.Replace(" ", string.Empty); // Xóa khoảng trắng và ký tự đặc biệt nếu có
+            string userId = userName.Replace(" ", string.Empty); // Xóa khoảng trắng và ký tự đặc biệt nếu có
             string uniqueUserId = userId;
             while (existingUserIds.Contains(uniqueUserId))
             {

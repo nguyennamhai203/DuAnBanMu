@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Shop_Models\Shop_Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\product_images\" />
+  </ItemGroup>
+
 </Project>

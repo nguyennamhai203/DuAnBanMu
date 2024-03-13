@@ -774,19 +774,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("Voucher");
-
-                    b.HasData(
-                        new
-                        {
-                            Guid = new Guid("f27e6385-975b-4bfb-9b8f-e6bc6bba0fee"),
-                            MaVoucher = "test",
-                            NgayBatDau = new DateTime(2000, 1, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayHetHan = new DateTime(2024, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            PhanTramGiam = 10,
-                            SoLuong = 1,
-                            TenVoucher = "test",
-                            TrangThai = 1
-                        });
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.XuatXu", b =>

@@ -18,10 +18,17 @@ namespace Shop_Api.Controllers
             _repository = repository;
         }
 
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(int? status, int page = 1)
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll(int? status/*, int page = 1*/)
         {
-            var result = await _repository.GetAsync(status, page);
+            var result = await _repository.GetAsync(/*status*//*, page*/);
+            return Ok(result);
+        }
+        
+        [HttpGet("PGetProductDetail")]
+        public async Task<IActionResult> PGetProductDetail(int? getNumber, string? codeProductDetail, int? status, string? tenSanPham, double? from, double? to, string? sortBy, int? page, string? tenLoai, string? tenThuongHieu, string? tenMauSac, string? tenXuatXu, string? chatLieu)
+        {
+            var result =  _repository.PGetProductDetail(getNumber,codeProductDetail,status,tenSanPham,from,to,sortBy,page, tenLoai,tenThuongHieu,tenMauSac,tenXuatXu, chatLieu).Result;
             return Ok(result);
         }
 
