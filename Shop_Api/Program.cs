@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Shop_Api.Repository.IRepository;
 using Shop_Api.Repository;
+using Shop_Api.Services.IServices;
+using Shop_Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,7 @@ builder.Services.AddScoped<IAnhRepository, AnhRepository>();
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 builder.Services.AddScoped<IMauSacRepository, MauSacRepository>();
 builder.Services.AddScoped<IPhuongThucThanhToanChiTietRepository, PhuongThucThanhToanChiTietRepository>();
+builder.Services.AddScoped<IGioHangChiTietServices, GioHangChiTietServices>();
 
 
 builder.Services.AddAuthentication(options =>

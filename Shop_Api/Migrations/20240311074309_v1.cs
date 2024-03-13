@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Shop_Api.Migrations
 {
-    public partial class cuongvt : Migration
+    public partial class v1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -95,14 +95,14 @@ namespace Shop_Api.Migrations
                 name: "Loai",
                 columns: table => new
                 {
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MaLoai = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TenLoai = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrangThai = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Loai", x => x.Guid);
+                    table.PrimaryKey("PK_Loai", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -385,7 +385,7 @@ namespace Shop_Api.Migrations
                         name: "FK_ChiTietSanPham_Loai_LoaiId",
                         column: x => x.LoaiId,
                         principalTable: "Loai",
-                        principalColumn: "Guid");
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ChiTietSanPham_MauSac_MauSacId",
                         column: x => x.MauSacId,
