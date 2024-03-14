@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shop_Api.Repository.IRepository;
+using Shop_Models.Dto;
 using Shop_Models.Entities;
 using Shop_Models.Heplers;
 
@@ -26,11 +27,41 @@ namespace Shop_Api.Controllers
         }
         
         [HttpGet("PGetProductDetail")]
-        public async Task<IActionResult> PGetProductDetail(int? getNumber, string? codeProductDetail, int? status, string? tenSanPham, double? from, double? to, string? sortBy, int? page, string? tenLoai, string? tenThuongHieu, string? tenMauSac, string? tenXuatXu, string? chatLieu)
+        public async Task<IActionResult> PGetProductDetail(int? getNumber, string? codeProductDetail, int? status, string? tenSanPham, double? from, double? to, string? sortBy, int? page, string? tenLoai, string? tenThuongHieu, string? tenMauSac, string? tenXuatXu, string? chatLieu,int PageSize)
         {
-            var result =  _repository.PGetProductDetail(getNumber,codeProductDetail,status,tenSanPham,from,to,sortBy,page, tenLoai,tenThuongHieu,tenMauSac,tenXuatXu, chatLieu).Result;
+            var result = await _repository.PGetProductDetail(getNumber,codeProductDetail,status,tenSanPham,from,to,sortBy,page, tenLoai,tenThuongHieu,tenMauSac,tenXuatXu, chatLieu,PageSize);
             return Ok(result);
         }
+
+        [HttpPost("GetFilteredDaTaDSTongQuanAynsc")]
+        public async Task<IActionResult> GetFilteredDaTaDSTongQuanAynsc(ParametersTongQuanDanhSach parameters)
+        {
+          
+
+            try
+            {
+                var viewModelResult = await _repository.GetFilteredDaTaDSTongQuanAynsc(parameters);
+
+                var paginatedResult = viewModelResult
+                    .Skip(parameters.Start)
+                    .Take(parameters.Length)
+                    .ToList();
+
+                return new ObjectResult(new
+                {
+                    draw = parameters.Draw,
+                    recordsTotal = viewModelResult.Count,
+                    recordsFiltered = viewModelResult.Count,
+                    data = paginatedResult
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+
 
         [Authorize(Roles = AppRole.Admin)]
         [HttpPost("CreateAsync")]

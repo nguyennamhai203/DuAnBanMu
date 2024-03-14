@@ -26,7 +26,7 @@ namespace Shop_Api.Services
 		{
 			try
 			{
-				var sanPhamChiTietDTO = _reposSanPhamChiTiet.PGetProductDetail(null, codeProductDetail, null, null, null, null, null, null, null, null, null, null, null).Result.FirstOrDefault();
+				var sanPhamChiTietDTO = _reposSanPhamChiTiet.PGetProductDetail(null, codeProductDetail, null, null, null, null, null, null, null, null, null, null, null,null).Result.FirstOrDefault();
 				var sanPhamChiTiet = await _reposSanPhamChiTiet.GetAsync();
 				var user = await _userManager.FindByNameAsync(userName);
 

@@ -1,0 +1,42 @@
+﻿
+
+
+<div class="data-container">
+    <!-- Your table or data display elements here -->
+</div>
+
+<script>
+    // Define your custom class
+    class DataRetriever {
+        static async fetchData() {
+            try {
+                const response = await fetch('@Url.Action("GetTongQuanDanhSach", "test")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        // Add any parameters needed for the request
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                // Process data or update UI as needed
+                console.log(data);
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
+    }
+
+    // Call fetchData method when the class is invoked
+    $(document).ready(function () {
+        $('.data-container').on('click', function () {
+            DataRetriever.fetchData();
+        });
+    });
+</script>

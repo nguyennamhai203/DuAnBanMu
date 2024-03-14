@@ -1,0 +1,96 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div id="productTableContainer" class="col-sm-12 m-t-15">
+    <!-- Table to display product list -->
+    <table class="table table-bordered table-hover no-footer w-100" id="content1">
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        // $(document).ready(function () {
+        //     // Load initial product data
+        //     loadProductData();
+        // });
+
+        // function loadProductData() {
+        //     $.ajax({
+        //         url: "/test/GetTongQuanDanhSach",
+        //         type: "POST", // Using POST method
+        //         contentType: "application/json",
+        //         success: function (data) {
+        //             // Update product table with data
+        //             updateProductTable(data); console.log(data)
+        //         },
+        //         error: function (xhr, status, error) {
+        //             console.error("Error:", error);
+        //         }
+        //     });
+        // }
+
+        // function updateProductTable(data) {
+        //     if (data != null && data.length > 0) {
+        //         // Clear the table
+        //         $("#table-sanpham").empty();
+
+        //         // Loop through the data and append rows to the table
+        //         $.each(data, function (index, item) {
+        //             var row = "<tr>" +
+        //                 "<td>" + item.sumGuild + "</td>" +
+        //                 "<td>" + item.sanPham + "</td>" +
+        //                 "<td>" + item.thuongHieu + "</td>" +
+        //                 "<td>" + item.loaiMu + "</td>" +
+        //                 "<td>" + item.xuatXu + "</td>" +
+        //                 "<td>" + item.chatLieu + "</td>" +
+        //                 "<td>" + item.soMau + "</td>" +
+        //                 "<td>" + item.tongSoLuongTon + "</td>" +
+        //                 "<td>" + item.tongSoLuongDaBan + "</td>" +
+        //                 "</tr>";
+        //             $("#table-sanpham").append(row);
+        //         });
+
+        //     }
+        // }
+
+
+        $(() => {
+            $.ajax({
+
+                url: '/test/DanhSachTongQuanSanPham',
+                type: 'GET',
+                success: function (result) {
+                    debugger
+                    $('#content1').empty().html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+
+            });
+        })
+
+
+        // $(document).ready(function () {
+        //     $.ajax({
+        //         url: '@Url.Action("DanhSachTongQuanSanPham", "test")',
+        //         type: 'GET',
+        //         success: function (result) {
+        //             // Load result to your desired container or div
+        //             $('#container').html(result);
+        //         },
+        //         error: function (xhr, status, error) {
+        //             console.log(error);
+        //         }
+        //     });
+        // });
+
+
+    </script>
+}
