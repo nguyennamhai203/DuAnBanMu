@@ -114,7 +114,7 @@ namespace Shop_Api.Services
 		{
 			return new ResponseDto
 			{
-				Result = null,
+				Content = null,
 				IsSuccess = false,
 				Code = code,
 				Message = message
@@ -125,7 +125,7 @@ namespace Shop_Api.Services
 		{
 			return new ResponseDto
 			{
-				Result = null,
+				Content = null,
 				IsSuccess = true,
 				Code = code,
 				Message = message

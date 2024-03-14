@@ -132,7 +132,7 @@ public IActionResult test(int? year, int? month)
                 {
                     Code = 200,
                     Message = "thong ke thanh cong",
-                    Result = thongke
+                    Content = thongke
                 };
             }
             catch (Exception)

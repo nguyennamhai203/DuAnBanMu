@@ -1,0 +1,54 @@
+﻿@using Shop_Models.Dto
+@model List<SPDanhSachViewModel>
+@{
+    var index = 1;
+}
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="datatable-top">
+                        <div class="datatable-dropdown">
+                            <label>
+                                <select class="datatable-selector"><option value="5">5</option><option value="10" selected="">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option></select> entries per page
+                            </label>
+                        </div>
+                        <div class="datatable-search">
+                            <input class="datatable-input" placeholder="Search..." type="search" title="Search within table">
+                        </div>
+                    </div>
+                    <table class="table datatable">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Start Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <th scope="row">@index</th>
+                                    <td>@item.SanPham</td>
+                                   
+                                </tr>
+                                index++;
+                            }
+
+
+                        </tbody>
+                    </table>
+                    <!-- End Table with stripped rows -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

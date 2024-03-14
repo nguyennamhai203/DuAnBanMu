@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Newtonsoft.Json;
 using Shop_Models.Dto;
 using System.Net.Http;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AdminApp.Controllers
 {
@@ -26,18 +29,23 @@ namespace AdminApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetTongQuanDanhSach([FromBody] ParametersTongQuanDanhSach parameters)
+        public async Task<IActionResult> DanhSachTongQuanSanPham([FromBody] ParametersTongQuanDanhSach parameters)
         {
             try
             {
                 var client = _httpClientFactory.CreateClient("BeHat");
-                var response = await client.PostAsJsonAsync("/api/SanPhamChiTiet/GetFilteredDaTaDSTongQuanAynsc", parameters);
+                var response = await client.PostAsJsonAsync("/api/ChiTietSanPham/GetFilteredDaTaDSTongQuanAynsc", parameters);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    return Content(jsonResponse, "application/json");
+
+                    var respone = JsonConvert.DeserializeObject<ResponseDto>(jsonResponse);
+                    var content = JsonConvert.DeserializeObject<List<SPDanhSachViewModel>>(respone.Content.ToString());
+
+                    return PartialView("/Views/test/_DanhSachTongQuanSanPham.cshtml", content);
                 }
+  
                 else
                 {
                     return StatusCode((int)response.StatusCode, response.ReasonPhrase);
@@ -47,18 +55,7 @@ namespace AdminApp.Controllers
             {
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
-        }
-
-
-        public async Task<IActionResult> DanhSachTongQuanSanPham()
-        {
-            //ViewData["IdChatLieu"] = new SelectList(await _sanPhamChiTietService.GetListModelChatLieuAsync(), "IdChatLieu", "TenChatLieu");
-            //ViewData["IdKieuDeGiay"] = new SelectList(await _sanPhamChiTietService.GetListModelKieuDeGiayAsync(), "IdKieuDeGiay", "TenKieuDeGiay");
-            //ViewData["IdLoaiGiay"] = new SelectList(await _sanPhamChiTietService.GetListModelLoaiGiayAsync(), "IdLoaiGiay", "TenLoaiGiay");
-            //ViewData["IdSanPham"] = new SelectList(await _sanPhamChiTietService.GetListModelSanPhamAsync(), "IdSanPham", "TenSanPham");
-            //ViewData["IdThuongHieu"] = new SelectList(await _sanPhamChiTietService.GetListModelThuongHieuAsync(), "IdThuongHieu", "TenThuongHieu");
-            //ViewData["IdXuatXu"] = new SelectList(await _sanPhamChiTietService.GetListModelXuatXuAsync(), "IdXuatXu", "Ten");
-            return PartialView();
+            return PartialView("_");
         }
 
     }

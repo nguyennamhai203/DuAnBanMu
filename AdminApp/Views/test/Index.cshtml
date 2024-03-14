@@ -55,13 +55,17 @@
 
         //     }
         // }
-
-
+        debugger
+        var data = {
+            Length:2
+        }
         $(() => {
             $.ajax({
 
                 url: '/test/DanhSachTongQuanSanPham',
-                type: 'GET',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
                 success: function (result) {
                     debugger
                     $('#content1').empty().html(result);

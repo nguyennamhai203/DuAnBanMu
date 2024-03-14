@@ -22,7 +22,7 @@ namespace Shop_Api.Repository
             {
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = false,
                     Code = 400,
                     Message = "Trùng Mã",
@@ -34,7 +34,7 @@ namespace Shop_Api.Repository
                 await _dbContext.SaveChangesAsync();
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = true,
                     Code = 200,
                     Message = "Thành Công",
@@ -44,7 +44,7 @@ namespace Shop_Api.Repository
             {
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = false,
                     Code = 500,
                     Message = "Lỗi Hệ Thống",
@@ -59,7 +59,7 @@ namespace Shop_Api.Repository
             {
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = false,
                     Code = 404,
                     Message = "Không Tim Thấy Bản Ghi",
@@ -84,7 +84,7 @@ namespace Shop_Api.Repository
                 await _dbContext.SaveChangesAsync();
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = true,
                     Code = 200,
                     Message = "Thành Công",
@@ -94,7 +94,7 @@ namespace Shop_Api.Repository
             {
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = false,
                     Code = 500,
                     Message = "Lỗi Hệ Thống",
@@ -109,7 +109,7 @@ namespace Shop_Api.Repository
             {
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = false,
                     Code = 404,
                     Message = "Không Tim Thấy Bản Ghi",
@@ -122,7 +122,7 @@ namespace Shop_Api.Repository
                 await _dbContext.SaveChangesAsync();
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = true,
                     Code = 200,
                     Message = "Xóa Thành Công",
@@ -132,7 +132,7 @@ namespace Shop_Api.Repository
             {
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = false,
                     Code = 500,
                     Message = "Lỗi Hệ Thống",

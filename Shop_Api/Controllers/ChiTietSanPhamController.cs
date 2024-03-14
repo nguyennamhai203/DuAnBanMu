@@ -46,14 +46,11 @@ namespace Shop_Api.Controllers
                     .Skip(parameters.Start)
                     .Take(parameters.Length)
                     .ToList();
-
-                return new ObjectResult(new
+                var result = new ResponseDto()
                 {
-                    draw = parameters.Draw,
-                    recordsTotal = viewModelResult.Count,
-                    recordsFiltered = viewModelResult.Count,
-                    data = paginatedResult
-                });
+                    Content= paginatedResult
+                };
+                return new ObjectResult(result);
             }
             catch (Exception ex)
             {

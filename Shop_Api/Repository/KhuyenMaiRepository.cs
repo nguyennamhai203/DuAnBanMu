@@ -147,7 +147,7 @@ namespace Shop_Api.Repository
             });
             return new ResponseDto
             {
-                Result = result.ToList(),
+                Content = result.ToList(),
                 IsSuccess = true,
                 Code = 200,
                 Message = $"trang số {page}/ tổng số trang: {totalPages} ,\n số bản ghi: {result.Count()}/ tổng số bản ghi: {listAll.Count()}",
@@ -173,7 +173,7 @@ namespace Shop_Api.Repository
                 {
                     return new ResponseDto
                     {
-                        Result = _findKM,
+                        Content = _findKM,
                         IsSuccess = true,
                         Code = 200,
                         Message = "Đã tìm thấy khuyến mãi",
