@@ -1,0 +1,122 @@
+﻿@using Shop_Models.Dto
+@model List<SPDanhSachViewModel>
+@{
+    var index = 1;
+    var tongsobanghi = ViewBag.TotalRecords;
+    var tongtrang = ViewBag.TotalPage;
+}
+
+<section class="section">
+    <div class="row">
+        <div class="card">
+            <table class="table table-bordered table-hover no-footer w-100" id="tables">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">SanPham</th>
+                        <th scope="col">ThuongHieu</th>
+                        <th scope="col">LoaiMu</th>
+                        <th scope="col">XuatXu</th>
+                        <th scope="col">ChatLieu</th>
+                        <th scope="col">SoMau</th>
+                        <th scope="col">TongSoLuongTon</th>
+                        <th scope="col">TongSoLuongDaBan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="postAPI" data-sumGuid="@item.SumGuild" data-url="@Url.Action("GetRelatedProducts", "test", new { sumGuid = item.SumGuild })">
+                            <th scope="row">@index</th>
+                            <td>@item.SanPham</td>
+                            <td>@item.ThuongHieu</td>
+                            <td>@item.LoaiMu</td>
+                            <td>@item.XuatXu</td>
+                            <td>@item.ChatLieu</td>
+                            <td>@item.SoMau</td>
+                            <td>@item.TongSoLuongTon</td>
+                            <td>@item.TongSoLuongDaBan</td>
+                            <td class="product-row" data-id="@item.SumGuild" data-url="@Url.Action("GetRelatedProducts", "test", new { sumGuid = item.SumGuild })"> Xem</td>
+                        </tr>
+                        index++;
+                    }
+                </tbody>
+
+            </table>
+            <div class="pagination-info">
+                Trang Hiện Tại: <span id="currentPage">1</span> / <span>@tongtrang</span> | Số bản ghi trên trang: <span id="totalRecords">0</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script src="cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"></script>
+    <script src="cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
+
+  @*   <script>
+        $(document).ready(function () {
+            $('#content1').on('click', '.product-row', function () {
+                console.log('Product row clicked');
+                var sumGuid = $(this).data('id');
+                var url = $(this).data('url');
+                // Gọi hàm AJAX để gửi sumGuid đến controller và hiển thị kết quả
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (result) {
+                        $('modalContent').empty().html(result);
+                        $('#exampleModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                        console.log(status);
+                        console.log(error);
+                        console.log(xhr);
+                    }
+                });
+            });
+        });
+
+    </script> *@
+    <script>
+        // function XemSanPham(idSanPham) {
+        //     console.log('Bạn vừa ấn vào nút');
+        //     $.ajax({
+        //         url: '/test/LoadPartialView?idSanPhamChiTiet=' + idSanPham,
+        //         type: 'GET',
+        //         success: function (result) {
+        //             // $('#exampleModal').modal('hide');
+        //             // $('#modal-SanPham').empty().html(result).modal("show");
+
+        //             $("#example").html(result);
+        //             // Mở modal
+        //             $("#updateModal").modal("show");
+        //         },
+        //         error: function (xhr, status, error) {
+        //             console.log(xhr.responseText);
+        //             console.log(status);
+        //             console.log(error);
+        //             console.log(xhr);
+        //         }
+        //     });
+        // }
+
+
+        var table = $('#tables').DataTable();
+        if (!table || !$.fn.DataTable.isDataTable('#tables')) {
+            // Nếu bảng chưa được khởi tạo DataTables thì khởi tạo nó
+            $('#tables').DataTable({
+                // Các tùy chọn của DataTables
+                "paging": true,
+                "lengthChange": true,
+                "lengthMenu": [10, 25, 50, 75, 100],
+                "searching": true
+            });
+        }
+
+    </script>
+}
+
+

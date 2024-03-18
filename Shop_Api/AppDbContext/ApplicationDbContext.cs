@@ -23,6 +23,7 @@ namespace Shop_Api.AppDbContext
         public virtual DbSet<GioHang> GioHangs { get; set; }
         public virtual DbSet<GioHangChiTiet> GioHangChiTiets { get; set; }
         public virtual DbSet<HoaDon> HoaDons { get; set; }
+        public virtual DbSet<HoaDonChiTiet> HoaDonChiTiets { get; set; }
         public virtual DbSet<Khuyenmai> KhuyenMais { get; set; }
         public virtual DbSet<Loai> Loais { get; set; }
         public virtual DbSet<MauSac> MauSacs { get; set; }
@@ -39,17 +40,11 @@ namespace Shop_Api.AppDbContext
         /*protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<Voucher>().HasData(
-                new Voucher
+            builder.Entity<ChiTietSanPham>().HasData(
+                new ChiTietSanPham
                 {
-                    Guid = Guid.NewGuid(),
-                    MaVoucher = "test",
-                    TenVoucher = "test",
-                    PhanTramGiam = 10,
-                    SoLuong = 1,
-                    NgayBatDau = new DateTime(2000, 1, 23),
-                    NgayHetHan = new DateTime(2024, 2, 25),
-                    TrangThai = 1
+                    Id = Guid.NewGuid(),
+                    ChatLieuId = Guid.Empty
                 }
             );
         }*/

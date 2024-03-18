@@ -1,0 +1,227 @@
+﻿@model Shop_Models.Dto.SanPhamChiTietDto;
+@{
+
+    @using Shop_Models;
+    @using Shop_Models.Entities;
+
+
+}
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/SanPhamChiTiet">Tổng Quan Sản Phẩm</a></li><li class="breadcrumb-item"><a href="/SanPhamChiTiet/CreatePartialView">Thêm Sản Phẩm</a></li>
+    </ol>
+</nav>
+
+<div id="example">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><h3>Thêm Sản Phẩm</h3></li>
+    </ol>
+    <form asp-controller="SanPhamChiTiet" asp-action="Createaa" method="post" enctype="multipart/form-data">
+
+        @*  <div id="grid1"></div> *@
+
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Mã Sản Phẩm Chi Tiết</label>
+            <input type="text" class="form-control" asp-for="MaSanPhamChiTiet" placeholder="Mã Sản Phẩm Chi Tiết">
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Tên Sản Phẩm</label>
+
+            <select class="form-select" asp-for="SanPhamId">
+                <option>Chọn Sản Phẩm</option>
+                @foreach (var t in (List<SanPham>)ViewBag.GetSanPham)
+                {
+                    <option value="@t.IdSanPham">@t.TenSanPham</option>
+                }
+
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"> Màu Sắc</label>
+            <div class="form-group col-md-6">
+                <select class="form-select" asp-for="MauSacId">
+                    <option>Chọn Màu Sắc</option>
+                    @foreach (var t in (List<MauSac>)ViewBag.GetColor)
+                    {
+                        <option value="@t.Guid">@t.TenMauSac</option>
+                    }
+
+                </select>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Chất Liệu</label>
+            <select class="form-select" asp-for="ChatLieuId">
+                <option>Chọn Chất Liệu</option>
+                @foreach (var t in (List<ChatLieu>)ViewBag.GetChatLieu)
+                {
+                    <option value="@t.Guid">@t.TenChatLieu</option>
+                }
+
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Thương Hiệu</label>
+            <select class="form-select" asp-for="ThuongHieuId">
+                <option>Chọn Thương Hiệu</option>
+                @foreach (var t in (List<ThuongHieu>)ViewBag.GetThuongHieu)
+                {
+                    <option value="@t.Guid">@t.TenThuongHieu</option>
+                }
+
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Xuất Xứ</label>
+            <select class="form-select" asp-for="XuatXuId">
+                <option>Chọn Xuất Xứ</option>
+                @foreach (var t in (List<XuatXu>)ViewBag.GetXuatXu)
+                {
+                    <option value="@t.Guid">@t.TenXuatXu</option>
+                }
+
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Loại Mũ</label>
+            <select class="form-select" asp-for="LoaiId">
+                <option>Chọn Loại Mũ</option>
+                @foreach (var t in (List<Loai>)ViewBag.GetLoai)
+                {
+                    <option value="@t.Id">@t.TenLoai</option>
+                }
+
+            </select>
+        </div>
+       @*  <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">CardVGA</label>
+            <select class="form-select" asp-for="IdCardVGA">
+                <option>Chọn CardVGA</option>
+                @foreach (var t in (List<CardVGA>)ViewBag.GetlistCardVGA)
+                {
+                    <option value="@t.Id">@t.Ma</option>
+                }
+
+            </select>
+        </div> *@
+
+        @*  <div class="form-group col-md-6">
+        <label for="">Sản phẩm</label>
+        <select class="form-select" >
+        @foreach (var t in (List<ProductType>)ViewBag.GetProductType)
+        {
+        <option>@t.Name</option>
+        }
+
+        </select>
+        </div> *@
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Giá Nhập</label>
+            <input type="number" class="form-control" id="exampleFormControlInput1" asp-for="GiaNhap" placeholder="Nhập Giá Nhập">
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Giá Bán</label>
+            <input type="number" class="form-control" id="exampleFormControlInput1" asp-for="GiaBan" placeholder="Nhập Giá Bán">
+        </div> <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Số Lượng Sản Phẩm</label>
+            <input type="number" class="form-control" id="exampleFormControlInput1" asp-for="SoLuongTon" placeholder="Nhập Số Lượng">
+        </div>
+          <div class="form-group d-flex align-items-center col-4">
+                                     <div class="switch m-r-10">
+                                         <input type="checkbox" id="switch-${index}-2" class="switch-2-trangthaikhuyenmai" name="TrangThaiKhuyenMai" checked>
+                                         <label class="font-weight-semibold" for="switch-${index}-2"></label>
+                                     </div>
+                                     <label class="font-weight-semibold">Cho phép áp dụng khuyến mại</label>
+                                 </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="exampleFormControlInput1" class="form-label">Hình Ảnh</label>
+                <div id="imageInputsContainer">
+                    <input type="file" name="formFiles" class="form-control" accept="image/*" multiple />
+                </div>
+                <button type="button" class="btn btn-secondary mt-2" onclick="addImageInput()">Thêm 1 ảnh</button>
+            </div>
+        </div>
+        <div class="demo-section wide">
+            <textarea name="editor" id="description" rows="10" cols="30" style="width:100%; height:840px" aria-label="editor"></textarea>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    <script>
+        var editor = $("#description").kendoEditor({
+            stylesheets: [
+                "../content/shared/styles/editor.css",
+            ],
+            tools: [
+                "bold",
+                "italic",
+                "underline",
+                "undo",
+                "redo",
+                "justifyLeft",
+                "justifyCenter",
+                "justifyRight",
+                "insertUnorderedList",
+                "createLink",
+                "unlink",
+                "insertImage",
+                "tableWizard",
+                "tableProperties",
+                "tableCellProperties",
+                "createTable",
+                "addRowAbove",
+                "addRowBelow",
+                "addColumnLeft",
+                "addColumnRight",
+                "deleteRow",
+                "deleteColumn",
+                "mergeCellsHorizontally",
+                "mergeCellsVertically",
+                "splitCellHorizontally",
+                "splitCellVertically",
+                "tableAlignLeft",
+                "tableAlignCenter",
+                "tableAlignRight",
+                "fontSize",
+                "foreColor",
+                "backColor",
+            ]
+        });
+    </script>
+</div>
+
+
+@section scripts {
+    <link href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script>
+
+
+    </script>
+
+
+    <script>
+        function addImageInput() {
+            var container = document.getElementById('imageInputsContainer');
+            var inputCount = container.getElementsByTagName('input').length;
+
+            if (inputCount < 6) {
+                var newInput = document.createElement('input');
+                newInput.type = 'file';
+                newInput.name = 'formFiles';
+                newInput.className = 'form-control';
+                newInput.accept = 'image/*';
+                newInput.multiple = true;  // Allow multiple file selection
+                container.appendChild(newInput);
+            }
+        }
+
+    </script>
+
+}

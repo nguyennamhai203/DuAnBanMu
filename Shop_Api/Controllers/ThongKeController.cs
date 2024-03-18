@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Entities;
 using Shop_Models.Heplers;
@@ -12,10 +13,11 @@ namespace Shop_Api.Controllers
     public class ThongKeController : ControllerBase
     {
         private readonly IThongKeRepository _repository;
-
-        public ThongKeController(IThongKeRepository repository)
+        private readonly ApplicationDbContext _context;
+        public ThongKeController(IThongKeRepository repository,ApplicationDbContext context)
         {
             _repository = repository;
+            _context = context;
         }
 
         [HttpGet("Get")]
@@ -61,5 +63,32 @@ namespace Shop_Api.Controllers
             else return BadRequest(respon);
         }
 
+        [Authorize(Roles = AppRole.Admin)]
+        [HttpGet("Thong-ke-san-pham-theo-ngay")]
+        public IActionResult ThongKeSanPhamTheoNgay(DateTime ngay)
+        {
+            var ngaybatdau = ngay.Date;
+            var ngayketthuc = ngaybatdau.AddMonths(1).AddDays(-1);
+            var thongketheongay = _context.HoaDons
+                .Where(b => b.NgayThanhToan >= ngaybatdau && b.NgayThanhToan <= ngayketthuc)
+                .Join(
+                    _context.HoaDonChiTiets,
+                    hd => hd.Id,
+                    hdct => hdct.HoaDonId,
+                    (hd, hdct) => new
+                    {
+                        Daily = hd.NgayThanhToan.Day,
+                        Amount = hdct.GiaBan * hdct.SoLuong
+                    }
+                )
+                .GroupBy(result => result.Daily)
+                .Select(group => new
+                {
+                    Day = group.Key,
+                    Amount = group.Sum(result => result.Amount),
+                    TotalOrders = group.Count(),
+                }).ToList();
+            return Ok(thongketheongay);
+        }
     }
 }

@@ -74,5 +74,32 @@ namespace Shop_Api.Repository
         {
             return await _db.HoaDons.FindAsync(id);
         }
+
+        public async Task<List<HoaDon>> GetAsync(int? status, int page = 1)
+        {
+            var list = _db.HoaDons.AsQueryable();
+            if (status.HasValue)
+            {
+                list = list.Where(x => x.TrangThaiThanhToan == status && x.TrangThaiGiaoHang == status);
+            }
+            var result = list.Select(x => new HoaDon
+            {
+                Id = x.Id,
+                MaHoaDon = x.MaHoaDon,
+                NgayTao = x.NgayTao,
+                NgayThanhToan = x.NgayThanhToan,
+                NgayShip = x.NgayShip,
+                NgayNhan = x.NgayNhan,
+                MoTa = x.MoTa,
+                TienGiam = x.TienGiam,
+                TienShip = x.TienShip,
+                TongTien = x.TongTien,
+                TrangThaiThanhToan = x.TrangThaiThanhToan,
+                TrangThaiGiaoHang = x.TrangThaiGiaoHang,
+                NgayGiaoDuKien = x.NgayGiaoDuKien,
+                LiDoHuy = x.LiDoHuy
+            });
+            return result.ToList();
+        }
     }
 }
