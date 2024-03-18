@@ -67,7 +67,7 @@ namespace Shop_Api.Repository
                 return new ResponseDto
                 {
                     IsSuccess = true,
-                    Result = getid,
+                    Content = getid,
                     Code = 200,
                     Message = "Da tim thay du lieu"
                 };

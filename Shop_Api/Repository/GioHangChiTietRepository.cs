@@ -88,7 +88,7 @@ namespace Shop_Api.Repository
             {          
                 return new ResponseDto
                 {
-                    Result = null,
+                    Content = null,
                     IsSuccess = false,
                     Code = 404,
                     Message = "Lỗi",
@@ -99,7 +99,7 @@ namespace Shop_Api.Repository
                 
                 return new ResponseDto
                 {
-                    Result = cartItem,
+                    Content = cartItem,
                     IsSuccess = true,
                     Code = 200,
                 };

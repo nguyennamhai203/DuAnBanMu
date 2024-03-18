@@ -119,7 +119,7 @@ public IActionResult test(int? year, int? month)
             try
             {
                 var thongke = (from tk in thongKeRes.GetAsync(status, page).Result
-                              join ctsp in chiTietSanPhamRes.GetAsync(status, page).Result on tk.SanPhamChiTietId equals ctsp.Id
+                              join ctsp in chiTietSanPhamRes.GetAsync(/*status, page*/).Result on tk.SanPhamChiTietId equals ctsp.Id
                               join hd in hoaDonRes.GetAsync(status, page).Result on tk.HoaDonId equals hd.Id
                               select new ThongKe 
                               {
@@ -132,7 +132,7 @@ public IActionResult test(int? year, int? month)
                 {
                     Code = 200,
                     Message = "thong ke thanh cong",
-                    Result = thongke
+                    Content = thongke
                 };
             }
             catch (Exception)

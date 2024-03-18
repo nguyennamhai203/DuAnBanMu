@@ -1,0 +1,118 @@
+﻿@model List<Shop_Models.Dto.SanPhamChiTietDto>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+<div id="example">
+    <div class="notification-toast top-right" id="notification-toast"></div>
+
+    <table id="data-table" class="table table-bordered table-hover no-footer w-100">
+        <thead>
+            <tr>
+                <th style="width: 30px">STT</th>
+                <th>MSPCT</th>
+                <th>Sản Phẩm</th>
+                <th>Màu</th>
+                <th>G/Nhập</th>
+                <th>G/Bán</th>
+                <th>SL</th>
+                <th>Đ/Bán</th>
+                <th>K/Doanh</th>
+                <th>Select</th>
+                <th>###</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int Stt = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="width: 30px">@Stt</td>
+                    <td>@item.MaSanPhamChiTiet</td>
+                    <td>
+                        <div class="d-flex align-items-center" style="cursor: pointer" onclick="XemSanPham('@item.Id')">
+                            <img class="img-fluid rounded" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.AnhThuNhat)" style="max-width: 60px" alt="">
+                            <h6 class="m-b-0 m-l-10">@item.TenSanPham</h6>
+                        </div>
+                    </td>
+                    <td>@item.TenMauSac</td>
+                    <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaNhap)</td>
+                    <td>
+                        <div class="editable-price">
+                            <span class="display-price">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                            <input class="edit-price form-control formatPrice-table" value="@item.GiaBan" style="display:none;" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="editable-soluong">
+                            <span class="display-soluong">@item.SoLuongTon</span>
+                            <input type="text" class="edit-soluong form-control" value="@item.SoLuongTon" style="display:none;" />
+                        </div>
+                    </td>
+                    <td>@item.SoLuongDaBan</td>
+                    <td>
+                        @if (item.TrangThai == 1)
+                        {
+                            <i class="anticon anticon-close">Kinh Doanh</i>
+                        }
+                        else
+                        {
+                            <i class="anticon anticon-check">Ngưng Kinh Doanh</i>
+                        }
+                    </td>
+                    <td>
+                        <div class="checkbox" data-id="@item.Id">
+                            <input id="check-item-@item.Id" type="checkbox" class="item">
+                            <label for="check-item-@item.Id" class="m-b-0"></label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group dropdown" style="cursor: pointer">
+                            <div class="dropdown">
+                               @*  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Dropdown button
+                                </button> *@
+                                <i class="fas fa-bars dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown"></i>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                                    @if (item.TrangThai != 1)
+                                    {
+                                        <li><a class="dropdown-item active" href="#" type="button" onclick="KhoiPhucSanPham(@item.Id)">Khôi phục</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" href="#" type="button" onclick="KhoiPhucSanPham(@item.Id)">Ngừng KDoanh</a></li>
+
+                                    }                                 
+                                    <li><a class="dropdown-item" href="#">Chỉnh sửa</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Coppy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                Stt++;
+            }
+        </tbody>
+        <!-- Thêm các phần tử footer ở đây nếu cần -->
+    </table>
+</div>
+@section Scripts{
+
+  
+<script>
+    var table = $('#data-table').DataTable();
+    if (!table || !$.fn.DataTable.isDataTable('#data-table')) {
+        // Nếu bảng chưa được khởi tạo DataTables thì khởi tạo nó
+        $('#data-table').DataTable({
+            // Các tùy chọn của DataTables
+            "paging": true,
+            "lengthChange": true,
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "searching": true
+        });
+    }
+   
+</script>
+}
+

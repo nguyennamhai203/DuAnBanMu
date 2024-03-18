@@ -1,0 +1,773 @@
+﻿@model List<Shop_Models.Dto.SanPhamChiTietDto>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@*  <style>
+    .checkbox input[type="checkbox"] {
+        display: none;
+    }
+
+    .checkbox label::before {
+        content: "\2714";
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #000;
+        text-align: center;
+        vertical-align: middle;
+        margin-right: 5px;
+        font-size: 18px;
+        line-height: 18px;
+        cursor: pointer;
+    }
+
+    .checkbox input[type="checkbox"]:checked + label::before {
+    }
+
+    .checkbox input[type="checkbox"]:not(:checked) + label::before {
+        background-color: #c4d0d9;
+    }
+
+    .editable-price {
+        position: relative;
+    }
+
+    .editable-soluong {
+        position: relative;
+    }
+
+    .editable-price .display-price,
+    .editable-price .edit-price {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .editable-soluong .display-soluong,
+    .editable-soluong .edit-soluong {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .editable-price .edit-price {
+        display: none;
+    }
+
+    .editable-soluong .edit-soluong {
+        display: none;
+    }
+
+    .swal2-title {
+        font-family: 'Arial', sans-serif; /* Chọn font bạn muốn sử dụng cho alert */
+    }
+</style>
+
+<style>
+    #updateModal {
+        z-index: 9999; /* Adjust the value as needed */
+    }
+
+    /* Đặt kích thước modal mặc định */
+    .modal-dialog {
+        max-width: 90%;
+        width: auto;
+    }
+
+    /* Thiết lập thuộc tính cho việc kéo modal */
+    .modal-content {
+        overflow: hidden; /* Ngăn chặn nội dung bên ngoài khỏi modal */
+    }
+
+    /* Thiết lập kích thước của modal-body khi kéo */
+    .modal-body {
+        max-height: 80vh; /* Điều chỉnh kích thước tùy ý dựa trên nhu cầu của bạn */
+        overflow-y: auto;
+    }
+
+</style>
+
+
+
+<div id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="updateLabel">Cập nhật sản phẩm</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                <div id="example">
+
+                    <div class="w-100 row m-b-10">
+                        <div class="col-lg-8">
+                            <div class="d-md-flex">
+                                <div style="margin-top: 15px; font: caption; color: #48b148;font-weight: bold">
+                                    <i class="anticon anticon-filter m-r-5"></i>
+                                    BỘ LỌC:
+                                </div>
+                                 <div class="m-b-10 ml-1">
+                                    <select onchange="Filter()" class="select2_active1" style="min-width: 180px;" data-column="1" id="filterMauSac">
+                                        <option value="" selected="">Màu sắc</option>
+                                        @if (string.IsNullOrEmpty(ViewData["ValueMauSac"] as string))
+                                        {
+                                            foreach (var item in (SelectList)ViewData["MauSac"]!)
+                                            {
+                                                <option value="@item.Text">@item.Text</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            foreach (var item in (SelectList)ViewData["MauSac"]!)
+                                            {
+                                                if (item.Text == ViewData["ValueMauSac"]!.ToString())
+                                                {
+                                                    <option value="@item.Text" selected>@item.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Text">@item.Text</option>
+                                                }
+                                            }
+                                        }
+
+                                    </select>
+                                </div>
+                                <div class="m-b-10 ml-1">
+                                    <select class="select2_active1" onchange="Filter()" style="min-width: 180px;" id="filterSize">
+                                        <option value="" selected="">Size</option>
+                                        @if (string.IsNullOrEmpty(ViewData["ValueSize"] as string))
+                                        {
+                                            foreach (var item in (SelectList)ViewData["Size"]!)
+                                            {
+                                                <option value="@item.Text">@item.Text</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            foreach (var item in (SelectList)ViewData["Size"]!)
+                                            {
+                                                if (item.Text == ViewData["ValueSize"]!.ToString())
+                                                {
+                                                    <option value="@item.Text" selected>@item.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Text">@item.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="m-b-10 ml-1">
+                                    <button class="btn btn-kio" onclick="XoaBoLoc()">
+                                        <i class="anticon anticon-delete m-r-5"></i>
+                                        <span>Xóa bộ lọc</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 d-none" id="showActions">
+                            <div class="w-100 d-flex justify-content-end" style="margin-left: 30px">
+                                <button class="btn btn-kio m-r-5" id="export-relatedProducts">
+                                    <i class="anticon anticon-loading m-r-5"></i>
+                                    <i class="anticon anticon-file-excel"></i>
+                                    <span>Export Excel</span>
+                                </button>
+                                <button class="btn btn-kio" id="btnUpdate">
+                                    <i class="anticon anticon-loading m-r-5"></i>
+                                    <i class="anticon anticon-save m-r-5"></i>
+                                    <span>Lưu</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notification-toast top-right" id="notification-toast"></div>
+
+                    <table id="data-table" class="table table-hover no-footer">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px">STT</th>
+                                <th>MSP</th>
+                                <th>Sản Phẩm</th>
+                                <th>Màu</th>
+                                <th>G/Nhập</th>
+                                <th>G/Bán</th>
+                                <th>SL</th>
+                                <th>Đ/Bán</th>
+                                <th>K/Doanh</th>
+                                <th>Select </th>
+                                <th>###</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int Stt = 1;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td style="width: 30px">@(Stt++)</td>
+                                    <td>@item.MaSanPham</td>
+                                    <td>
+                                        <div class="d-flex align-items-center" style="cursor: pointer" onclick="showModal('@item.SanPhamId')">
+                                            <img class="img-fluid rounded" src="/AnhSanPham/@item.AnhThuNhat" style="max-width: 60px" alt="">
+                                            <h6 class="m-b-0 m-l-10">@item.TenSanPham</h6>
+                                        </div>
+                                    </td>
+                                    <td>@item.TenMauSac</td>
+                                    <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaNhap)</td>
+                                    <td>
+                                        <div class="editable-price">
+                                            <span class="display-price">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                                            <input class="edit-price form-control formatPrice-table" value="@item.GiaBan" style="display:none;" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="editable-soluong">
+                                            <span class="display-soluong">@item.SoLuongTon</span>
+                                            <input type="text" class="edit-soluong form-control" value="@item.SoLuongTon" style="display:none;" />
+                                        </div>
+                                    </td>
+                                    <td>@item.SoLuongDaBan</td>
+                                    <td>
+                                        @if (@item.TrangThai == 1)
+                                        {
+                                            <i class="anticon anticon-close"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="anticon anticon-check"></i>
+                                        }
+                                    </td>
+                                    <td><div class="checkbox" data-id="@item.Id"><input id="check-item-@item.Id" type="checkbox" class="item"><label for="check-item-@item.Id" class="m-b-0"></label></div></td>
+                                    <td>
+                                        <div class="btn-group dropdown" style="cursor: pointer">
+                                            <i class="fas fa-bars" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                            <div class="dropdown-menu">
+                                                <button class="dropdown-item" type="button" onclick="XemSanPham('@item.Id')"> Xem chi tiết</button>
+                                                @if (@item.TrangThai == 1)
+                                                {
+                                                    <button class="dropdown-item" type="button" onclick="KhoiPhucSanPham('@item.Id')">Khôi phục</button>
+                                                }
+                                                else
+                                                {
+                                                    <button class="dropdown-item" type="button" onclick="NgungKinhDoanhSanPham('@item.Id')">Ngừng KDoanh</button>
+                                                }
+
+                                                <button class="dropdown-item" type="button" onclick="EditSanPham('@item.Id')">Chỉnh sửa</button>
+                                                <button class="dropdown-item" type="button" onclick="CoppySanPham('@item.Id')">Coppy</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot style="background: #6de0d8;">
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+
+                    </table>
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
+*@
+
+
+
+@* <div id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="updateLabel">Cập nhật sản phẩm</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="example">
+                    <table id="data-table" class="table table-hover no-footer">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px">STT</th>
+                                <th>MSP</th>
+                                <th>Sản Phẩm</th>
+                                <th>Màu</th>
+                                <th>G/Nhập</th>
+                                <th>G/Bán</th>
+                                <th>SL</th>
+                                <th>Đ/Bán</th>
+                                <th>K/Doanh</th>
+                                <th>Select</th>
+                                <th>###</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int stt = 1;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td style="width: 30px">@stt</td>
+                                    <td>@item.MaSanPham</td>
+                                    <td>
+                                        <div class="d-flex align-items-center" style="cursor: pointer" onclick="showModal('@item.SanPhamId')">
+                                            <img class="img-fluid rounded" src="/AnhSanPham/@item.AnhThuNhat" style="max-width: 60px" alt="">
+                                            <h6 class="m-b-0 m-l-10">@item.TenSanPham</h6>
+                                        </div>
+                                    </td>
+                                    <td>@item.TenMauSac</td>
+                                    <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaNhap)</td>
+                                    <td>
+                                        <div class="editable-price">
+                                            <span class="display-price">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                                            <input class="edit-price form-control formatPrice-table" value="@item.GiaBan" style="display:none;" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="editable-soluong">
+                                            <span class="display-soluong">@item.SoLuongTon</span>
+                                            <input type="text" class="edit-soluong form-control" value="@item.SoLuongTon" style="display:none;" />
+                                        </div>
+                                    </td>
+                                    <td>@item.SoLuongDaBan</td>
+                                    <td>
+                                        @if (item.TrangThai == 1)
+                                        {
+                                            <i class="anticon anticon-close"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="anticon anticon-check"></i>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="checkbox" data-id="@item.Id">
+                                            <input id="check-item-@item.Id" type="checkbox" class="item">
+                                            <label for="check-item-@item.Id" class="m-b-0"></label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group dropdown" style="cursor: pointer">
+                                            <i class="fas fa-bars" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                            <div class="dropdown-menu">
+                                                <button class="dropdown-item" type="button" onclick="XemSanPham('@item.Id')"> Xem chi tiết</button>
+                                                @if (item.TrangThai == 1)
+                                                {
+                                                    <button class="dropdown-item" type="button" onclick="KhoiPhucSanPham('@item.Id')">Khôi phục</button>
+                                                }
+                                                else
+                                                {
+                                                    <button class="dropdown-item" type="button" onclick="NgungKinhDoanhSanPham('@item.Id')">Ngừng KDoanh</button>
+                                                }
+                                                <button class="dropdown-item" type="button" onclick="EditSanPham('@item.Id')">Chỉnh sửa</button>
+                                                <button class="dropdown-item" type="button" onclick="CoppySanPham('@item.Id')">Coppy</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                stt++;
+                            }
+                        </tbody>
+                        <!-- Thêm các phần tử footer ở đây nếu cần -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ *@
+
+@*
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true">
+    <div class="toast-header">
+        <img src="..." class="rounded me-2" alt="...">
+        <strong class="me-auto">Thông báo</strong>
+        <small>Just now</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        <!-- Nội dung của toast ở đây -->
+        <div id="example">
+            <table id="data-table" class="table table-hover no-footer">
+                <thead>
+                    <tr>
+                        <th style="width: 30px">STT</th>
+                        <th>MSP</th>
+                        <th>Sản Phẩm</th>
+                        <th>Màu</th>
+                        <th>G/Nhập</th>
+                        <th>G/Bán</th>
+                        <th>SL</th>
+                        <th>Đ/Bán</th>
+                        <th>K/Doanh</th>
+                        <th>Select</th>
+                        <th>###</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int stt = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="width: 30px">@stt</td>
+                            <td>@item.MaSanPham</td>
+                            <td>
+                                <div class="d-flex align-items-center" style="cursor: pointer" onclick="showModal('@item.SanPhamId')">
+                                    <img class="img-fluid rounded" src="/AnhSanPham/@item.AnhThuNhat" style="max-width: 60px" alt="">
+                                    <h6 class="m-b-0 m-l-10">@item.TenSanPham</h6>
+                                </div>
+                            </td>
+                            <td>@item.TenMauSac</td>
+                            <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaNhap)</td>
+                            <td>
+                                <div class="editable-price">
+                                    <span class="display-price">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                                    <input class="edit-price form-control formatPrice-table" value="@item.GiaBan" style="display:none;" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editable-soluong">
+                                    <span class="display-soluong">@item.SoLuongTon</span>
+                                    <input type="text" class="edit-soluong form-control" value="@item.SoLuongTon" style="display:none;" />
+                                </div>
+                            </td>
+                            <td>@item.SoLuongDaBan</td>
+                            <td>
+                                @if (item.TrangThai == 1)
+                                {
+                                    <i class="anticon anticon-close"></i>
+                                }
+                                else
+                                {
+                                    <i class="anticon anticon-check"></i>
+                                }
+                            </td>
+                            <td>
+                                <div class="checkbox" data-id="@item.Id">
+                                    <input id="check-item-@item.Id" type="checkbox" class="item">
+                                    <label for="check-item-@item.Id" class="m-b-0"></label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group dropdown" style="cursor: pointer">
+                                    <i class="fas fa-bars" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                    <div class="dropdown-menu">
+                                        <button class="dropdown-item" type="button" onclick="XemSanPham('@item.Id')"> Xem chi tiết</button>
+                                        @if (item.TrangThai == 1)
+                                        {
+                                            <button class="dropdown-item" type="button" onclick="KhoiPhucSanPham('@item.Id')">Khôi phục</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="dropdown-item" type="button" onclick="NgungKinhDoanhSanPham('@item.Id')">Ngừng KDoanh</button>
+                                        }
+                                        <button class="dropdown-item" type="button" onclick="EditSanPham('@item.Id')">Chỉnh sửa</button>
+                                        <button class="dropdown-item" type="button" onclick="CoppySanPham('@item.Id')">Coppy</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        stt++;
+                    }
+                </tbody>
+                <!-- Thêm các phần tử footer ở đây nếu cần -->
+            </table>
+        </div>
+    </div>
+</div>
+
+ *@
+
+
+
+
+
+<!--Extra large modal-->
+@* <div data-twe-modal-init
+     class="fixed left-0 top-0 z-[1055] hidden h-full w-full overflow-y-auto overflow-x-hidden outline-none"
+     id="exampleModalXl"
+     tabindex="-1"
+     aria-labelledby="exampleModalXlLabel"
+     aria-modal="true"
+     role="dialog"> *@
+@* <div data-twe-modal-dialog-ref
+     class="pointer-events-none relative w-auto translate-y-[-50px] opacity-0 transition-all duration-300 ease-in-out min-[576px]:mx-auto min-[576px]:mt-7 min-[576px]:max-w-[500px] min-[992px]:max-w-[800px] min-[1200px]:max-w-[1140px]">
+    <div class="pointer-events-auto relative flex w-full flex-col rounded-md border-none bg-white bg-clip-padding text-current shadow-4 outline-none dark:bg-surface-dark">
+        <div class="flex flex-shrink-0 items-center justify-between rounded-t-md border-b-2 border-neutral-100 p-4 dark:border-white/10">
+            <!-- Modal title -->
+            <h5 class="text-xl font-medium leading-normal text-surface dark:text-black"
+                id="exampleModalXlLabel">
+                Extra large modal
+            </h5>
+            <!-- Close button -->
+            <button type="button"
+                    class="box-content rounded-none border-none text-neutral-500 hover:text-neutral-800 hover:no-underline focus:text-neutral-800 focus:opacity-100 focus:shadow-none focus:outline-none dark:text-neutral-400 dark:hover:text-neutral-300 dark:focus:text-neutral-300"
+                    data-twe-modal-dismiss
+                    aria-label="Close">
+                <span class="[&>svg]:h-6 [&>svg]:w-6">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="currentColor"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </span>
+            </button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="relative p-4">
+            <table id="data-table" class="table table-hover no-footer">
+                <thead>
+                    <tr>
+                        <th style="width: 30px">STT</th>
+                        <th>MSP</th>
+                        <th>Sản Phẩm</th>
+                        <th>Màu</th>
+                        <th>G/Nhập</th>
+                        <th>G/Bán</th>
+                        <th>SL</th>
+                        <th>Đ/Bán</th>
+                        <th>K/Doanh</th>
+                        <th>Select</th>
+                        <th>###</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int stt = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="width: 30px">@stt</td>
+                            <td>@item.MaSanPham</td>
+                            <td>
+                                <div class="d-flex align-items-center" style="cursor: pointer" onclick="showModal('@item.SanPhamId')">
+                                    <img class="img-fluid rounded" src="/AnhSanPham/@item.AnhThuNhat" style="max-width: 60px" alt="">
+                                    <h6 class="m-b-0 m-l-10">@item.TenSanPham</h6>
+                                </div>
+                            </td>
+                            <td>@item.TenMauSac</td>
+                            <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaNhap)</td>
+                            <td>
+                                <div class="editable-price">
+                                    <span class="display-price">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                                    <input class="edit-price form-control formatPrice-table" value="@item.GiaBan" style="display:none;" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editable-soluong">
+                                    <span class="display-soluong">@item.SoLuongTon</span>
+                                    <input type="text" class="edit-soluong form-control" value="@item.SoLuongTon" style="display:none;" />
+                                </div>
+                            </td>
+                            <td>@item.SoLuongDaBan</td>
+                            <td>
+                                @if (item.TrangThai == 1)
+                                {
+                                    <i class="anticon anticon-close"></i>
+                                }
+                                else
+                                {
+                                    <i class="anticon anticon-check"></i>
+                                }
+                            </td>
+                            <td>
+                                <div class="checkbox" data-id="@item.Id">
+                                    <input id="check-item-@item.Id" type="checkbox" class="item">
+                                    <label for="check-item-@item.Id" class="m-b-0"></label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group dropdown" style="cursor: pointer">
+                                    <i class="fas fa-bars" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                                    <div class="dropdown-menu">
+                                        <button class="dropdown-item" type="button" onclick="XemSanPham('@item.Id')"> Xem chi tiết</button>
+                                        @if (item.TrangThai == 1)
+                                        {
+                                            <button class="dropdown-item" type="button" onclick="KhoiPhucSanPham('@item.Id')">Khôi phục</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="dropdown-item" type="button" onclick="NgungKinhDoanhSanPham('@item.Id')">Ngừng KDoanh</button>
+                                        }
+                                        <button class="dropdown-item" type="button" onclick="EditSanPham('@item.Id')">Chỉnh sửa</button>
+                                        <button class="dropdown-item" type="button" onclick="CoppySanPham('@item.Id')">Coppy</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        stt++;
+                    }
+                </tbody>
+                <!-- Thêm các phần tử footer ở đây nếu cần -->
+            </table>
+        </div> *@
+@*  <div id="example">
+
+        </div> *@
+@*    </div>
+</div> *@
+@* </div> *@
+
+
+<div id="example">
+    <div class="notification-toast top-right" id="notification-toast"></div>
+
+    <table id="data-table" class="table table-bordered table-hover no-footer w-100">
+        <thead>
+            <tr>
+                <th style="width: 30px">STT</th>
+                <th>MSPCT</th>
+                <th>Sản Phẩm</th>
+                <th>Màu</th>
+                <th>G/Nhập</th>
+                <th>G/Bán</th>
+                <th>SL</th>
+                <th>Đ/Bán</th>
+                <th>K/Doanh</th>
+                <th>Select</th>
+                <th>###</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int Stt = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="width: 30px">@Stt</td>
+                    <td>@item.MaSanPhamChiTiet</td>
+                    <td>
+                        <div class="d-flex align-items-center" style="cursor: pointer" onclick="XemSanPham('@item.Id')">
+                            <img class="img-fluid rounded" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.AnhThuNhat)" style="max-width: 60px" alt="">
+                            <h6 class="m-b-0 m-l-10">@item.TenSanPham</h6>
+                        </div>
+                    </td>
+                    <td>@item.TenMauSac</td>
+                    <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaNhap)</td>
+                    <td>
+                        <div class="editable-price">
+                            <span class="display-price">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                            <input class="edit-price form-control formatPrice-table" value="@item.GiaBan" style="display:none;" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="editable-soluong">
+                            <span class="display-soluong">@item.SoLuongTon</span>
+                            <input type="text" class="edit-soluong form-control" value="@item.SoLuongTon" style="display:none;" />
+                        </div>
+                    </td>
+                    <td>@item.SoLuongDaBan</td>
+                    <td>
+                        @if (item.TrangThai == 1)
+                        {
+                            <i class="anticon anticon-close">Kinh Doanh</i>
+                        }
+                        else
+                        {
+                            <i class="anticon anticon-check">Ngưng Kinh Doanh</i>
+                        }
+                    </td>
+                    <td>
+                        <div class="checkbox" data-id="@item.Id">
+                            <input id="check-item-@item.Id" type="checkbox" class="item">
+                            <label for="check-item-@item.Id" class="m-b-0"></label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group dropdown" style="cursor: pointer">
+                            <div class="dropdown">
+                               @*  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Dropdown button
+                                </button> *@
+                                <i class="fas fa-bars dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown"></i>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                                    @if (item.TrangThai != 1)
+                                    {
+                                        <li><a class="dropdown-item active" href="#" type="button" onclick="KhoiPhucSanPham(@item.Id)">Khôi phục</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" href="#" type="button" onclick="KhoiPhucSanPham(@item.Id)">Ngừng KDoanh</a></li>
+
+                                    }                                 
+                                    <li><a class="dropdown-item" href="#">Chỉnh sửa</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Coppy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                Stt++;
+            }
+        </tbody>
+        <!-- Thêm các phần tử footer ở đây nếu cần -->
+    </table>
+</div>
+@section Scripts{
+
+    @*   <script>
+        function XemSanPham(idSanPham) {
+            console.log('Bạn vừa ấn vào nút');
+            $.ajax({
+                url: '/test/LoadPartialView?idSanPhamChiTiet=' + idSanPham,
+                type: 'GET',
+                success: function (result) {
+                    // $('#exampleModal').modal('hide');
+                    // $('#modal-SanPham').empty().html(result).modal("show");
+
+                    $("#example").html(result);
+                    // Mở modal
+                    $("#updateModal").modal("show");
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+    </script> *@
+}
+
+
+<script>
+    var table = $('#data-table').DataTable();
+    if (!table || !$.fn.DataTable.isDataTable('#data-table')) {
+        // Nếu bảng chưa được khởi tạo DataTables thì khởi tạo nó
+        $('#data-table').DataTable({
+            // Các tùy chọn của DataTables
+            "paging": true,
+            "lengthChange": true,
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "searching": true
+        });
+    }
+   
+</script>

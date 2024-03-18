@@ -19,6 +19,8 @@ namespace Shop_Models.Dto
 		public int? SoLuongTon { get; set; }
 		public int? SoLuongDaBan { get; set; }
 		public int? TrangThai { get; set; }
+		//public bool? TrangThaiKhuyenMai { get; set; }
+		//public string? Mota { get; set; }
 
 		public Guid? SanPhamId { get; set; }
 		public string? MaSanPham {get; set; }
