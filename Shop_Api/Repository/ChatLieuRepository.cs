@@ -131,8 +131,8 @@ namespace Shop_Api.Repository
 
         public async Task<List<ChatLieu>> GetAsync()
         {
-            var list = await _dbContext.ChatLieus.ToListAsync();
-            return list;
+            var list =  _dbContext.ChatLieus.AsQueryable();
+            return list.ToList();
         }
 
         public async Task<List<ChatLieu>> GetAsync(int? status, int page = 1)

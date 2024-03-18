@@ -15,6 +15,11 @@ namespace AdminApp
             builder.Services.AddSession();
 
             // Add services to the container.
+            builder.Services.AddRazorPages();
+            builder.Services.AddServerSideBlazor();
+            builder.Services.AddHttpClient();
+
+            // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();

@@ -5,6 +5,7 @@ using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
 using Shop_Models.Heplers;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Shop_Api.Controllers
 {
@@ -25,30 +26,32 @@ namespace Shop_Api.Controllers
             var result = await _repository.GetAsync(/*status*//*, page*/);
             return Ok(result);
         }
-        
+
         [HttpGet("PGetProductDetail")]
-        public async Task<IActionResult> PGetProductDetail(int? getNumber, string? codeProductDetail, int? status, string? tenSanPham, double? from, double? to, string? sortBy, int? page, string? tenLoai, string? tenThuongHieu, string? tenMauSac, string? tenXuatXu, string? chatLieu,int PageSize)
+        public async Task<IActionResult> PGetProductDetail(int? getNumber, string? codeProductDetail, int? status, string? tenSanPham, double? from, double? to, string? sortBy, int? page, string? tenLoai, string? tenThuongHieu, string? tenMauSac, string? tenXuatXu, string? chatLieu, int PageSize)
         {
-            var result = await _repository.PGetProductDetail(getNumber,codeProductDetail,status,tenSanPham,from,to,sortBy,page, tenLoai,tenThuongHieu,tenMauSac,tenXuatXu, chatLieu,PageSize);
+            var result = await _repository.PGetProductDetail(getNumber, codeProductDetail, status, tenSanPham, from, to, sortBy, page, tenLoai, tenThuongHieu, tenMauSac, tenXuatXu, chatLieu, PageSize);
             return Ok(result);
         }
 
+        [Authorize(Roles =AppRole.Admin)]
         [HttpPost("GetFilteredDaTaDSTongQuanAynsc")]
         public async Task<IActionResult> GetFilteredDaTaDSTongQuanAynsc(ParametersTongQuanDanhSach parameters)
         {
-          
-
             try
             {
                 var viewModelResult = await _repository.GetFilteredDaTaDSTongQuanAynsc(parameters);
-
+                //var totalItems = await query.CountAsync();
+                var totalPages = (int)Math.Ceiling(viewModelResult.Count / (double)parameters.Length);
                 var paginatedResult = viewModelResult
                     .Skip(parameters.Start)
                     .Take(parameters.Length)
                     .ToList();
                 var result = new ResponseDto()
                 {
-                    Content= paginatedResult
+                    Content = paginatedResult,
+                    Count = viewModelResult.Count,
+                    TotalPage = totalPages
                 };
                 return new ObjectResult(result);
             }
@@ -57,7 +60,18 @@ namespace Shop_Api.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+        [HttpGet("Get-List-RelatedProduct")]
+        public List<SanPhamChiTietDto> GetRelatedProducts(string sumGuild)
+        {
+            return _repository.GetRelatedProducts(sumGuild);
+        }
 
+        [HttpGet("DetailSanPhamChiTietDto")]
+        public async Task<IActionResult> DetailSanPhamChiTietDto(Guid Id)
+        {
+            var reuslt = await _repository.DetailSanPhamChiTietDto(Id);
+            return Ok(reuslt);
+        }
 
 
         [Authorize(Roles = AppRole.Admin)]

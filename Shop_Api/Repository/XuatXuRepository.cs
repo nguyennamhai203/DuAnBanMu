@@ -2,9 +2,7 @@
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
-using System.Data.Entity;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
+using Microsoft.EntityFrameworkCore;
 namespace Shop_Api.Repository
 {
     public class XuatXuRepository : IXuatXuRepository

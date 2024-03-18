@@ -1,0 +1,408 @@
+﻿@model Shop_Models.Dto.SanPhamChiTietDto
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+<style>
+    .class-of-image-container {
+        display: block !important; /* hoặc display: inline-block !important; */
+    }
+
+    .custom-padding {
+        padding-top: 30px; /* Điều chỉnh giá trị padding-top tùy thuộc vào nhu cầu của bạn */
+    }
+
+</style>
+<div class="modal-dialog  modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+        <div class="modal-header align-items-center" style=" background: #00090b; color: white">
+            <i class="far fa-bell m-r-5" style="font-size: 33px"></i>
+            <h5 class="modal-title" id="exampleModalLabel" style="color:white">THÔNG TIN SẢN PHẨM</h5>
+            <button type="button" class="close" data-dismiss="modal">
+                <i class="anticon anticon-close"></i>
+            </button>
+        </div>
+        <div class="modal-body" style="background: #d3f6ff;">
+            <form>
+                <div class="page-header no-gutters has-tab" style="background: #cbc8c8">
+                    <div class="d-md-flex m-b-15 align-items-center justify-content-between" style="height:200px;">
+                        <div class="media align-items-center m-b-15">
+                            <div class="avatar avatar-image rounded" style="height: 70px; width: 70px">
+                                @if (Model.AnhThuNhat != null && Model.AnhThuNhat.Any())
+                                {
+                                    <img style="max-height: 175px; max-width: 175px;" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(Model.AnhThuNhat)" alt="">
+
+                                }
+                            </div>
+                            <div class="m-l-15 custom-padding">
+                                <h4 class="m-b-0">@Model.TenSanPham</h4>
+                                <p class="text-muted m-b-0">Code: @Model.MaSanPhamChiTiet</p>
+                            </div>
+
+                        </div>
+                        <div class="avatar avatar-image rounded" style="height: 70px; width: 70px">
+                            <img src="/images/QRCode/@(Model.MaSanPhamChiTiet).png" alt="">
+                        </div>
+                    </div>                 
+                </div>
+                <!-- Default Tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Thông tin cơ bản</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Ảnh</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
+                    </li>
+                </ul>
+                <div class="tab-content pt-2" id="myTabContent">
+                    <!--thongtin-->          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="tab-pane fade show active" id="product-basic-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Thông tin cơ bản</h4>
+                                    <div class="d-flex">
+                                        <div class="table-responsive col-6">
+                                            <table class="product-info-table m-t-20">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Giá bán:</td>
+                                                        <td class="text-dark font-weight-semibold">
+                                                            @Model.GiaBan?.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Giá nhập:</td>
+                                                        <td class="text-dark font-weight-semibold">
+                                                            @Model.GiaNhap?.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Thương hiệu:</td>
+                                                        <td class="text-dark font-weight-semibold">@Model.TenThuongHieu</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Loại:</td>
+                                                        <td class="text-dark font-weight-semibold">@Model.TenLoai</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Màu sắc:</td>
+                                                        <td class="text-dark font-weight-semibold">@Model.TenMauSac</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="table-responsive col-6">
+                                            <table class="product-info-table m-t-20">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Xuất xứ:</td>
+                                                        <td class="text-dark font-weight-semibold">@Model.TenXuatXu</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Kích cỡ:</td>
+                                                        <td class="text-dark font-weight-semibold">@Model.TrangThai</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Số lượng:</td>
+                                                        <td class="text-dark font-weight-semibold">
+                                                            <span class="soLuong"></span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Số lượng đã bán:</td>
+                                                        <td class="text-dark font-weight-semibold">
+                                                            @Model.SoLuongDaBan
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Trạng thái:</td>
+                                                        <td class="text-dark font-weight-semibold">
+                                                            @if (Model.TrangThai == 1)
+                                                            {
+                                                                <span>Kinh Doanh</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>Ngừng Kinh Doanh</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--ảnh-->
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div class="tab-pane fade show active" id="product-basic-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <img style="max-height: 200px; max-width: 200px;" class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(Model.AnhThuNhat)" alt="Product Image">
+                                        </div>
+                                        @foreach (var item in Model.OtherImages)
+                                        {
+                                            <div class="col-md-3">
+                                                <img style="max-height: 200px; max-width: 200px;" class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item)" alt="Product Image">
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--mota-->        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                        <div class="tab-pane fade show active" id="product-basic-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Mô tả sản phẩm</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        @Html.Raw(Model.SoLuongDaBan)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- End Default Tabs --> 
+            </form>
+        </div>
+        <div class="modal-footer d-flex justify-content-between" style="background: #d0dae3 ">
+            <div id="form-getID">
+                <input asp-for="Id" hidden />
+                <button class="btn btn-kio" id="btn-coppy">
+                    <i class="anticon anticon-loading m-r-5"></i>
+                    <i class="anticon anticon-copy"></i>
+                    <span>Copy</span>
+                </button>
+            </div>
+            <div>
+                <button type="button" class="btn btn-kio" data-dismiss="modal">
+                    <i class="anticon anticon-close-circle"></i>
+                    <span>Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function formatNumber(number) {
+        if (number >= 1000) {
+            const formattedNumber = (number / 1000).toFixed(1) + 'k';
+            return formattedNumber.replace('.0', '');
+        }
+        return number.toString();
+    }
+
+    $(() => $('.soLuong').text(formatNumber('@Model.SoLuongTon')))
+
+    $(document).off('click', '#btn-coppy');
+
+    $(document).one('click', '#btn-coppy', function () {
+        const $btn = $(this);
+        $btn.addClass('is-loading')
+        var id = $(this).closest('#form-getID').find('[name="IdChiTietSp"]').val();
+
+        var data = {
+            IdSanPhamChiTiet: id,
+        };
+
+        $.ajax({
+            url: '/Admin/SanPhamChiTiet/GetPartialViewSanPhamCopy',
+            type: 'Get',
+            data: data,
+            success: function (result) {
+                $('#modalSanPham').fadeOut(30, function () {
+                    $(this).empty().html(result).css('opacity', 0);
+
+                    $(this).fadeIn(20, function () {
+                        $(this).css('opacity', 1);
+                    });
+                    $btn.removeClass('is-loading')
+                });
+            },
+            error: function (xhr, status, error) {
+                $btn.removeClass('is-loading')
+                alert('Copy false!')
+                console.log(xhr.responseText);
+                console.log(status);
+                console.log(error);
+                console.log(xhr);
+            }
+        });
+    })
+
+    document.getElementById('id-of-image-container').style.visibility = 'visible';
+
+</script>
+ @* <script>
+        function XemSanPham(idSanPham) {
+            console.log('Bạn vừa ấn vào nút');
+            $.ajax({
+                url: '/test/LoadPartialView?idSanPhamChiTiet=' + idSanPham,
+                type: 'GET',
+                success: function (result) {
+                    // $('#exampleModal').modal('hide');
+                    // $('#modal-SanPham').empty().html(result).modal("show");
+
+                    $("#example").html(result);
+                    // Mở modal
+                    $("#updateModal").modal("show");
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+    </script> *@
+
+@* <section class="section">
+    <div class="row">
+        <div class="col-lg-6">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Default Tabs</h5>
+
+                    <!-- Default Tabs -->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Thông tin cơ bản</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Ảnh</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content pt-2" id="myTabContent">
+                        <!--thongtin-->          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div class="tab-pane fade show active" id="product-basic-tab">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Thông tin cơ bản</h4>
+                                        <div class="d-flex">
+                                            <div class="table-responsive col-6">
+                                                <table class="product-info-table m-t-20">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Giá bán:</td>
+                                                            <td class="text-dark font-weight-semibold">
+                                                                @Model.GiaBan?.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Giá nhập:</td>
+                                                            <td class="text-dark font-weight-semibold">
+                                                                @Model.GiaNhap?.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Thương hiệu:</td>
+                                                            <td class="text-dark font-weight-semibold">@Model.TenThuongHieu</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Loại:</td>
+                                                            <td class="text-dark font-weight-semibold">@Model.TenLoai</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Màu sắc:</td>
+                                                            <td class="text-dark font-weight-semibold">@Model.TenMauSac</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive col-6">
+                                                <table class="product-info-table m-t-20">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Xuất xứ:</td>
+                                                            <td class="text-dark font-weight-semibold">@Model.TenXuatXu</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Kích cỡ:</td>
+                                                            <td class="text-dark font-weight-semibold">@Model.TrangThai</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Số lượng:</td>
+                                                            <td class="text-dark font-weight-semibold">
+                                                                <span class="soLuong"></span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Số lượng đã bán:</td>
+                                                            <td class="text-dark font-weight-semibold">
+                                                                @Model.SoLuongDaBan
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Trạng thái:</td>
+                                                            <td class="text-dark font-weight-semibold">
+                                                                @if (Model.TrangThai == 1)
+                                                                {
+                                                                    <span>Kinh Doanh</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>Ngừng Kinh Doanh</span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--ảnh-->              <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="tab-pane fade" id="product-option-tab">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <img style="height: 220px" class="img-fluid" src="/AnhSanPham/@Model.AnhThuNhat" alt="">
+                                            </div>
+                                            @foreach (var item in Model.OtherImages)
+                                            {
+                                                <div class="col-md-3">
+                                                    <img style="height: 220px" class="img-fluid" src="/AnhSanPham/@item" alt="">
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--mota-->        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            <div class="tab-pane fade show active" id="product-basic-tab">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Mô tả sản phẩm</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            @Html.Raw(Model.SoLuongDaBan)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Default Tabs -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section> *@

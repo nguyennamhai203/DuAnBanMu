@@ -19,5 +19,6 @@ namespace Shop_Models.Dto
         //public int SoSize { get; set; }
         public int TongSoLuongTon { get; set; }
         public double TongSoLuongDaBan { get; set; }
+        //public int? tongsotrang { get; set; }
     }
 }

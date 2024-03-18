@@ -4,6 +4,8 @@ using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
+//using System.Data.Entity;
+
 namespace Shop_Api.Repository
 {
     public class ChiTietSanPhamRepository : IChiTietSanPhamRepository
@@ -26,6 +28,28 @@ namespace Shop_Api.Repository
                     IsSuccess = false,
                     Code = 400,
                     Message = "Trùng Mã",
+                };
+            }
+            if (model.SanPhamId == Guid.Empty)
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Bắt buộc phải chọn tên sản phẩm",
+
+                };
+            }
+            if (model.GiaNhap == 0 || model.GiaBan == 0)
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Giá phải lớn hơn 0",
+
                 };
             }
             try
@@ -396,6 +420,7 @@ namespace Shop_Api.Repository
 
             if (!string.IsNullOrEmpty(parametersTongQuanDanhSach.SearchValue))
             {
+                parametersTongQuanDanhSach.Length = query.Count();
                 string searchValueLower = parametersTongQuanDanhSach.SearchValue.ToLower();
                 viewModelResult = viewModelResult
                     .Where(x =>
@@ -408,6 +433,155 @@ namespace Shop_Api.Repository
             }
 
             return await viewModelResult.ToListAsync();
+        }
+
+
+        //public async Task<(List<SPDanhSachViewModel>, int)> GetFilteredDataDSTongQuanAsync(ParametersTongQuanDanhSach parametersTongQuanDanhSach)
+        //{
+        //    var query = _dbContext.ChiTietSanPhams.AsQueryable();
+
+        //    // Thêm biến mới để lưu trữ tổng số bản ghi
+        //    int totalRecords = 0;
+
+        //    // Thực hiện các bước lọc dữ liệu như bạn đã làm trước đó
+
+        //    // Tính tổng số lượng bản ghi
+        //    totalRecords = await query.CountAsync();
+
+        //    // Áp dụng phân trang và lấy dữ liệu từ cơ sở dữ liệu
+        //    var result = await query
+        //        .Include(sp => sp.SanPham)
+        //        .Include(sp => sp.ThuongHieu)
+        //        .Include(sp => sp.Loai)
+        //        .Include(sp => sp.XuatXu)
+        //        .Include(sp => sp.ChatLieu)
+        //        .Skip((parametersTongQuanDanhSach.Start - 1) * parametersTongQuanDanhSach.Length)
+        //        .Take(parametersTongQuanDanhSach.Length)
+        //        .GroupBy(gr => new
+        //        {
+        //            gr.ChatLieuId,
+        //            gr.SanPhamId,
+        //            gr.ThuongHieuId,
+        //            gr.XuatXuId,
+        //            gr.LoaiId,
+        //        })
+        //        .Select(gr => new SPDanhSachViewModel
+        //        {
+        //            // Thêm các trường ViewModel cần thiết
+        //        })
+        //        .ToListAsync();
+
+        //    // Trả về cả danh sách kết quả và tổng số bản ghi
+        //    return (result, totalRecords);
+        //}
+
+        public List<SanPhamChiTietDto> GetRelatedProducts(string sumGuid)
+        {
+            try
+            {
+                var listGuid = sumGuid.ToString().Split('/');
+                var idSanPham = Guid.Parse(listGuid[0]);
+                var idThuongHieu = Guid.Parse(listGuid[1]);
+                var idLoai = Guid.Parse(listGuid[2]);
+                var idXuatXu = Guid.Parse(listGuid[3]);
+                var idChatLieu = Guid.Parse(listGuid[4]);
+                return _dbContext
+                        .ChiTietSanPhams.AsQueryable()
+                        .Where(sp =>
+                        sp.SanPhamId == idSanPham &&
+                        sp.ThuongHieuId == idThuongHieu &&
+                        sp.LoaiId == idLoai &&
+                        sp.XuatXuId == idXuatXu &&
+                        sp.ChatLieuId == idChatLieu
+                        ).
+                        Include(sp => sp.SanPham).
+                        Include(sp => sp.MauSac).
+                        ////Include(sp => sp.Anh).
+                        //AsEnumerable().
+                        //GroupBy(sp => sp.MauSacId).
+                        //OrderBy(gr => gr.Key).
+                        //SelectMany(gr => gr.OrderBy(sp => sp.KichCo.SoKichCo.GetValueOrDefault())).
+                        Select(a => new SanPhamChiTietDto
+                        {
+                            Id = a.Id,
+                            MaSanPhamChiTiet = a.MaSanPham,
+                            GiaNhap = a.GiaNhap,
+                            GiaBan = a.GiaBan,
+                            GiaThucTe = a.GiaThucTe,
+                            SoLuongTon = a.SoLuongTon,
+                            SoLuongDaBan = a.SoLuongDaBan,
+                            TrangThai = a.TrangThai,
+                            MaSanPham = a.SanPham.MaSanPham,
+                            TenSanPham = a.SanPham.TenSanPham,
+                            MaLoai = a.Loai.MaLoai,
+                            TenLoai = a.Loai.TenLoai,
+                            MaThuongHieu = a.ThuongHieu.MaThuongHieu,
+                            TenThuongHieu = a.ThuongHieu.TenThuongHieu,
+                            MaXuatXu = a.XuatXu.MaXuatXu,
+                            TenXuatXu = a.XuatXu.TenXuatXu,
+                            MaMauSac = a.MauSac.MaMauSac,
+                            TenMauSac = a.MauSac.TenMauSac,
+                            MaChatLieu = a.ChatLieu.MaChatLieu,
+                            TenChatLieu = a.ChatLieu.TenChatLieu,
+                            AnhThuNhat = _dbContext.Anhs
+                    .Where(image => image.ChiTietSanPhamId == a.Id && image.MaAnh == "Anh1")
+                    .Select(image => image.URL)
+                    .FirstOrDefault(),
+                            OtherImages = _dbContext.Anhs
+                    .Where(image => image.ChiTietSanPhamId == a.Id && image.MaAnh != "Anh1")
+                    .Select(image => image.URL)
+                    .ToList()
+                        })
+                        .ToList();
+            }
+            catch (Exception)
+            {
+
+                return new List<SanPhamChiTietDto>();
+            }
+
+        }
+
+        public async Task<SanPhamChiTietDto> DetailSanPhamChiTietDto(Guid Id)
+        {
+            var query = await _dbContext.ChiTietSanPhams.AsQueryable()
+                .AsNoTracking()
+                .Include(a => a.Anhs)
+                .Where(x => x.Id == Id)
+                .Select(a => new SanPhamChiTietDto
+                {
+                    Id = a.Id,
+                    MaSanPhamChiTiet = a.MaSanPham,
+                    GiaNhap = a.GiaNhap,
+                    GiaBan = a.GiaBan,
+                    GiaThucTe = a.GiaThucTe,
+                    SoLuongTon = a.SoLuongTon,
+                    SoLuongDaBan = a.SoLuongDaBan,
+                    TrangThai = a.TrangThai,
+                    MaSanPham = a.SanPham.MaSanPham,
+                    TenSanPham = a.SanPham.TenSanPham,
+                    MaLoai = a.Loai.MaLoai,
+                    TenLoai = a.Loai.TenLoai,
+                    MaThuongHieu = a.ThuongHieu.MaThuongHieu,
+                    TenThuongHieu = a.ThuongHieu.TenThuongHieu,
+                    MaXuatXu = a.XuatXu.MaXuatXu,
+                    TenXuatXu = a.XuatXu.TenXuatXu,
+                    MaMauSac = a.MauSac.MaMauSac,
+                    TenMauSac = a.MauSac.TenMauSac,
+                    MaChatLieu = a.ChatLieu.MaChatLieu,
+                    TenChatLieu = a.ChatLieu.TenChatLieu,
+                    AnhThuNhat = _dbContext.Anhs
+                        .Where(image => image.ChiTietSanPhamId == a.Id && image.MaAnh == "Anh1")
+                        .Select(image => image.URL)
+                        .FirstOrDefault(),
+                    OtherImages = _dbContext.Anhs
+                        .Where(image => image.ChiTietSanPhamId == a.Id && image.MaAnh != "Anh1")
+                        .Select(image => image.URL)
+                        .ToList(),
+                })
+                .FirstOrDefaultAsync();
+
+            return (SanPhamChiTietDto)query;
         }
 
 

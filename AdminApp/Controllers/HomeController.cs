@@ -1,5 +1,6 @@
 ﻿using AdminApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using Shop_Models.Dto;
 using System.Diagnostics;
@@ -20,16 +21,17 @@ namespace AdminApp.Controllers
 
         public IActionResult Index()
         {
-            //var accessToken = HttpContext.Session.GetString("AccessToken");
-            //var accessRole = HttpContext.Session.GetString("Result");
-            //if (!string.IsNullOrEmpty(accessToken) && accessRole=="Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
-            //{
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
                 return View();
-            //}
-            //else
-            //{
-            //    return View("Login");
-            //}
+            }
+            else
+            {
+               
+                return View("Login");
+            }
         }
 
         public IActionResult Login(/*string ReturnUrl = "/"*/)
@@ -61,11 +63,16 @@ namespace AdminApp.Controllers
             if (respone.IsSuccessStatusCode)
             {
                 HttpContext.Session.SetString("AccessToken", jsonRespone);
-
+                HttpContext.Session.SetString("TokenCheck", info.Token);
                 HttpContext.Session.SetString("Result", info.Role);
                 return RedirectToAction("Index", "Home");
             }
-            else return BadRequest("Error");
+            else {
+              
+                HttpContext.Session.SetString("ThongBao", info.Message);
+                var error = HttpContext.Session.GetString("ThongBao");
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         public IActionResult Privacy()

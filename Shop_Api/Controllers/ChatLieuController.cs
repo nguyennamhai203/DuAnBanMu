@@ -24,6 +24,12 @@ namespace Shop_Api.Controllers
             var result = await _repository.GetAsync(status, page);
             return Ok(result);
         }
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _repository.GetAsync();
+            return Ok(result);
+        }
 
         [Authorize(Roles = AppRole.Admin)]
         [HttpPost("CreateAsync")]

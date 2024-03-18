@@ -113,6 +113,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 var app = builder.Build();
+app.UseStaticFiles();// cho phép s? d?ng file
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
