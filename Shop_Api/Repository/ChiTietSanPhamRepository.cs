@@ -94,9 +94,9 @@ namespace Shop_Api.Repository
                 chiTietSanPham.MaSanPham = model.MaSanPham;
                 chiTietSanPham.GiaBan = model.GiaBan;
                 chiTietSanPham.GiaNhap = model.GiaNhap;
-                chiTietSanPham.GiaThucTe = model.GiaThucTe;
+                //chiTietSanPham.GiaThucTe = model.GiaThucTe;
                 chiTietSanPham.SoLuongTon = model.SoLuongTon;
-                chiTietSanPham.SoLuongDaBan = model.SoLuongDaBan;
+                //chiTietSanPham.SoLuongDaBan = model.SoLuongDaBan;
 
                 chiTietSanPham.SanPhamId = model.SanPhamId;
                 chiTietSanPham.LoaiId = model.LoaiId;

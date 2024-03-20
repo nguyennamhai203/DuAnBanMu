@@ -1,0 +1,222 @@
+﻿@* @page "/admin/EditProfile" *@
+@model Shop_Models.Dto.ProfileOfUserDto;
+<!-- Include thư viện Toastr -->
+
+@section scripts{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+}
+@{
+    var httpContext = ViewContext.HttpContext;
+    var accessRole = httpContext.Session.GetString("Result");
+    var tenNguoiDing = httpContext.Session.GetString("TenNguoiDung");
+    var soDienThoai = httpContext.Session.GetString("soDienThoai");
+    var diaChi = httpContext.Session.GetString("DiaChi");
+    var email = httpContext.Session.GetString("Email");
+    var gioiTinh = httpContext.Session.GetString("GioiTinh");
+    var username = httpContext.Session.GetString("UserName");
+}
+<style>
+    .form-control[disabled] {
+        /*        cursor: not-allowed;
+                */
+        background-color: white;
+        color: black;
+        cursor: auto !important;
+    }
+
+    .text-danger {
+        color: red;
+    }
+</style>
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a href="#" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Hồ sơ</a>
+            @*            <span class="breadcrumb-item active">Hồ sơ</span>
+            *@            <span class="breadcrumb-item active">Chỉnh sửa hồ sơ</span>
+        </nav>
+    </div>
+</div>
+@* <partial name="_StatusMessage" for="StatusMessage" />
+ *@
+<form id="editprofile-form" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="container">
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Thông tin cơ bản</h4>
+                <label class="font-weight-semibold" for="fullName">Bạn chỉ có thể sửa đổi mật khẩu, ngày sinh, giới tính và địa chỉ. Các thông tin khác vui lòng liên hệ quản lý để sửa đổi.</label>
+
+            </div>
+            <div class="card-body">
+               @*  <div class="media align-items-center">
+                    <div class="avatar avatar-image  m-h-10 m-r-15" style="height: 80px; width: 80px">
+                        <img id="imagePreview" src="@Model.Input.AnhDaiDien" alt="">
+                    </div>
+                    <input style="display:none" id="imageInput" asp-for="Input.AnhDaiDien" type="file" class="form-control" accept=".jpg, .jpeg, .png" />
+                    <div class="m-l-20 m-r-20">
+                        <h5 class="m-b-5 font-size-18">Change Avatar</h5>
+                        <p class="opacity-07 font-size-13 m-b-0">
+                            Kích thước phim tối đa 120x120: 5MB
+                        </p>
+                    </div>
+                    <div>
+                        <label for="imageInput" class="btn btn-tone btn-primary">Tải lên</label>
+                    </div>
+                    <span asp-validation-for="@Model.Input.AnhDaiDien" class="text-danger"></span>
+                </div> *@
+
+                <hr class="m-v-25">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="userName">Tên tài khoản:</label>
+                        <input type="text" class="form-control " id="userName" placeholder="User Name" value="@Model.TenTaiKhoan" disabled>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="fullName">Họ và tên:</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Họ và tên" value="@Model.TenNguoiDung" disabled>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="vaitro">Vai trò: @accessRole</label>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="email">Email:</label>
+                        <input class="form-control" id="email" placeholder="email" value="@Model.Email" disabled>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="phoneNumber">Số điện thoại:</label>
+                        <input type="text" class="form-control" id="phoneNumber" placeholder="Số điện thoại" value="@Model.soDienThoai" name="SDT">
+                        <input type="text" class="form-control" id="username" placeholder="Số điện thoại" value="@Model.TenTaiKhoan" name="username" visialbe>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="phoneNumber">Địa Chỉ:</label>
+                        <input value="@Model.DiaChi" class="form-control w-75" name="diaChi">
+                    </div>
+                   
+                    @* <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="language">Giới tính</label>
+                        <select asp-for="@Model.Input.GioiTinh" id="language" class="form-control">
+                            <option class="hidden" selected disabled>Giới tính</option>
+                            <option value="@((int)GioiTinhMacDinh.Nam)">Nam</option>
+                            <option value="@((int)GioiTinhMacDinh.Nu)">Nữ</option>
+                        </select>
+                        <span asp-validation-for="@Model.Input.GioiTinh" class="text-danger"></span>
+                    </div> *@
+                    </div>              
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-3">
+        <button id="update-editprofile-button" type="submit" class="btn btn-primary m-t-30" onclick="saveForm()">Lưu thay đổi</button>
+        </div>
+
+
+    
+</form>
+
+
+    <script>
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right", // Sửa từ "toast-top-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+
+
+
+    // function saveForm() {
+    //     var formData = new FormData(document.getElementById('editprofile-form'));
+    //     event.preventDefault();
+    //     // Thực hiện request và hiển thị thông báo
+    //     performRequest(formData);
+    // }
+
+    function saveForm() {
+        var formData = new FormData(document.getElementById('editprofile-form'));
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Confirm Title',
+            text: 'Bạn có chắc chắn muốn sửa ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, perform the request
+                performRequest(formData);
+            } else {
+                // User canceled, do nothing
+                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+            }
+        });
+    }
+
+
+
+    function performRequest(formData) {
+        $.ajax({
+            url: '/NguoiDung/CapNhatSDT_DiaChi',
+            type: 'PUT',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+                   
+
+                    showNotification(results.message, "success");
+                    document.getElementById('editprofile-form').reset();
+
+                } else {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "error");
+                    document.getElementById('editprofile-form').reset();
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+    </script>
+
+

@@ -172,6 +172,10 @@
 </div>
 <div id="modalContent" style="display: block;">
 </div>
+
+<div id="alertMessage" class="alert" role="alert" style="display: none;"></div>
+
+
 <nav>
     <button class="breadcrumb">
         <li class="breadcrumb-item"><a href="/SanPhamChiTiet/CreatePartialView">Thêm mới sản phẩm</a></li>
@@ -256,6 +260,7 @@
 
 
 <div class="modal fade" id="modal-SanPham"></div>
+<div class="modal fade" id="updateView-SanPham"></div>
 
 @section Scripts {
     <script>
@@ -477,11 +482,89 @@
         $('#modal-SanPham').on('hidden.bs.modal', function () {
             $('#updateModal').modal("show");
         });
-
-
-     
-
     </script>
 
+    <script>
+        function EditSanPham(idSanPhamEdit) {
+            var data = {
+                idSanPhamChiTiet: idSanPhamEdit,
+            };
+            $.ajax({
+                url: '/SanPhamChiTiet/_SanPhamUpdatePartialView',
+                type: 'GET',
+                data: data,
+                success: function (result) {
+                    $('#updateModal').modal('hide');
+                    $('#updateView-SanPham').empty().html(result).modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+        // $('#updateView-SanPham').on('hidden.bs.modal', function () {
+        //     $('#updateModal').modal("show");
+        // });
+         $('#updateView-SanPham').on('hidden.bs.modal', function () {
+            // Làm mới nội dung của updateView-SanPham
+            $('#updateView-SanPham').empty(); // Xóa nội dung trong modal
+            // $('#updateView-SanPham').append('Nội dung mới'); // Thêm nội dung mới vào modal
+
+            // Hiển thị lại modal updateModal
+            // $('#updateView-SanPham').modal('show');
+            $('#updateView-SanPham').modal('hide');
+            $('#updateModal').modal('show');
+        });
+    </script>
 
 }
+
+
+
+
+
+
+<script>
+    function showAlert(message, isSuccess) {
+        const alertMessage = document.getElementById('alertMessage');
+        alertMessage.textContent = message;
+        alertMessage.classList.add(isSuccess ? 'alert-success' : 'alert-danger');
+        alertMessage.style.display = 'block';
+        setTimeout(() => {
+            alertMessage.style.display = 'none';
+            alertMessage.classList.remove('alert-success', 'alert-danger');
+        }, 3000); // Hiển thị thông báo trong 3 giây
+    }
+</script>
+<script>
+    // Hàm xử lý sự kiện khi form được gửi
+    function handleFormSubmit(event) {
+        event.preventDefault(); // Ngăn chặn hành động mặc định của form
+
+        // Lấy form
+        const form = event.target;
+
+        // Gửi dữ liệu form bằng AJAX
+        fetch(form.action, {
+            method: form.method,
+            body: new FormData(form)
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Nếu cập nhật thành công, hiển thị thông báo thành công
+                    showAlert('Cập nhật sản phẩm thành công!', true);
+                } else {
+                    // Nếu cập nhật không thành công, hiển thị thông báo thất bại
+                    showAlert('Cập nhật sản phẩm thất bại. Vui lòng thử lại sau.', false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Đã xảy ra lỗi khi cập nhật sản phẩm. Vui lòng thử lại sau.', false);
+            });
+    }
+</script>

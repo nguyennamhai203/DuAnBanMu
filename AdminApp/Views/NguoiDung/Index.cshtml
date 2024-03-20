@@ -1,0 +1,163 @@
+﻿@page "/admin/Profile"
+@* @using Microsoft.AspNetCore.Identity;
+@using Shop_Models.Entities;
+@using Shop_Models.Dto;
+@inject SignInManager<NguoiDung> SignInManager
+@inject UserManager<NguoiDung> UserManager *@
+
+@{
+    var httpContext = ViewContext.HttpContext;
+    var tenNguoiDing = httpContext.Session.GetString("TenNguoiDung");
+    var soDienThoai = httpContext.Session.GetString("soDienThoai");
+    var diaChi = httpContext.Session.GetString("DiaChi");
+    var email = httpContext.Session.GetString("Email");
+    var gioiTinh = httpContext.Session.GetString("GioiTinh");
+    var accessRole = httpContext.Session.GetString("Result");
+    var username = httpContext.Session.GetString("UserName");
+}
+
+<!-- Page Container START -->
+<!-- Content Wrapper START -->
+
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a href="#" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Hồ sơ</a>
+            <span class="breadcrumb-item active">Hồ sơ cá nhân</span>
+        </nav>
+    </div>
+</div>
+@* <partial name="_StatusMessage" for="StatusMessage" /> *@
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <div class="d-md-flex align-items-center">
+                        <div class="text-center text-sm-left ">
+                            <div class="avatar avatar-image" style="width: 150px; height:150px">
+
+                                @*  <img src="@Model.Picture" alt=""> *@
+                                <img src="~/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="d-md-block d-none border-left col-1"></div>
+                        <div class="col">
+                            <ul class="list-unstyled m-t-10">
+                                <li class="row">
+                                    <p class="col-sm-4 col-4 font-weight-semibold text-dark m-b-5">
+                                        <i class="m-r-10 text-primary anticon anticon-mail"></i>
+                                        <span>Họ và tên:</span>
+                                    </p>
+                                    <p class="col font-weight-semibold"> @tenNguoiDing</p>
+                                </li>
+                                <li class="row">
+                                    <p class="col-sm-4 col-4 font-weight-semibold text-dark m-b-5">
+                                        <i class="m-r-10 text-primary anticon anticon-phone"></i>
+                                        <span>SDT: </span>
+                                    </p>
+                                    <p class="col font-weight-semibold">@soDienThoai</p>
+                                </li>
+                                <li class="row">
+                                    <p class="col-sm-4 col-5 font-weight-semibold text-dark m-b-5">
+                                        <i class="m-r-10 text-primary anticon anticon-mail"></i>
+                                        <span>Email: </span>
+                                    </p>
+                                    <p class="col font-weight-semibold">@email</p>
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="d-md-block d-none border-left col-1"></div>
+                        <div class="col">
+                            <ul class="list-unstyled m-t-10">
+                                <li class="row">
+                                    <p class="col-sm-4 col-5 font-weight-semibold text-dark m-b-5">
+                                        <i class="m-r-10 text-primary anticon anticon-user"></i>
+
+                                        <span>Giới tính: </span>
+                                    </p>
+                                    <p class="col font-weight-semibold">@gioiTinh</p>
+                                </li>
+                                <li class="row">
+                                    <p class="col-sm-4 col-5 font-weight-semibold text-dark m-b-5">
+                                        <i class="m-r-10 text-primary anticon anticon-profile"></i>
+
+                                        <span>Ngày sinh: </span>
+                                    </p>
+                                    @* <p class="col font-weight-semibold">@Model.NgaySinh</p> *@
+                                </li>
+                                <li class="row">
+                                    <p class="col-sm-4 col-5 font-weight-semibold text-dark m-b-5">
+                                        <i class="m-r-10 text-primary anticon anticon-environment"></i>
+                                        <span>địa chỉ: </span>
+                                    </p>
+                                    <p class="col font-weight-semibold">@diaChi</p>
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h4 class="m-b-5" style="text-align:center">@tenNguoiDing</h4>
+                </div>
+                @* <div class="col-md-5">
+                <div class="row">
+                <div class="d-md-block d-none  col-1"></div>
+                <div class="col">
+                <ul class="list-unstyled m-t-10">
+                <li class="row">
+                <p class="col-sm-4 col-4 font-weight-semibold text-dark m-b-5">
+                <i class="m-r-10 text-primary anticon anticon-branches"></i>
+                <span>Vai trò: </span>
+                </p>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                var user = await UserManager.GetUserAsync(User);
+                var chucvu = await UserManager.GetRolesAsync(user);
+                @foreach (var role in chucvu)
+                {
+
+                <p class="col font-weight-semibold">@role</p>
+                }
+                }
+
+                </li>
+
+                </ul>
+
+                </div>
+                </div>
+                </div> *@
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="d-md-block d-none  col-1"></div>
+                        <div class="col">
+                            @* <a class="btn btn-primary btn-tone" asp-page="/User/EditProfile">Chỉnh sửa hồ sơ</a> *@
+                            <a class="btn btn-primary btn-tone" asp-controller="NguoiDung" asp-action="CapNhatThongTin" asp-route-userName="@username">Chỉnh sửa hồ sơ</a>
+
+                            <a class="btn btn-primary btn-tone" asp-controller="NguoiDung" asp-action="DoiMatKhauView" asp-route-userName="@username">Đổi mật khẩu</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

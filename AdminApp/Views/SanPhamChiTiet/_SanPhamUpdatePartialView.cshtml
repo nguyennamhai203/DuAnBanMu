@@ -1,0 +1,433 @@
+﻿@using Shop_Models.Entities;
+@model Shop_Models.Dto.SanPhamChiTietDto
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+<style>
+    .bigger-icon {
+        font-size: 24px; /* Kích thước mới của biểu tượng */
+    }
+</style>
+<div class="modal-dialog  modal-xl">
+    <div class="modal-content">
+        <div class="modal-header align-items-center" style=" background: #00090b; color: white">
+            <i class="far fa-bell m-r-5" style="font-size: 33px"></i>
+            <h5 style="color: white" class="modal-title" id="exampleModalLabel">EDIT SẢN PHẨM</h5>
+            <button type="button" class="close" data-dismiss="modal">
+                <i class="anticon anticon-close"></i>
+            </button>
+        </div>
+        <div class="modal-body" style="background: #d3f6ff;">
+
+            <div class="accordion" id="accordion-default">
+
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between" style="background: #e1faff; diModellay: none !important">
+                        <h5 class="card-title" hidden>
+                            <a style="background: #e1faff" class="collapsed" data-toggle="collapse" href="#collapseTwoDefault-@Model.Id">
+                                <Modelan>@Model.TenSanPham</Modelan>
+                            </a>
+                        </h5>
+                        <button class="btn btn-tone rounded-circle btn-delete btn-close" style="border: none" hidden>X</button>
+                    </div>
+                    <div id="collapseTwoDefault-@Model.Id" class="collapse show" data-parent="#accordion-default">
+                        <div class="card-body">
+                            <input class="d-none" name="Id" value="@Model.Id" />
+                            <!-- Default Tabs -->
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Thông tin cơ bản</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Ảnh</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Mô tả</button>
+                                </li>
+                            </ul>
+
+                            <form asp-controller="SanPhamChiTiet" asp-action="Update" method="post" enctype="multipart/form-data">
+                                <div class="tab-content m-t-15" id="myTabContent">
+
+                                    <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="home-tab" id="home" style="min-height: 470px">
+                                        <div class="card">
+                                            <div class="card-body main">
+                                                <div class="row">
+                                                    <div class="col-4 sanpham" style="margin-top: 10px">
+                                                        <label class="font-weight-semibold">Tên sản phẩm*</label>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-info-circle mr-1" data-toggle="tooltip" data-placement="top" title="Nhấn Enter để thêm vào cơ sở dữ liệu nếu giá trị chưa tồn tại!"></i>
+                                                            <select class="w-100 select2-active" name="SanPhamId" asp-for="SanPhamId">
+                                                                @foreach (var item in (List<SanPham>)ViewBag.GetSanPham!)
+                                                                {
+                                                                    if (item.IdSanPham == Model.SanPhamId)
+                                                                    {
+                                                                        <option value="@item.IdSanPham" selected>@item.TenSanPham</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@item.IdSanPham">@item.TenSanPham</option>
+                                                                    }
+
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-2">
+                                                        <div class="form-group col-3">
+                                                            <label class="font-weight-semibold" for="productBrand">Mã Sản Phẩm</label>
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas fa-info-circle mr-1"></i>
+                                                                <input name="Id" value="@Model.Id" hidden>
+                                                                <input class="form-control formatPrice" name="MaSanPhamChiTiet" value="@Model.MaSanPhamChiTiet" readonly>
+
+                                                              
+                                                            </div>
+                                                        </div>
+                                                    
+                                                    <div class="col-4 thuonghieu" style="margin-top: 10px">
+                                                        <label class="font-weight-semibold">Thương hiệu*</label>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-info-circle mr-1" data-toggle="tooltip" data-placement="top" title="Nhấn Enter để thêm vào cơ sở dữ liệu nếu giá trị chưa tồn tại!"></i>
+                                                            <select class="select2-active w-100" name="ThuongHieuId">
+                                                                @foreach (var item in (List<ThuongHieu>)ViewBag.GetThuongHieu!)
+                                                                {
+                                                                    if (item.Guid == Model.ThuongHieuId)
+                                                                    {
+                                                                        <option value="@item.Guid" selected>@item.TenThuongHieu</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@item.Guid">@item.TenThuongHieu</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-4 xuatxu" style="margin-top: 10px">
+                                                        <label class="font-weight-semibold">Xuất xứ*</label>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-info-circle mr-1" data-toggle="tooltip" data-placement="top" title="Nhấn Enter để thêm vào cơ sở dữ liệu nếu giá trị chưa tồn tại!"></i>
+                                                            <select class="select2-active w-100" name="XuatXuId">
+                                                                @foreach (var item in (List<XuatXu>)ViewBag.GetXuatXu!)
+                                                                {
+                                                                    if (item.Guid == Model.XuatXuId)
+                                                                    {
+                                                                        <option value="@item.Guid" selected>@item.TenXuatXu</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@item.Guid">@item.TenXuatXu</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-4 chatlieu" style="margin-top: 10px">
+                                                        <label class="font-weight-semibold">Chất liệu*</label>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-info-circle mr-1" data-toggle="tooltip" data-placement="top" title="Nhấn Enter để thêm vào cơ sở dữ liệu nếu giá trị chưa tồn tại!"></i>
+                                                            <select class="select2-active w-100" name="ChatLieuId">
+                                                                @foreach (var item in (List<ChatLieu>)ViewBag.GetChatLieu!)
+                                                                {
+                                                                    if (item.Guid == Model.ChatLieuId)
+                                                                    {
+                                                                        <option value="@item.Guid" selected>@item.TenChatLieu</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@item.Guid">@item.TenChatLieu</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-4 loaigiay" style="margin-top: 10px">
+                                                        <label class="font-weight-semibold">Loại mũ</label>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-info-circle mr-1" data-toggle="tooltip" data-placement="top" title="Nhấn Enter để thêm vào cơ sở dữ liệu nếu giá trị chưa tồn tại!"></i>
+                                                            <select class="select2-active w-100" name="LoaiId">
+                                                                @foreach (var item in (List<Loai>)ViewBag.GetLoai!)
+                                                                {
+                                                                    if (item.Id == Model.LoaiId)
+                                                                    {
+                                                                        <option value="@item.Id" selected>@item.TenLoai</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@item.Id">@item.TenLoai</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    ...
+
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-6 mausac">
+                                                        <label class="font-weight-semibold">Màu Sắc*</label>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-info-circle mr-1" data-toggle="tooltip" data-placement="top" title="Nhấn Enter để thêm vào cơ sở dữ liệu nếu giá trị chưa tồn tại!"></i>
+                                                            <select class="select2-active w-100" name="MauSacId">
+                                                                @foreach (var item in (List<MauSac>)ViewBag.GetColor!)
+                                                                {
+                                                                    if (item.Guid == Model.MauSacId)
+                                                                    {
+                                                                        <option value="@item.Guid" selected>@item.TenMauSac</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@item.Guid">@item.TenMauSac</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    ..
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="form-group col-3">
+                                                        <label class="font-weight-semibold" for="productBrand">Giá nhập*</label>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="far fa-money-bill-alt mr-1"></i>
+                                                            <input type="text" class="form-control formatPrice" name="GiaNhap" value="@Model.GiaNhap">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group col-3">
+                                                        <label class="font-weight-semibold" for="productBrand">Giá bán*</label>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-money-bill-wave mr-1"></i>
+                                                            <input type="text" class="form-control formatPrice" name="GiaBan" value="@Model.GiaBan">
+                                                        </div>
+                                                    </div>
+                                                   
+
+                                                    <div class="form-group col-3">
+                                                        <label class="font-weight-semibold" for="productBrand">Số lượng tồn*</label>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-database mr-1"></i>
+                                                            <input type="text" class="form-control formatNumber" name="SoLuongTon" value="@Model.SoLuongTon">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div style="color: red">
+                                                    Lưu ý:
+                                                    <br />
+                                                    <Modelan>
+                                                        -Việc thay đổi thông tin các trường tên sản phẩm, thương hiệu, xuất xứ, chất liệu, loại giày, kiểu đế giày có thể gây ra việc thêm mới một nhóm sản phẩm khác!
+                                                    </Modelan>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" role="tabpanel" aria-labelledby="profile-tab" id="profile">
+
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="upload">
+                                                    <button id="chooseFileButton" class="custom-btn mb-2">
+                                                        Choose file
+                                                    </button>
+                                                    <input id="fileInput" name="formFiles" type="file" class="fileInput default-btn 1" accept="image/*" multiple hidden>
+                                                    <div class="container-file" style="display: flex;">
+                                                        <div class="row" id="imageContainer">
+                                                            <!-- Các ảnh được load từ cơ sở dữ liệu -->
+                                                            <div class="col-md-3">
+                                                                <div class="image-container">
+                                                                    <img name="formFiles" type="file" style="max-height: 200px; max-width: 200px;" class="file-image" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(Model.AnhThuNhat)" alt="Product Image" accept="image/*">
+                                                                    <div class="content">
+                                                                        <div class="icon"><i class="fas fa-cloud-upload-alt bigger-icon"></i></div>
+                                                                    </div>
+                                                                    <div class="cancel-btn" onclick="deleteImageContainer(this)"><i class="fas fa-times bigger-icon"></i></div>
+                                                                </div>
+                                                            </div>
+                                                            @foreach (var item in Model.OtherImages)
+                                                            {
+                                                                <div class="col-md-3">
+                                                                    <div class="image-container">
+                                                                        <img name="formFiles" type="file" style="max-height: 200px; max-width: 200px;" class="file-image" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item)" alt="Product Image" accept="image/*">
+                                                                        <div class="content">
+                                                                            <div class="icon"><i class="fas fa-cloud-upload-alt bigger-icon"></i></div>
+                                                                        </div>
+                                                                        <div class="cancel-btn" onclick="deleteImageContainer(this)"><i class="fas fa-times bigger-icon"></i></div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                                        <div class="form-group col-12">
+                                            <div class="m-b-5" style="margin-top: 10px;">
+                                                <label class="font-weight-semibold" style="diModellay: block; margin-bottom: 5px;">
+                                                    Mô tả sản phẩm
+                                                </label>
+                                                <div class="moTa w-100" style="height: 400px" name="MoTa">@Html.Raw(@Model.SoLuongDaBan)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+        <div class="modal-footer d-flex justify-content-between" style="background: #d0dae3 ">
+            <div>
+                <button class="btn btn-kio" id="btn-save">
+                    <i class="anticon anticon-loading m-r-5"></i>
+                    <i class="anticon anticon-save m-r-5"></i>
+                    <Modelan>Lưu</Modelan>
+                </button>
+            </div>
+            <div>
+                <button type="button" class="btn btn-kio" data-dismiss="modal">
+                    <i class="anticon anticon-close-circle"></i>
+                    <Modelan>Close</Modelan>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('chooseFileButton').addEventListener('click', function (event) {
+        event.preventDefault(); // Ngăn chặn hành động mặc định của nút "Choose file"
+        document.getElementById('fileInput').click(); // Kích hoạt sự kiện click trên input file
+    });
+
+    // Khởi tạo biến đếm số lượng ảnh
+    let imageCount = 0;
+
+    // Lấy tham chiếu đến phần tử "container-file" và phần tử "fileInput"
+    const containerFile = document.querySelector('.container-file');
+    const fileInput = document.getElementById('fileInput');
+
+    // Xử lý sự kiện khi input file thay đổi
+    fileInput.addEventListener('change', function () {
+        const imageList = document.getElementById('imageContainer');
+
+        const formData = new FormData();
+        const imageFiles = this.files;
+
+        for (let i = 0; i < imageFiles.length; i++) {
+            formData.append('images[]', imageFiles[i]); // Thêm các ảnh từ input file vào FormData
+        }
+
+        Array.from(this.files).forEach(file => {
+            if (imageCount < 6) { // Kiểm tra nếu số lượng ảnh đã chọn nhỏ hơn 6
+                // Tạo phần tử mới chứa ảnh và các nút điều khiển
+                const imageContainer = document.createElement('div');
+                imageContainer.classList.add('col-md-3');
+
+                const imageDiv = document.createElement('div');
+                imageDiv.classList.add('image-container');
+
+                const image = document.createElement('img');
+                image.classList.add('file-image');
+                image.style.maxHeight = '200px';
+                image.style.maxWidth = '200px';
+                image.src = URL.createObjectURL(file);
+                image.alt = 'Product Image';
+
+                const contentDiv = document.createElement('div');
+                contentDiv.classList.add('content');
+
+                const iconDiv = document.createElement('div');
+                iconDiv.classList.add('icon');
+                const icon = document.createElement('i');
+                icon.classList.add('fas', 'fa-cloud-upload-alt', 'bigger-icon');
+                iconDiv.appendChild(icon);
+
+                const cancelDiv = document.createElement('div');
+                cancelDiv.classList.add('cancel-btn');
+                cancelDiv.addEventListener('click', function () {
+                    deleteImageContainer(this);
+                });
+                const cancelIcon = document.createElement('i');
+                cancelIcon.classList.add('fas', 'fa-times', 'bigger-icon');
+                cancelDiv.appendChild(cancelIcon);
+
+                imageDiv.appendChild(image);
+                contentDiv.appendChild(iconDiv);
+                imageDiv.appendChild(contentDiv);
+                imageDiv.appendChild(cancelDiv);
+                imageContainer.appendChild(imageDiv);
+
+                // Thêm phần tử mới vào cuối danh sách các ảnh
+                imageList.appendChild(imageContainer);
+
+                imageCount++; // Tăng biến đếm lên mỗi khi thêm ảnh mới
+            } else {
+                alert("Bạn chỉ được phép thêm tối đa 6 ảnh!");
+            }
+        });
+
+        // Kiểm tra nếu đã đạt tới giới hạn số lượng ảnh cho phép
+        if (imageCount >= 6) {
+            alert("Bạn đã chọn đủ số lượng ảnh.");
+        }
+    });
+
+    // Hàm xử lý sự kiện khi người dùng muốn xóa một ảnh
+    function deleteImageContainer(btn) {
+        // Hiển thị hộp thoại xác nhận trước khi xóa
+        const isConfirmed = confirm("Bạn có chắc chắn muốn xóa ảnh này?");
+        if (isConfirmed) {
+            // Xác định phần tử cha của nút "cancel-btn" là thẻ div có class là "col-md-3"
+            const parentContainer = btn.closest('.col-md-3');
+            // Xóa phần tử cha của "image-container" khỏi DOM
+            parentContainer.remove();
+            imageCount--; // Giảm biến đếm ảnh đi mỗi khi xóa ảnh
+        }
+    }
+</script>
+
+
+
+<script>
+    // Hàm xử lý sự kiện khi submit form
+    async function submitForm() {
+        try {
+            // Lấy dữ liệu từ form
+            const formData = new FormData(document.getElementById('updateForm'));
+
+            // Gửi request đến controller sử dụng fetch API
+            const response = await fetch('/SanPhamChiTiet/Update', {
+                method: 'POST',
+                body: formData
+            });
+
+            // Kiểm tra trạng thái của response
+            if (response.ok) {
+                // Nếu thành công, hiển thị thông báo và làm gì đó
+                alert('Cập nhật sản phẩm thành công.');
+            } else {
+                // Nếu thất bại, hiển thị thông báo lỗi
+                alert('Có lỗi xảy ra khi cập nhật sản phẩm.');
+            }
+        } catch (error) {
+            // Nếu có lỗi trong quá trình gửi request, hiển thị thông báo lỗi
+            alert('Có lỗi xảy ra khi gửi yêu cầu.');
+            console.error(error);
+        }
+    }
+</script>

@@ -1,0 +1,266 @@
+﻿@page "/admin/EditProfile"
+
+
+@{
+    var httpContext = ViewContext.HttpContext;
+    var tenNguoiDing = httpContext.Session.GetString("TenNguoiDung");
+    var soDienThoai = httpContext.Session.GetString("soDienThoai");
+    var diaChi = httpContext.Session.GetString("DiaChi");
+    var email = httpContext.Session.GetString("Email");
+    var gioiTinh = httpContext.Session.GetString("GioiTinh");
+    var accessRole = httpContext.Session.GetString("Result");
+    var UserName = httpContext.Session.GetString("UserName");
+}
+<style>
+    .form-control[disabled] {
+        /*        cursor: not-allowed;
+                */
+        background-color: white;
+        color: black;
+        cursor: auto !important;
+    }
+
+    .text-danger {
+        color: red;
+    }
+</style>
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a href="#" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Hồ sơ</a>
+            @*            <span class="breadcrumb-item active">Hồ sơ</span>
+            *@            <span class="breadcrumb-item active">Chỉnh sửa hồ sơ</span>
+        </nav>
+    </div>
+</div>
+@* <partial name="_StatusMessage" for="StatusMessage" /> *@
+
+<form id="editprofile-form" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="container">
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Thông tin cơ bản</h4>
+                <label class="font-weight-semibold text-danger" for="fullName">Bạn chỉ có thể sửa đổi mật khẩu, ngày sinh, giới tính và địa chỉ. Các thông tin khác vui lòng liên hệ quản lý để sửa đổi.</label>
+
+            </div>
+            <div class="card-body">
+               @*  <div class="media align-items-center">
+                    <div class="avatar avatar-image  m-h-10 m-r-15" style="height: 80px; width: 80px">
+                         <img id="imagePreview" src="@Model.Input.AnhDaiDien" alt=""> 
+                        <img src="~/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" id="imagePreview">
+
+                    </div>
+                     <input style="display:none" id="imageInput" asp-for="Input.AnhDaiDien" type="file" class="form-control" accept=".jpg, .jpeg, .png" /> 
+                    <div class="m-l-20 m-r-20">
+                        <h5 class="m-b-5 font-size-18">Change Avatar</h5>
+                        <p class="opacity-07 font-size-13 m-b-0">
+                            Kích thước phim tối đa 120x120: 5MB
+                        </p>
+                    </div>
+                    <div>
+                        <label for="imageInput" class="btn btn-tone btn-primary">Tải lên</label>
+                    </div>
+                     <span asp-validation-for="@Model.Input.AnhDaiDien" class="text-danger"></span> 
+                </div> *@
+
+                <hr class="m-v-25">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="userName">Tên tài khoản:</label>
+                        <input type="text" class="form-control " id="userName" placeholder="User Name" value="@UserName" disabled>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="fullName">Họ và tên:</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Họ và tên" value="@tenNguoiDing" disabled>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="email">Email:</label>
+                        <input class="form-control" id="email" placeholder="email" value="@email" disabled>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="phoneNumber">Số điện thoại:</label>
+                        <input type="text" class="form-control" id="phoneNumber" placeholder="Số điện thoại" value="@soDienThoai" >
+                    </div>
+                  @*   <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="dob">Ngày sinh:</label>
+                        <input asp-for="@Model.Input.NgaySinh" type="date" class="form-control" id="dob" placeholder="Date of Birth">
+                        <span asp-validation-for="@Model.Input.NgaySinh" class="text-danger"></span>
+                    </div> *@
+
+
+                 @*    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="language">Giới tính</label>
+                        <select asp-for="@Model.Input.GioiTinh" id="language" class="form-control">
+                            <option class="hidden" selected disabled>Giới tính</option>
+                            <option value="@((int)GioiTinhMacDinh.Nam)">Nam</option>
+                            <option value="@((int)GioiTinhMacDinh.Nu)">Nữ</option>
+                        </select>
+                        <span asp-validation-for="@Model.Input.GioiTinh" class="text-danger"></span>
+                    </div> *@
+                    <div class="form-group col-md-4">
+
+                       
+                                <label class="font-weight-semibold" for="language">Vai trò: @accessRole</label>
+                            
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Địa chỉ:</h4>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        @* <input type="text" asp-for="@Model.Input.DiaChi" value="@Model.Input.DiaChi" class="form-control" id="fullAddress" placeholder="Full Address">
+                        <span asp-validation-for="@Model.Input.DiaChi" class="text-danger"></span> *@
+                        <input value="@diaChi" class="form-control w-75">
+                    </div>
+                 @*    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="language">Tỉnh thành</label>
+                        <select id="city" class="form-control" onchange="updateAddress()">
+                            <option value="" selected>Chọn tỉnh thành</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="language">Tỉnh thành</label>
+                        <select id="district" class="form-control" onchange="updateAddress()">
+                            <option value="" selected>Chọn quận huyện</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="language">Tỉnh thành</label>
+                        <select id="ward" class="form-control" onchange="updateAddress()">
+                            <option value="" selected>Chọn phường xã</option>
+                        </select>
+                    </div> *@
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-3">
+            <button id="update-editprofile-button" type="submit" class="btn btn-primary m-t-30">Lưu thay đổi</button>
+        </div>
+
+
+    </div>
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+
+    function updateAddress() {
+        var cityId = document.getElementById('city').value;
+        var districtId = document.getElementById('district').value;
+        var wardId = document.getElementById('ward').value;
+
+        var cityName = getOptionText('city', cityId);
+
+        var districtName = getOptionText('district', districtId);
+        var wardName = getOptionText('ward', wardId);
+        console.log(cityName);
+        console.log(wardName);
+        console.log(districtName);
+        //var fullAddress = cityName + ', ' + districtName + ', ' + wardName;
+        var fullAddress = '';
+
+        if (cityId) {
+            fullAddress += cityName;
+        }
+
+        if (districtId) {
+            if (fullAddress) {
+                fullAddress += ', ';
+            }
+            fullAddress += districtName;
+        }
+
+        if (wardId) {
+            if (fullAddress) {
+                fullAddress += ', ';
+            }
+            fullAddress += wardName;
+        }
+        document.getElementById('fullAddress').value = fullAddress;
+    }
+
+    function getOptionText(selectId, optionValue) {
+        var select = document.getElementById(selectId);
+        var selectedOption = [...select.options].find(option => option.value === optionValue);
+        return selectedOption ? selectedOption.text : '';
+    }
+    document.getElementById('city').addEventListener('change', updateAddress);
+    document.getElementById('district').addEventListener('change', updateAddress);
+    document.getElementById('ward').addEventListener('change', updateAddress);
+</script>
+<script>
+    var citis = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
+    var Parameter = {
+        url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+        method: "GET",
+        responseType: "application/json",
+    };
+    var promise = axios(Parameter);
+    promise.then(function (result) {
+        renderCity(result.data);
+    });
+
+    function renderCity(data) {
+        for (const x of data) {
+            citis.options[citis.options.length] = new Option(x.Name, x.Id);
+        }
+        citis.onchange = function () {
+            district.length = 1;
+            ward.length = 1;
+            if (this.value != "") {
+                const result = data.filter(n => n.Id === this.value);
+
+                for (const k of result[0].Districts) {
+                    district.options[district.options.length] = new Option(k.Name, k.Id);
+                }
+            }
+        };
+        district.onchange = function () {
+            ward.length = 1;
+            const dataCity = data.filter((n) => n.Id === citis.value);
+            if (this.value != "") {
+                const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+
+                for (const w of dataWards) {
+                    wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                }
+            }
+        };
+    }
+</script>
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const submitButton = document.querySelector('button[type="submit"]');
+
+    if (imageInput.value) {
+        imagePreview.src = imageInput.value;
+    }
+
+    imageInput.addEventListener('change', function () {
+        if (imageInput.files && imageInput.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                submitButton.disabled = false;
+            };
+
+            reader.readAsDataURL(imageInput.files[0]);
+        }
+    });
+
+</script>

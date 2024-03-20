@@ -1,0 +1,175 @@
+﻿@* @page "/admin/EditProfile" *@
+@model Shop_Models.Dto.DoiMatKhauDto;
+<!-- Include thư viện Toastr -->
+@section scripts{
+ 
+
+}
+@{
+    var httpContext = ViewContext.HttpContext;
+    var accessRole = httpContext.Session.GetString("Result");
+    var tenNguoiDing = httpContext.Session.GetString("TenNguoiDung");
+    var soDienThoai = httpContext.Session.GetString("soDienThoai");
+    var diaChi = httpContext.Session.GetString("DiaChi");
+    var email = httpContext.Session.GetString("Email");
+    var gioiTinh = httpContext.Session.GetString("GioiTinh");
+    var username = httpContext.Session.GetString("UserName");
+}
+<style>
+    .form-control[disabled] {
+        /*        cursor: not-allowed;
+                    */
+        background-color: white;
+        color: black;
+        cursor: auto !important;
+    }
+
+    .text-danger {
+        color: red;
+    }
+</style>
+<div class="page-header">
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a href="#" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Đổi Mật Khẩu</a>
+            @*            <span class="breadcrumb-item active">Hồ sơ</span>
+            *@            <span class="breadcrumb-item active">Chỉnh sửa hồ sơ</span>
+        </nav>
+    </div>
+</div>
+@* <partial name="_StatusMessage" for="StatusMessage" />
+ *@
+<form id="editprofile-form" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="container">
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Đổi Mật Khẩu</h4>
+                </div>
+            <div class="card-body">
+                <hr class="m-v-25">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="userName">Mật Khẩu Hiện Tại:</label>
+                        <input type="text" class="form-control " id="presentPassword" name="oldPass">
+                        <input type="text" class="form-control " id="presentPassword" name="userName" value="@username" hidden>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="fullName">Mật Khẩu Mới:</label>
+                        <input type="text" class="form-control" id="newPass" name="newPass">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="font-weight-semibold" for="vaitro">Nhắc Lại Mật Khẩu Mới:</label>
+                            <input type="text" class="form-control" id="remindNewPass" name="remindNewPass" >
+                    </div>                                       
+                    </div>
+                </div>        
+                </div>
+            </div>
+ 
+    <div class="form-group col-md-3">
+        <button id="update-editprofile-button" type="submit" class="btn btn-primary m-t-30" onclick="saveForm()">Lưu thay đổi</button>
+    </div>
+
+
+
+</form>
+
+
+<script>
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right", // Sửa từ "toast-bot-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+   
+
+
+    // function saveForm() {
+    //     var formData = new FormData(document.getElementById('editprofile-form'));
+    //     event.preventDefault();
+    //     // Thực hiện request và hiển thị thông báo
+    //     performRequest(formData);
+    // }
+    function saveForm() {
+        var formData = new FormData(document.getElementById('editprofile-form'));
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Confirm Title',
+            text: 'Bạn có chắc chắn muốn sửa ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, perform the request
+                performRequest(formData);
+            } else {
+                // User canceled, do nothing
+                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+            }
+        });
+    }
+
+
+
+
+
+    function performRequest(formData) {
+        $.ajax({
+            url: '/NguoiDung/CapNhatMatKhau',
+            type: 'PUT',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "success");
+                    document.getElementById('editprofile-form').reset();
+                } else {
+                    debugger
+                    console.log(results.message);
+                    document.getElementById('editprofile-form').reset();
+                    showNotification(results.message, "error");
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+</script>
+
+
