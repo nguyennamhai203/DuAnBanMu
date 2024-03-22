@@ -96,7 +96,7 @@ namespace AdminApp.Controllers
             }
             else
             {
-                return View("Login");
+                return RedirectToAction("Login","Home");
             }
         }
         public async Task<IActionResult> DanhSachSanPhamNgungKinhDoanh(int status = 0)
@@ -116,7 +116,7 @@ namespace AdminApp.Controllers
             }
             else
             {
-                return View("Login");
+                return RedirectToAction("Login", "Home");
             }
         }
 

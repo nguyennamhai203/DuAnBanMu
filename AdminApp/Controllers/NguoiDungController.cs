@@ -28,7 +28,7 @@ namespace AdminApp.Controllers
             else
             {
 
-                return View("Login");
+                return RedirectToAction("Login", "Home");
             }
         }
 
