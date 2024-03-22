@@ -125,7 +125,42 @@ namespace Shop_Api.Repository
                 };
             }
         }
-
+        public async Task<ResponseDto> UpdateAsync2(ChiTietSanPham model)
+        {
+            var chiTietSanPham = await _dbContext.ChiTietSanPhams.FindAsync(model.Id);
+            if (chiTietSanPham == null)
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    IsSuccess = false,
+                    Code = 404,
+                    Message = "Không Tim Thấy Bản Ghi",
+                };
+            }
+            try
+            {              
+                _dbContext.ChiTietSanPhams.Update(chiTietSanPham);
+                await _dbContext.SaveChangesAsync();
+                return new ResponseDto
+                {
+                    Content = null,
+                    IsSuccess = true,
+                    Code = 200,
+                    Message = "Thành Công",
+                };
+            }
+            catch (Exception)
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = "Lỗi Hệ Thống",
+                };
+            }
+        }
         public async Task<ResponseDto> DeleteAsync(Guid Id)
         {
             var chiTietSanPham = await _dbContext.ChiTietSanPhams.FindAsync(Id);
@@ -173,16 +208,9 @@ namespace Shop_Api.Repository
         public async Task<List<SanPhamChiTietDto>> GetAsync(int? status/*, int page = 1*/)
         {
             var list = _dbContext.ChiTietSanPhams.AsQueryable();
-
-
-            //#region Paging
-            //list = list.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE);
-
-            //#endregion
-
             var result = list.Select(sp => new SanPhamChiTietDto
             {
-
+                Id = sp.Id,
                 MaSanPhamChiTiet = sp.MaSanPham,
                 GiaBan = sp.GiaBan,
                 GiaNhap = sp.GiaNhap,
@@ -200,14 +228,16 @@ namespace Shop_Api.Repository
                 MaThuongHieu = sp.ThuongHieu.MaThuongHieu,
                 TenThuongHieu = sp.ThuongHieu.TenThuongHieu,
 
-                //MaXuatXu = sp.XuatXu.MaXuatXu,
-                //TenXuatXu = sp.XuatXu.TenXuatXu,
+                MaXuatXu = sp.XuatXu.MaXuatXu,
+                TenXuatXu = sp.XuatXu.TenXuatXu,
 
-                //MaMauSac = sp.MauSac.MaMauSac,
-                //TenMauSac = sp.MauSac.TenMauSac,
+                MaMauSac = sp.MauSac.MaMauSac,
+                TenMauSac = sp.MauSac.TenMauSac,
 
-                //MaChatLieu = sp.ChatLieu.MaChatLieu,
-                //TenChatLieu = sp.ChatLieu.TenChatLieu,
+                MaChatLieu = sp.ChatLieu.MaChatLieu,
+                TenChatLieu = sp.ChatLieu.TenChatLieu,
+
+                TrangThai = sp.TrangThai,
 
                 SanPhamId = sp.SanPhamId,
                 LoaiId = sp.LoaiId,
@@ -217,16 +247,23 @@ namespace Shop_Api.Repository
                 ChatLieuId = sp.ChatLieuId,
 
                 AnhThuNhat = _dbContext.Anhs
-                    .Where(image => image.ChiTietSanPhamId == sp.Id && image.MaAnh == "Anh1")
-                    .Select(image => image.URL)
-                    .FirstOrDefault(),
+                     .Where(image => image.ChiTietSanPhamId == sp.Id && image.MaAnh == "Anh1")
+                     .Select(image => image.URL)
+                     .FirstOrDefault(),
                 OtherImages = _dbContext.Anhs
-                    .Where(image => image.ChiTietSanPhamId == sp.Id && image.MaAnh != "Anh1")
-                    .Select(image => image.URL)
-                    .ToList(),
+                     .Where(image => image.ChiTietSanPhamId == sp.Id && image.MaAnh != "Anh1")
+                     .Select(image => image.URL)
+                     .ToList(),
 
             });
+
+            if (status != null) {
+               
+                return result.Where(x=>x.TrangThai==status).ToList();
+            }
             return result.ToList();
+
+
         }
 
         public async Task<List<SanPhamChiTietDto>> PGetProductDetail(int? getNumber, string? codeProductDetail, int? status, string? tenSanPham, double? from, double? to, string? sortBy, int? page, string? tenLoai, string? tenThuongHieu, string? tenMauSac, string? tenXuatXu, string? chatLieu, int? PageSize)

@@ -79,10 +79,11 @@
                                                                 <input name="Id" value="@Model.Id" hidden>
                                                                 <input class="form-control formatPrice" name="MaSanPhamChiTiet" value="@Model.MaSanPhamChiTiet" readonly>
 
-                                                              
+
                                                             </div>
                                                         </div>
-                                                    
+                                                    </div>
+
                                                     <div class="col-4 thuonghieu" style="margin-top: 10px">
                                                         <label class="font-weight-semibold">Thương hiệu*</label>
                                                         <div class="d-flex align-items-center">
@@ -206,7 +207,7 @@
                                                             <input type="text" class="form-control formatPrice" name="GiaBan" value="@Model.GiaBan">
                                                         </div>
                                                     </div>
-                                                   
+
 
                                                     <div class="form-group col-3">
                                                         <label class="font-weight-semibold" for="productBrand">Số lượng tồn*</label>
@@ -216,6 +217,21 @@
                                                         </div>
                                                     </div>
 
+                                                </div>
+                                                <div class="form-group d-flex align-items-center col-4">
+                                                    <div class="switch m-r-10">
+                                                        @if (Model.TrangThaiKhuyenMai == true)
+                                                        {
+                                                            <input type="checkbox" name="TrangThaiKhuyenMai" id="switch-trangThaiKhuyenMai-@Model.Id" class="switch-2-trangThaiKhuyenMai" checked>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" name="TrangThaiKhuyenMai" id="switch-trangThaiKhuyenMai-@Model.Id" class="switch-2-trangThaiKhuyenMai">
+                                                        }
+
+                                                        <label class="font-weight-semibold" for="switch-trangThaiKhuyenMai-@Model.Id."></label>
+                                                    </div>
+                                                    <label class="font-weight-semibold">Cho phép áp dụng khuyễn mại</label>
                                                 </div>
                                                 <div style="color: red">
                                                     Lưu ý:

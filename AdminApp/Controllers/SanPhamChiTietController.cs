@@ -1,4 +1,4 @@
-﻿    using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -20,7 +20,7 @@ namespace AdminApp.Controllers
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
-            _config = config;           
+            _config = config;
         }
 
         public async Task<IActionResult> _ProductListPartial()
@@ -62,7 +62,7 @@ namespace AdminApp.Controllers
             }
         }
 
-       
+
         public IActionResult ChiTietSanPham()
         {
             var accessToken = HttpContext.Session.GetString("AccessToken");
@@ -76,6 +76,51 @@ namespace AdminApp.Controllers
                 return View("Login");
             }
         }
+
+
+
+        public async Task<IActionResult> DanhSachSanPhamDangKinhDoanh(int status = 1)
+        {
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
+                var client = _httpClientFactory.CreateClient("BeHat");
+                string response = await client.GetStringAsync($"/api/ChiTietSanPham/GetAll?status={status}");
+                if (!string.IsNullOrEmpty(response))
+                {
+                    var productList = JsonConvert.DeserializeObject<List<SanPhamChiTietDto>>(response);
+                    return View(productList);
+                }
+                return View();
+            }
+            else
+            {
+                return View("Login");
+            }
+        }
+        public async Task<IActionResult> DanhSachSanPhamNgungKinhDoanh(int status = 0)
+        {
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
+                var client = _httpClientFactory.CreateClient("BeHat");
+                string response = await client.GetStringAsync($"/api/ChiTietSanPham/GetAll?status={status}");
+                if (!string.IsNullOrEmpty(response))
+                {
+                    var productList = JsonConvert.DeserializeObject<List<SanPhamChiTietDto>>(response);
+                    return View(productList);
+                }
+                return View();
+            }
+            else
+            {
+                return View("Login");
+            }
+        }
+
+
 
         [HttpPost]
         public async Task<IActionResult> DanhSachTongQuanSanPham([FromBody] ParametersTongQuanDanhSach parameters)
@@ -125,6 +170,9 @@ namespace AdminApp.Controllers
             //    ViewData["ValueMauSac"] = mauSac;
             //    lstRelatedProducts = lstRelatedProducts!.Where(it => it.TenMauSac!.ToLower() == mauSac.ToLower()).ToList();
             //}
+
+            ViewBag.SumGuid = sumGuid;
+
             if (lstRelatedProducts.IsSuccessStatusCode)
             {
                 var jsonResponse = await lstRelatedProducts.Content.ReadAsStringAsync();
@@ -141,7 +189,7 @@ namespace AdminApp.Controllers
                 return StatusCode((int)lstRelatedProducts.StatusCode, lstRelatedProducts.ReasonPhrase);
             }
         }
-        public async Task<IActionResult?> LoadPartialView(Guid idSanPhamChiTiet)
+        public async Task<IActionResult?> LoadPartialView(Guid idSanPhamChiTiet) // Detail sản phẩm chi tiết
         {
             var client = _httpClientFactory.CreateClient("BeHat");
             var lstRelatedProducts = await client.GetAsync($"/api/ChiTietSanPham/DetailSanPhamChiTietDto?Id={idSanPhamChiTiet}");
@@ -294,7 +342,7 @@ namespace AdminApp.Controllers
         }
 
         [HttpPost("Update")]
-        public async Task<IActionResult> Update(SanPhamChiTietDto productRequest, string editor, [FromForm] List<IFormFile> formFiles)
+        public async Task<IActionResult> Update(SanPhamChiTietDto productRequest, bool TrangThaiKhuyenMai, string editor, [FromForm] List<IFormFile> formFiles)
         {
             ChiTietSanPham productDetail = new ChiTietSanPham()
             {
@@ -358,6 +406,60 @@ namespace AdminApp.Controllers
                 HttpContext.Session.SetString("ResultUpdate", resultdto.Message);
 
                 return Content(result, "application/json");
+            }
+        }
+
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient("BeHat");
+                var response = await client.DeleteAsync($"/api/ChiTietSanPham/Ngung-kinh-doanh-san-pham/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+
+                    return Content(result, "application/json");
+                }
+                else
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+
+                    return Content(result, "application/json");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw new Exception("Not IsSuccessStatusCode");
+            }
+        } 
+        
+        public async Task<IActionResult> KhoiPhuc(Guid id)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient("BeHat");
+                var response = await client.DeleteAsync($"/api/ChiTietSanPham/Khoi-phuc-kinh-doanh-san-pham/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+
+                    return Content(result, "application/json");
+                }
+                else
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+
+                    return Content(result, "application/json");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw new Exception("Not IsSuccessStatusCode");
             }
         }
 

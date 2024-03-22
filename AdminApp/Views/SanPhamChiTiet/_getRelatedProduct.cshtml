@@ -1,6 +1,9 @@
 ﻿@model List<Shop_Models.Dto.SanPhamChiTietDto>
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
+@{
+    var sumGuid = ViewBag.SumGuid;
+}
 <div id="example">
     <div class="notification-toast top-right" id="notification-toast"></div>
 
@@ -76,11 +79,11 @@
                                 <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
                                     @if (item.TrangThai != 1)
                                     {
-                                        <li><a class="dropdown-item active" href="#" type="button" onclick="KhoiPhucSanPham(@item.Id)">Khôi phục</a></li>
+                                        <li><a class="dropdown-item active" href="#" type="button" onclick="KhoiPhucSanPham('@item.Id','@sumGuid')">Khôi phục</a></li>
                                     }
                                     else
                                     {
-                                        <li><a class="dropdown-item" href="#" type="button" onclick="KhoiPhucSanPham(@item.Id)">Ngừng KDoanh</a></li>
+                                        <li><a class="dropdown-item" href="#" type="button" onclick="NgungKinhDoanhSanPham('@item.Id','@sumGuid')">Ngừng KDoanh</a></li>
 
                                     }
                                     <li>  <button class="dropdown-item" type="button" onclick="EditSanPham('@item.Id')">Chỉnh sửa</button></li>

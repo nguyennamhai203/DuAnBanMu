@@ -23,7 +23,7 @@ namespace Shop_Api.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll(int? status/*, int page = 1*/)
         {
-            var result = await _repository.GetAsync(/*status*//*, page*/);
+            var result = await _repository.GetAsync(status/*, page*/);
             return Ok(result);
         }
 
@@ -34,7 +34,7 @@ namespace Shop_Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles =AppRole.Admin)]
+        [Authorize(Roles = AppRole.Admin)]
         [HttpPost("GetFilteredDaTaDSTongQuanAynsc")]
         public async Task<IActionResult> GetFilteredDaTaDSTongQuanAynsc(ParametersTongQuanDanhSach parameters)
         {
@@ -107,6 +107,40 @@ namespace Shop_Api.Controllers
                 return Ok(respon);
             }
             else return BadRequest(respon);
+        }
+        [HttpDelete("Ngung-kinh-doanh-san-pham/{id}")]
+        public async Task<IActionResult> NgungKinhDoanhSanPham(Guid id)
+        {
+            var sanPhamChiTiet = _repository.GetAsync().Result.FirstOrDefault(x => x.Id == id);
+            if (sanPhamChiTiet != null)
+            {
+                sanPhamChiTiet.TrangThai = 0;
+                var result = await _repository.UpdateAsync(sanPhamChiTiet);
+                if (result.IsSuccess == true)
+                {
+                    return Ok(result);
+                }
+                else return BadRequest(result);
+
+            }
+            return BadRequest(false);
+        }
+        [HttpDelete("Khoi-phuc-kinh-doanh-san-pham/{id}")]
+        public async Task<IActionResult> KhoiPhucKinhDoanhSanPham(Guid id)
+        {
+            var sanPhamChiTiet = _repository.GetAsync().Result.FirstOrDefault(x => x.Id == id);
+            if (sanPhamChiTiet != null)
+            {
+                sanPhamChiTiet.TrangThai =1;
+                var result = await _repository.UpdateAsync(sanPhamChiTiet);
+                if (result.IsSuccess == true)
+                {
+                    return Ok(result);
+                }
+                else return BadRequest(result);
+
+            }
+            return BadRequest(false);
         }
     }
 }

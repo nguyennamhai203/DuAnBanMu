@@ -1,139 +1,6 @@
-﻿@* @using Shop_Models.Dto;
-@model List<SanPhamChiTietDto>
-
-
-@{
-    ViewData["Title"] = "Product List";
-}
-
-<main id="main" class="main">
-    <div class="pagetitle">
-        <h1>Data Tables</h1>
-        <nav>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item">Tables</li>
-                <li class="breadcrumb-item active">Data</li>
-            </ol>
-        </nav>
-    </div>
-
-    <section class="section">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Datatables</h5>
-                        <p>Add lightweight datatables to your project with using the <a href="https://github.com/fiduswriter/Simple-DataTables" target="_blank">Simple DataTables</a> library. Just add <code>.datatable</code> class name to any table you wish to conver to a datatable</p>
-
-                        <!-- Table with stripped rows -->
-                        <table id="productTable" class="table datatable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Product Code</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Product Name</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Cost</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var product in Model)
-                                {
-                                    <tr>
-                                        <td>@product.Id</td>
-                                        <td>@product.MaSanPhamChiTiet</td>
-                                        <td>@product.TrangThai</td>
-                                        <td>@product.TenSanPham</td>
-                                        <td>@product.GiaBan</td>
-                                        <td>@product.GiaNhap</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                        <!-- End Table with stripped rows -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </section>
-</main>
-
-@section Scripts {
-    <script>
-        // document.addEventListener('DOMContentLoaded', function () {
-        //     // Lắng nghe sự kiện thay đổi giá trị của dropdown list
-        //     document.getElementById('pageSizeSelect').addEventListener('change', function () {
-        //         var pageSize = this.value; // Lấy giá trị mới được chọn
-        //         loadData(pageSize); // Gọi hàm loadData với pageSize mới
-        //     });
-
-        //     function loadData(pageSize) {
-        //         // Sử dụng AJAX để gửi yêu cầu tới controller với pageSize mới
-        //         var url = '/ChiTietSanPham/Index?page=1&PageSize=' + pageSize;
-        //         $.get(url, function (data) {
-        //             // Cập nhật dữ liệu trên trang với dữ liệu mới từ controller
-        //             $('#productTable tbody').html(data);
-        //         });
-        //     }
-        // });
-
-        // document.getElementById("pageSizeSelector").onchange = function () {
-        //     var pageSize = this.value; // Lấy giá trị pageSize mới được chọn
-        //     loadPageWithPageSize(pageSize); // Gọi hàm để gửi yêu cầu AJAX
-        // };
-
-        // function loadPageWithPageSize(pageSize) {
-        //     // Sử dụng thư viện jQuery để gửi yêu cầu AJAX
-        //     $.ajax({
-        //         url: '/SanPhamChiTiet/Index', // Thay đổi đường dẫn đến action của controller của bạn
-        //         type: 'GET',
-        //         data: { pageSize: pageSize }, // Truyền pageSize mới qua query string
-        //         success: function (response) {
-        //             // Xử lý phản hồi từ server (nếu cần)
-        //         },
-        //         error: function (xhr, status, error) {
-        //             // Xử lý lỗi (nếu có)
-        //             console.error(error);
-        //         }
-        //     });
-        // }
-
-
-    </script>
-
-
-
-}
-
-
-
-
- <main id="main" class="main">
-    <!-- Content -->
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <h1>Product List</h1>
-                <!-- Include the partial view here -->
-                @await Html.PartialAsync("_ProductListPartial", Model)
-            </div>
-        </div>
-    </div>
-</main>
- 
-
-
-<div class="col-sm-12 m-t-15">
-    <table class="table table-bordered table-hover no-footer w-100" id="table-sanpham">
-    </table>
-</div> *@
-
-
- @{
+﻿@{
     ViewData["Title"] = "Sản Phẩm Chi Tiết";
+
 
 }
 <style>
@@ -170,17 +37,42 @@
         </ol>
     </nav>
 </div>
+<div class="row w-100">
+    <div class="col-lg-8">
+        <div class="d-md-flex">
+            <div class="m-b-10">
+                <a class="btn btn-kio" href="/SanPhamChiTiet/DanhSachSanPhamNgungKinhDoanh">
+                    <i class="far fa-list-alt m-r-5"></i>
+                    <span>Danh sách sản phẩm ngừng kinh doanh</span>
+                </a>
+            </div>  <div class="m-b-10">
+                <a class="btn btn-kio" href="/SanPhamChiTiet/DanhSachSanPhamDangKinhDoanh">
+                    <i class="far fa-list-alt m-r-5"></i>
+                    <span>Danh sách sản phẩm đang kinh doanh</span>
+                </a>
+            </div>
+            <div class="m-b-10 m-l-10">
+                <a class="btn btn-kio" href="/SanPhamChiTiet/CreatePartialView">
+                    <i class="far fa-list-alt m-r-5"></i>
+                    <span>Thêm Sản Phẩm</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 text-right">
+    </div>
+</div>
 <div id="modalContent" style="display: block;">
 </div>
 
 <div id="alertMessage" class="alert" role="alert" style="display: none;"></div>
 
 
-<nav>
+@* <nav>
     <button class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/SanPhamChiTiet/CreatePartialView">Thêm mới sản phẩm</a></li>
+        <li class="breadcrumb-item"> <a href="/SanPhamChiTiet/CreatePartialView">Thêm mới sản phẩm</a></li>
     </button>
-</nav>
+</nav> *@
 <div class="datatable-top">
     <div class="datatable-dropdown">
         <label>
@@ -427,7 +319,7 @@
                 event.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ <a>, nếu có
                 debugger;
                 console.log('Row clicked');
-                var sumGuid = $(this).data('id');
+                var sumGuid = $(this).data('sumguid');
                 var url = $(this).data('url');
                 // Gọi hàm AJAX để gửi sumGuid đến controller và hiển thị kết quả
                 $.ajax({
@@ -509,7 +401,7 @@
         // $('#updateView-SanPham').on('hidden.bs.modal', function () {
         //     $('#updateModal').modal("show");
         // });
-         $('#updateView-SanPham').on('hidden.bs.modal', function () {
+        $('#updateView-SanPham').on('hidden.bs.modal', function () {
             // Làm mới nội dung của updateView-SanPham
             $('#updateView-SanPham').empty(); // Xóa nội dung trong modal
             // $('#updateView-SanPham').append('Nội dung mới'); // Thêm nội dung mới vào modal
@@ -542,7 +434,7 @@
 </script>
 <script>
     // Hàm xử lý sự kiện khi form được gửi
-    function handleFormSubmit(event) {
+    function (event) {
         event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
         // Lấy form
@@ -567,4 +459,121 @@
                 showAlert('Đã xảy ra lỗi khi cập nhật sản phẩm. Vui lòng thử lại sau.', false);
             });
     }
+</script>
+
+
+
+<script>
+    // view index
+
+    function KhoiPhucSanPham(idSanPham, sumguid) {
+        $('#updateModal').modal("hide");
+        var sumGuid = sumguid;
+
+        Swal.fire({
+            title: 'Thông báo!',
+            text: 'Bạn có muốn khôi phục kinh doanh mặt hàng này!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/SanPhamChiTiet/KhoiPhuc/' + idSanPham,
+                    type: 'GET',
+                    success: function (result) {
+                        if (result.code === 200) {
+                            $.ajax({
+                                url: '/GetRelatedProducts?sumGuid=' + sumGuid,
+                                type: 'GET',
+                                success: function (results) {
+                                    $("#example").html(results);
+                                    Swal.fire({
+                                        title: 'Đã xác nhận!',
+                                        text: 'Hành động đã được thực hiện.',
+                                        icon: 'success'
+                                    }).then(() => {
+                                        $('#updateModal').modal("show");
+                                    });
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(xhr.responseText);
+                                    console.log(status);
+                                    console.log(error);
+                                    console.log(xhr);
+                                }
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                        console.log(status);
+                        console.log(error);
+                        console.log(xhr);
+                    }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire('Đã hủy bỏ', 'Hành động không được thực hiện.', 'error').then(() => {
+                    $('#updateModal').modal("show");
+                });
+            }
+        });
+    }
+
+
+    function NgungKinhDoanhSanPham(idSanPham, sumguid) {
+        $('#updateModal').modal("hide");
+        var sumGuid = sumguid;
+        Swal.fire({
+            title: 'Thông báo!',
+            text: 'Bạn có muốn ngừng kinh doanh mặt hàng này!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/SanPhamChiTiet/Delete/' + idSanPham,
+                    type: 'GET',
+                    success: function (result) {
+                        if (result.code === 200) {
+                            $.ajax({
+                                url: '/GetRelatedProducts?sumGuid=' + sumGuid,
+                                type: 'GET',
+                                success: function (result) {
+                                    $("#example").html(result);
+                                    Swal.fire({
+                                        title: 'Đã xác nhận!',
+                                        text: 'Hành động đã được thực hiện.',
+                                        icon: 'success'
+                                    }).then(() => {
+                                        $('#updateModal').modal("show");
+                                    });
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(xhr.responseText);
+                                    console.log(status);
+                                    console.log(error);
+                                    console.log(xhr);
+                                }
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                        console.log(status);
+                        console.log(error);
+                        console.log(xhr);
+                    }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire('Đã hủy bỏ', 'Hành động không được thực hiện.', 'error').then(() => {
+                    $('#updateModal').modal("show");
+                });
+            }
+        });
+    }
+
 </script>
