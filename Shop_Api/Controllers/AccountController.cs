@@ -70,6 +70,39 @@ namespace Shop_Api.Controllers
             }
             return BadRequest(result);
         }
-
+        
+        [HttpGet("FindProfileOfUser")]
+        public async Task<IActionResult> FindProfileOfUser(string userName)
+        {
+            var result = await _accountRepository.FindProfileOfUser(userName);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        
+        [HttpPut("CapNhatMatKhau")]
+        public async Task<IActionResult> CapNhatMatKhau(DoiMatKhauDto obj)
+        {
+            var result = await _accountRepository.CapNhatMatKhau(obj);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        
+        [HttpPut("CapNhatSDTDiaChi")]
+        public async Task<IActionResult> CapNhatSDTDiaChi(userSDTDiaChi obj)
+        {
+            var result = await _accountRepository.CapNhatSDTDiaChi(obj);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+       
     }
 }

@@ -8,14 +8,38 @@
 }
 <nav>
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/SanPhamChiTiet">Tổng Quan Sản Phẩm</a></li><li class="breadcrumb-item"><a href="/SanPhamChiTiet/CreatePartialView">Thêm Sản Phẩm</a></li>
+        <li class="breadcrumb-item"><a href="/SanPhamChiTiet">Tổng Quan Sản Phẩm</a></li>
+        <li class="breadcrumb-item"><a href="/SanPhamChiTiet/CreatePartialView">Thêm Sản Phẩm</a></li>
     </ol>
 </nav>
 
 <div id="example">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><h3>Thêm Sản Phẩm</h3></li>
-    </ol>
+    <div class="row w-100">
+        <div class="col-lg-8">
+            <div class="d-md-flex">
+                <div class="m-b-10">
+                    <a class="btn btn-kio" href="/SanPhamChiTiet/DanhSachSanPhamNgungKinhDoanh">
+                        <i class="far fa-list-alt m-r-5"></i>
+                        <span>Danh sách sản phẩm ngừng kinh doanh</span>
+                    </a>
+                </div>  <div class="m-b-10">
+                    <a class="btn btn-kio" href="/SanPhamChiTiet/DanhSachSanPhamDangKinhDoanh">
+                        <i class="far fa-list-alt m-r-5"></i>
+                        <span>Danh sách sản phẩm đang doanh</span>
+                    </a>
+                </div>
+                <div class="m-b-10 m-l-10">
+                    <a class="btn btn-kio" href="/SanPhamChiTiet">
+                        <i class="far fa-list-alt m-r-5"></i>
+                        <span>Danh sách nhóm sản phẩm</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 text-right">
+        </div>
+    </div>
+    
     <form asp-controller="SanPhamChiTiet" asp-action="Createaa" method="post" enctype="multipart/form-data">
 
         @*  <div id="grid1"></div> *@
@@ -95,16 +119,16 @@
 
             </select>
         </div>
-       @*  <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">CardVGA</label>
-            <select class="form-select" asp-for="IdCardVGA">
-                <option>Chọn CardVGA</option>
-                @foreach (var t in (List<CardVGA>)ViewBag.GetlistCardVGA)
-                {
-                    <option value="@t.Id">@t.Ma</option>
-                }
+        @*  <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">CardVGA</label>
+        <select class="form-select" asp-for="IdCardVGA">
+        <option>Chọn CardVGA</option>
+        @foreach (var t in (List<CardVGA>)ViewBag.GetlistCardVGA)
+        {
+        <option value="@t.Id">@t.Ma</option>
+        }
 
-            </select>
+        </select>
         </div> *@
 
         @*  <div class="form-group col-md-6">
@@ -128,13 +152,13 @@
             <label for="exampleFormControlInput1" class="form-label">Số Lượng Sản Phẩm</label>
             <input type="number" class="form-control" id="exampleFormControlInput1" asp-for="SoLuongTon" placeholder="Nhập Số Lượng">
         </div>
-          <div class="form-group d-flex align-items-center col-4">
-                                     <div class="switch m-r-10">
-                                         <input type="checkbox" id="switch-${index}-2" class="switch-2-trangthaikhuyenmai" name="TrangThaiKhuyenMai" checked>
-                                         <label class="font-weight-semibold" for="switch-${index}-2"></label>
-                                     </div>
-                                     <label class="font-weight-semibold">Cho phép áp dụng khuyến mại</label>
-                                 </div>
+        <div class="form-group d-flex align-items-center col-4">
+            <div class="switch m-r-10">
+                <input type="checkbox" id="switch-${index}-2" class="switch-2-trangthaikhuyenmai" name="TrangThaiKhuyenMai" checked>
+                <label class="font-weight-semibold" for="switch-${index}-2"></label>
+            </div>
+            <label class="font-weight-semibold">Cho phép áp dụng khuyến mại</label>
+        </div>
         <div class="row">
             <div class="col-md-3">
                 <label for="exampleFormControlInput1" class="form-label">Hình Ảnh</label>

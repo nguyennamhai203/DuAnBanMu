@@ -42,6 +42,157 @@ namespace Shop_Api.Repository
             _roleManager = roleManager;
             _context = context;
         }
+
+
+        public async Task<ProfileOfUserDto> FindProfileOfUser(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            return new ProfileOfUserDto
+            {
+                TenTaiKhoan = user.UserName,
+                TenNguoiDung = user.TenNguoiDung,
+                soDienThoai = user.SoDienThoai,
+                DiaChi = user.DiaChi,
+                Email = user.Email,
+                GioiTinh = user.GioiTinh,
+            };
+
+        }
+
+        public async Task<ResponseDto> CapNhatMatKhau(DoiMatKhauDto obj)
+        {
+            var user = await _userManager.FindByNameAsync(obj.UserName);
+            var oldPassWordVaild = await _userManager.CheckPasswordAsync(user, obj.OldPass);
+            var newPassVaild = await _userManager.CheckPasswordAsync(user, obj.NewPass);
+
+            if (obj.NewPass != obj.RemindNewPass)
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    Message = "Nhắc lại mật khẩu không trùng khớp",
+                    Code = 400,
+                };
+            }
+            else if (oldPassWordVaild == false)
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    Message = "Mật khẩu cũ sai",
+                    Code = 400,
+                };
+            }
+            else if (newPassVaild == true)
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    Message = "Bạn Đã Nhập Mật Khẩu Cũ",
+                    Code = 400,
+                };
+            }
+            else if (oldPassWordVaild)
+            {
+                // Xác minh mật khẩu cũ
+                user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, obj.NewPass);
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return new ResponseDto
+                    {
+                        Content = user,
+                        Message = "Cập Nhật Thành Công",
+                        Code = 200,
+                    };
+                }
+                else
+                {
+                    return new ResponseDto
+                    {
+                        Content = null,
+                        Message = "Cập Nhật Thất Bại",
+                        Code = 400,
+                    };
+                }
+            }
+            else
+            {
+                return new ResponseDto
+                {
+                    Content = user,
+                    Message = "Mật khẩu cũ sai",
+                    Code = 500,
+                };
+            }
+
+
+
+        }
+        public async Task<ResponseDto> CapNhatSDTDiaChi(userSDTDiaChi obj)
+        {
+            try
+            {
+                var user = await _userManager.FindByNameAsync(obj.userName);
+
+
+                if (obj.SDT == null || obj.SDT == "" || obj.DiaChi == null || obj.DiaChi == "")
+                {
+                    return new ResponseDto
+                    {
+                        Content = null,
+                        Message = "Thiếu Thông Tin Đầu Vào!",
+                        Code = 405,
+                    };
+
+                }
+                else if (user == null) { return new ResponseDto { Message = "Không tìm thấy người dùng",Code=405 }; }
+                else
+                {
+                    if (IsValidPhoneNumber(obj.SDT) == true)
+                    {
+                        user.SoDienThoai = obj.SDT;
+                        user.DiaChi = obj.DiaChi;
+                        var result = await _userManager.UpdateAsync(user);
+                        if (result.Succeeded)
+                        {
+                            return new ResponseDto
+                            {
+                                Content = user,
+                                Message = "Cập Nhật Thành Công",
+                                Code = 200,
+                            };
+                        }
+                        return new ResponseDto
+                        {
+                            Content = user,
+                            Message = "Cập Nhật Thất Bại",
+                            Code = 400,
+                        };
+
+                    }
+                    return new ResponseDto
+                    {
+                        Content = null,
+                        Message = "Số Điện Thoại Không Đúng Định Dạng \r " +
+                        "định dạng số điện thoại tiếng Việt (10 hoặc 11 chữ số, bắt đầu bằng 0)",
+                        Code = 400,
+                    };
+                }
+            }
+            catch
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    Message = "Lỗi Hệ Thống",
+                    Code = 500,
+                };
+            }
+        }
+
         public async Task<LoginResponseDto> LoginAsync(LoginDto model)
         {
             var user = await _userManager.FindByNameAsync(model.NameAccount);
@@ -52,7 +203,7 @@ namespace Shop_Api.Repository
             {
                 return new LoginResponseDto
                 {
-                    Message = "Thông tin tai khoan khong chinh xac",
+                    Message = "Thông tin tài khoản không chính xác !",
                     Success = false,
                     Code = 405,
                 };
@@ -68,7 +219,7 @@ namespace Shop_Api.Repository
             foreach (var role in userRoles)
             {
                 authClamis.Add(new Claim(ClaimTypes.Role, role.ToString()));
-                roleUser= role;
+                roleUser = role;
             }
 
             var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -84,7 +235,7 @@ namespace Shop_Api.Repository
             //return new JwtSecurityTokenHandler().WriteToken(token);
             return new LoginResponseDto
             {
-                Token= new JwtSecurityTokenHandler().WriteToken(token),
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Result = user,
                 Role = roleUser,
                 Success = true,

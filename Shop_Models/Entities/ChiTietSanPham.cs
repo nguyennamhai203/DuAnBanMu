@@ -20,7 +20,8 @@ namespace Shop_Models.Entities
         public int? SoLuongTon { get; set; }
         public int? SoLuongDaBan { get; set; }
         public int? TrangThai { get; set; }
-        //public int? TrangThaiKhuyenMai { get; set; }
+        //public string? Mota { get; set; }
+        //public bool? TrangThaiKhuyenMai { get; set; }
         public Guid? SanPhamId { get; set; }
         public Guid? LoaiId { get; set; }
         public Guid? ThuongHieuId { get; set; }
