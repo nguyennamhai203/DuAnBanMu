@@ -20,10 +20,17 @@ namespace Shop_Api.Controllers
             _repository = repository;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet("GetAllDto")]
         public async Task<IActionResult> GetAll(int? status/*, int page = 1*/)
         {
-            var result = await _repository.GetAsync(status/*, page*/);
+            var result = await _repository.GetAllAsync(status);
+            return Ok(result);
+        }
+        
+        [HttpGet("Get")]
+        public async Task<IActionResult> Get()
+        {
+            var result = await _repository.GetAsync();
             return Ok(result);
         }
 
@@ -91,6 +98,18 @@ namespace Shop_Api.Controllers
         public async Task<IActionResult> UpdateAsync(ChiTietSanPham obj)
         {
             var respon = await _repository.UpdateAsync(obj);
+            if (respon.IsSuccess == true)
+            {
+                return Ok(respon);
+            }
+            else return BadRequest(respon);
+        } 
+        
+        //[Authorize(Roles = AppRole.Admin)]
+        [HttpPut("UpdateAsync2")]
+        public async Task<IActionResult> UpdateAsync2(ChiTietSanPham obj)
+        {
+            var respon = await _repository.UpdateAsync2(obj);
             if (respon.IsSuccess == true)
             {
                 return Ok(respon);

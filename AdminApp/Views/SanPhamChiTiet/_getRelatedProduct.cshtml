@@ -7,6 +7,9 @@
 <div id="example">
     <div class="notification-toast top-right" id="notification-toast"></div>
 
+    <!-- Thêm nút Làm mới -->
+    <button id="refreshBtn" class="btn btn-primary">Làm mới</button>
+
     <table id="data-table" class="table table-bordered table-hover no-footer w-100">
         <thead>
             <tr>
@@ -19,6 +22,7 @@
                 <th>SL</th>
                 <th>Đ/Bán</th>
                 <th>K/Doanh</th>
+                <th>Cho Phép km</th>
                 <th>Select</th>
                 <th>###</th>
             </tr>
@@ -62,6 +66,20 @@
                         {
                             <i class="anticon anticon-check">Ngưng Kinh Doanh</i>
                         }
+                    </td> 
+                    <td>
+                        @if (item.TrangThaiKhuyenMai == 1)
+                        {
+                            <i class="anticon anticon-close">Được áp dụng sale</i>
+                        }
+                        @if(item.TrangThaiKhuyenMai==2)
+                        {
+                            <i class="anticon anticon-check">Đã áp dụng sale</i>
+                        }
+                        @if (item.TrangThaiKhuyenMai == 0)
+                        {
+                            <i class="anticon anticon-check">KKM</i>
+                        }
                     </td>
                     <td>
                         <div class="checkbox" data-id="@item.Id">
@@ -100,9 +118,7 @@
         <!-- Thêm các phần tử footer ở đây nếu cần -->
     </table>
 </div>
-@section Scripts{
-
-  
+ 
 <script>
     var table = $('#data-table').DataTable();
     if (!table || !$.fn.DataTable.isDataTable('#data-table')) {
@@ -117,5 +133,64 @@
     }
    
 </script>
-}
+
+<script>
+    // Xử lý sự kiện click của nút Làm mới
+    $('#refreshBtn').click(function () {
+        // Gửi yêu cầu làm mới nội dung từ cơ sở dữ liệu
+        refreshData();
+    });
+
+    // Hàm gửi yêu cầu làm mới nội dung từ cơ sở dữ liệu
+    function refreshData() {
+        // Gửi yêu cầu AJAX để làm mới dữ liệu từ cơ sở dữ liệu
+        debugger
+        $.ajax({
+            url: url, // Đường dẫn đến endpoint để làm mới dữ liệu
+            method: 'GET', // Phương thức GET hoặc POST tùy thuộc vào endpoint của bạn
+            success: function (response) {
+
+                // Cập nhật nội dung của bảng DataTable sau khi làm mới dữ liệu thành công
+                $('#example').html(response);
+
+            },
+            error: function (xhr, status, error) {
+                // Xử lý lỗi nếu có
+                console.error(error);
+                alert('Đã xảy ra lỗi khi làm mới dữ liệu.');
+            }
+        });
+    }
+</script>
+<style>
+    .dt-paging-button {
+        padding: 8px 12px;
+        margin: 0 2px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .dt-paging-button:hover {
+            background-color: #0056b3;
+        }
+
+        .dt-paging-button.current {
+            background-color: #0056b3;
+        }
+
+        .dt-paging-button.disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+            .dt-paging-button.disabled:hover {
+                background-color: #ccc;
+            }
+
+</style>
 

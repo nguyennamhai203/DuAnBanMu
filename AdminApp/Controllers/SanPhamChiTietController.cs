@@ -86,7 +86,7 @@ namespace AdminApp.Controllers
             if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
                 var client = _httpClientFactory.CreateClient("BeHat");
-                string response = await client.GetStringAsync($"/api/ChiTietSanPham/GetAll?status={status}");
+                string response = await client.GetStringAsync($"/api/ChiTietSanPham/GetAllDto?status={status}");
                 if (!string.IsNullOrEmpty(response))
                 {
                     var productList = JsonConvert.DeserializeObject<List<SanPhamChiTietDto>>(response);
@@ -106,7 +106,7 @@ namespace AdminApp.Controllers
             if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
                 var client = _httpClientFactory.CreateClient("BeHat");
-                string response = await client.GetStringAsync($"/api/ChiTietSanPham/GetAll?status={status}");
+                string response = await client.GetStringAsync($"/api/ChiTietSanPham/GetAllDto?status={status}");
                 if (!string.IsNullOrEmpty(response))
                 {
                     var productList = JsonConvert.DeserializeObject<List<SanPhamChiTietDto>>(response);
@@ -341,8 +341,7 @@ namespace AdminApp.Controllers
 
         }
 
-        [HttpPost("Update")]
-        public async Task<IActionResult> Update(SanPhamChiTietDto productRequest, bool TrangThaiKhuyenMai, string editor, [FromForm] List<IFormFile> formFiles)
+        public async Task<IActionResult> Update(SanPhamChiTietDto productRequest, int trangThaiKhuyenMai, string MoTa, [FromForm] List<IFormFile> formFiles)
         {
             ChiTietSanPham productDetail = new ChiTietSanPham()
             {
@@ -351,8 +350,8 @@ namespace AdminApp.Controllers
                 GiaNhap = (float)productRequest.GiaNhap,
                 GiaBan = (float)productRequest.GiaBan,
                 SoLuongTon = productRequest.SoLuongTon,
-                //TrangThaiKhuyenMai = productRequest.TrangThaiKhuyenMai,
-                //Mota = editor,
+                TrangThaiKhuyenMai = trangThaiKhuyenMai,
+                Mota = MoTa,
                 TrangThai = 1,
                 SanPhamId = productRequest.SanPhamId,
                 MauSacId = productRequest.MauSacId == Guid.Empty ? null : productRequest.MauSacId,

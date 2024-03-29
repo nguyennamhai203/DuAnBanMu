@@ -1,0 +1,56 @@
+﻿﻿@using static Shop_Models.Heplers.TrangThai
+@model IEnumerable<Shop_Models.Entities.Khuyenmai>
+
+
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td class="hidden-column">
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @item.MaKhuyenMai
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenKhuyenMai)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayBatDau)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayKetThuc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoaiHinhKhuyenMai)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MucGiam)
+            </td>
+            <td>
+                <div class="label-container" style="display:flex;align-items:center;gap:10px;">
+                    <strong>Trạng thái:</strong>
+                    <label class="switch">
+                        <input type="checkbox" class="status-toggle" data-id="@item.Id" data-status="@item.TrangThai" @(item.TrangThai == (int)TrangThaiSale.DangBatDau ? "checked" : "")>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </td>
+            <td>
+
+
+                <div class="btn-group dropdown" style="cursor: pointer">
+                    <div class="dropdown">
+                        <i class="fas fa-bars dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown"></i>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2" style="background-color: #343a40;">
+                        <li><a href="@Url.Action("Edit","KhuyenMai", new {  Id=item.Id  })" class="dropdown-item" style="color: #ffffff;">Chỉnh Sửa</a></li>
+                        <li><a href="@Url.Action("ApllySale","KhuyenMaiChiTiet", new {  id=item.Id })" class="dropdown-item" style="color: #ffffff;">Áp Dụng</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+
+
+            </td>
+        </tr>
+    }

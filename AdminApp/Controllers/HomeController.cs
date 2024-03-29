@@ -48,6 +48,14 @@ namespace AdminApp.Controllers
                 return View();
             }
         }
+        public IActionResult Logout(/*string ReturnUrl = "/"*/)
+        {
+            HttpContext.Session.Remove("AccessToken");
+            HttpContext.Session.Remove("Result");
+            //  await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpPost]
         public async Task<IActionResult> LoginWithJWT(string username, string password)
         {

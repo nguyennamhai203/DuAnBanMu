@@ -24,7 +24,35 @@ namespace Shop_Api.Controllers
             var respon = await _repository.GetAsync(status,  page);
             return Ok(respon);
         }
-        [Authorize(Roles = AppRole.Admin)]
+        [HttpGet("GetAllProductInSale")]
+        public async Task<IActionResult> GetAllProductInSale(Guid idSale)
+        {
+            var respon = await _repository.GetAllProductInSale(idSale);
+            if (respon.IsSuccess == true)
+            {
+                return Ok(respon);
+            }
+            else return BadRequest(respon);
+        } 
+        
+        [HttpPost("RemoveSelectedProductPromotions")]
+        public async Task<IActionResult> RemoveSelectedProductPromotions(List<Guid> idSale)
+        {
+            var respon = await _repository.RemoveSelectedProductPromotions(idSale);
+            if (respon.IsSuccess == true)
+            {
+                return Ok(respon);
+            }
+            else return BadRequest(respon);
+        } 
+        
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var respon = await _repository.GetAll();
+            return Ok(respon);
+        }
+        //[Authorize(Roles = AppRole.Admin)]
         [HttpPost("CreateAsync")]
         public async Task<IActionResult> CreateAsync(Khuyenmai obj)
         {
@@ -38,6 +66,17 @@ namespace Shop_Api.Controllers
 
         [HttpPut("UpdateAsync")]
         public async Task<IActionResult> UpdateAsync(Khuyenmai obj)
+        {
+            var respon = await _repository.UpdateAsync(obj);
+            if (respon.IsSuccess == true)
+            {
+                return Ok(respon);
+            }
+            else return BadRequest(respon);
+        }
+        
+        [HttpPut("Update")]
+        public async Task<IActionResult> Update(Khuyenmai obj)
         {
             var respon = await _repository.UpdateAsync(obj);
             if (respon.IsSuccess == true)
