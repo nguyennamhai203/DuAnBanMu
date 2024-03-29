@@ -313,6 +313,8 @@
 
     <!-- -->
     <script>
+        debugger
+        var url;
         $(document).ready(function () {
             // Xử lý sự kiện khi click vào các thẻ tr trong phần tbody của #content1
             $('#content1').on('click', 'tbody tr', function (event) {
@@ -320,7 +322,7 @@
                 debugger;
                 console.log('Row clicked');
                 var sumGuid = $(this).data('sumguid');
-                var url = $(this).data('url');
+                 url = $(this).data('url');
                 // Gọi hàm AJAX để gửi sumGuid đến controller và hiển thị kết quả
                 $.ajax({
                     url: url,
@@ -339,6 +341,7 @@
                     }
                 });
             });
+
 
             // Ngăn chặn sự kiện click trên các thẻ <tr> trong phần <thead> của #content1
             $('#content1').on('click', 'thead tr', function (event) {
@@ -372,6 +375,7 @@
         }
 
         $('#modal-SanPham').on('hidden.bs.modal', function () {
+            $(this).empty();
             $('#updateModal').modal("show");
         });
     </script>
@@ -399,18 +403,23 @@
         }
 
         // $('#updateView-SanPham').on('hidden.bs.modal', function () {
-        //     $('#updateModal').modal("show");
+        //     // Làm mới nội dung của updateView-SanPham
+        //     $('#updateView-SanPham').empty(); // Xóa nội dung trong modal
+        //     // $('#updateView-SanPham').append('Nội dung mới'); // Thêm nội dung mới vào modal
+
+        //     // Hiển thị lại modal updateModal
+        //     $('#updateView-SanPham').modal('hide');
+        //     $('#updateModal').modal('show');
         // });
         $('#updateView-SanPham').on('hidden.bs.modal', function () {
-            // Làm mới nội dung của updateView-SanPham
-            $('#updateView-SanPham').empty(); // Xóa nội dung trong modal
-            // $('#updateView-SanPham').append('Nội dung mới'); // Thêm nội dung mới vào modal
+            // Xóa nội dung hiện tại của phần tử
+            $(this).empty();
 
             // Hiển thị lại modal updateModal
-            // $('#updateView-SanPham').modal('show');
-            $('#updateView-SanPham').modal('hide');
             $('#updateModal').modal('show');
+            console.log(url);
         });
+
     </script>
 
 }
@@ -432,7 +441,7 @@
         }, 3000); // Hiển thị thông báo trong 3 giây
     }
 </script>
-<script>
+@* <script>
     // Hàm xử lý sự kiện khi form được gửi
     function (event) {
         event.preventDefault(); // Ngăn chặn hành động mặc định của form
@@ -459,7 +468,7 @@
                 showAlert('Đã xảy ra lỗi khi cập nhật sản phẩm. Vui lòng thử lại sau.', false);
             });
     }
-</script>
+</script> *@
 
 
 

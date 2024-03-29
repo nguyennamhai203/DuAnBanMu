@@ -44,7 +44,7 @@
                                 </li>
                             </ul>
 
-                            <form asp-controller="SanPhamChiTiet" asp-action="Update" method="post" enctype="multipart/form-data">
+                            <form id="editprofile-form" method="post" enctype="multipart/form-data">
                                 <div class="tab-content m-t-15" id="myTabContent">
 
                                     <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="home-tab" id="home" style="min-height: 470px">
@@ -91,7 +91,7 @@
                                                             <select class="select2-active w-100" name="ThuongHieuId">
                                                                 @foreach (var item in (List<ThuongHieu>)ViewBag.GetThuongHieu!)
                                                                 {
-                                                                    if (item.Guid == Model.ThuongHieuId)
+                                                                    if (item.TenThuongHieu == Model.TenThuongHieu)
                                                                     {
                                                                         <option value="@item.Guid" selected>@item.TenThuongHieu</option>
                                                                     }
@@ -111,7 +111,7 @@
                                                             <select class="select2-active w-100" name="XuatXuId">
                                                                 @foreach (var item in (List<XuatXu>)ViewBag.GetXuatXu!)
                                                                 {
-                                                                    if (item.Guid == Model.XuatXuId)
+                                                                    if (item.TenXuatXu == Model.TenXuatXu)
                                                                     {
                                                                         <option value="@item.Guid" selected>@item.TenXuatXu</option>
                                                                     }
@@ -131,7 +131,7 @@
                                                             <select class="select2-active w-100" name="ChatLieuId">
                                                                 @foreach (var item in (List<ChatLieu>)ViewBag.GetChatLieu!)
                                                                 {
-                                                                    if (item.Guid == Model.ChatLieuId)
+                                                                    if (item.TenChatLieu == Model.TenChatLieu)
                                                                     {
                                                                         <option value="@item.Guid" selected>@item.TenChatLieu</option>
                                                                     }
@@ -151,7 +151,7 @@
                                                             <select class="select2-active w-100" name="LoaiId">
                                                                 @foreach (var item in (List<Loai>)ViewBag.GetLoai!)
                                                                 {
-                                                                    if (item.Id == Model.LoaiId)
+                                                                    if (item.TenLoai == Model.TenLoai)
                                                                     {
                                                                         <option value="@item.Id" selected>@item.TenLoai</option>
                                                                     }
@@ -176,7 +176,7 @@
                                                             <select class="select2-active w-100" name="MauSacId">
                                                                 @foreach (var item in (List<MauSac>)ViewBag.GetColor!)
                                                                 {
-                                                                    if (item.Guid == Model.MauSacId)
+                                                                    if (item.TenMauSac == Model.TenMauSac)
                                                                     {
                                                                         <option value="@item.Guid" selected>@item.TenMauSac</option>
                                                                     }
@@ -220,26 +220,27 @@
                                                 </div>
                                                 <div class="form-group d-flex align-items-center col-4">
                                                     <div class="switch m-r-10">
-                                                        @if (Model.TrangThaiKhuyenMai == true)
+                                                        @if (Model.TrangThaiKhuyenMai == 1||Model.TrangThaiKhuyenMai==2)
                                                         {
-                                                            <input type="checkbox" name="TrangThaiKhuyenMai" id="switch-trangThaiKhuyenMai-@Model.Id" class="switch-2-trangThaiKhuyenMai" checked>
+                                                            <input type="checkbox"  id="trangthaikm" class="switch-2-trangThaiKhuyenMai" onchange="updateTrangThai()" checked>
                                                         }
                                                         else
                                                         {
-                                                            <input type="checkbox" name="TrangThaiKhuyenMai" id="switch-trangThaiKhuyenMai-@Model.Id" class="switch-2-trangThaiKhuyenMai">
+                                                            <input type="checkbox"  id="trangthaikm" class="switch-2-trangThaiKhuyenMai" onchange="updateTrangThai()">
                                                         }
 
-                                                        <label class="font-weight-semibold" for="switch-trangThaiKhuyenMai-@Model.Id."></label>
+                                                        <label class="font-weight-semibold" for="trangthaikm">Cho phép áp dụng khuyến mại</label>
                                                     </div>
-                                                    <label class="font-weight-semibold">Cho phép áp dụng khuyễn mại</label>
                                                 </div>
-                                                <div style="color: red">
+                                                <input type="hidden" name="trangThaiKhuyenMai" id="trangThaiKhuyenMai" value="@Model.TrangThaiKhuyenMai" />
+
+                                              @*   <div style="color: red">
                                                     Lưu ý:
                                                     <br />
                                                     <Modelan>
                                                         -Việc thay đổi thông tin các trường tên sản phẩm, thương hiệu, xuất xứ, chất liệu, loại giày, kiểu đế giày có thể gây ra việc thêm mới một nhóm sản phẩm khác!
                                                     </Modelan>
-                                                </div>
+                                                </div> *@
                                             </div>
                                         </div>
                                     </div>
@@ -290,13 +291,13 @@
                                                 <label class="font-weight-semibold" style="diModellay: block; margin-bottom: 5px;">
                                                     Mô tả sản phẩm
                                                 </label>
-                                                <div class="moTa w-100" style="height: 400px" name="MoTa">@Html.Raw(@Model.SoLuongDaBan)</div>
+                                                <textarea class="moTa w-100" style="height: 400px" name="MoTa">@Html.Raw(@Model.Mota)</textarea>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button id="update-editprofile-button" type="submit" class="btn btn-primary m-t-30" onclick="saveForm()">Lưu thay đổi</button>
                             </form>
 
                         </div>
@@ -307,7 +308,7 @@
 
 
         </div>
-        <div class="modal-footer d-flex justify-content-between" style="background: #d0dae3 ">
+     @*    <div class="modal-footer d-flex justify-content-between" style="background: #d0dae3 ">
             <div>
                 <button class="btn btn-kio" id="btn-save">
                     <i class="anticon anticon-loading m-r-5"></i>
@@ -321,7 +322,7 @@
                     <Modelan>Close</Modelan>
                 </button>
             </div>
-        </div>
+        </div> *@
     </div>
 </div>
 <script>
@@ -420,30 +421,131 @@
 
 
 <script>
-    // Hàm xử lý sự kiện khi submit form
-    async function submitForm() {
-        try {
-            // Lấy dữ liệu từ form
-            const formData = new FormData(document.getElementById('updateForm'));
 
-            // Gửi request đến controller sử dụng fetch API
-            const response = await fetch('/SanPhamChiTiet/Update', {
-                method: 'POST',
-                body: formData
-            });
+    // Hàm xử lý sự kiện khi checkbox thay đổi trạng thái
+    function updateTrangThai() {
+        var trangthaikm = document.getElementById('trangthaikm').checked ? 1 : 0;
+        document.getElementById('trangThaiKhuyenMai').value = trangthaikm;
+    }
 
-            // Kiểm tra trạng thái của response
-            if (response.ok) {
-                // Nếu thành công, hiển thị thông báo và làm gì đó
-                alert('Cập nhật sản phẩm thành công.');
-            } else {
-                // Nếu thất bại, hiển thị thông báo lỗi
-                alert('Có lỗi xảy ra khi cập nhật sản phẩm.');
-            }
-        } catch (error) {
-            // Nếu có lỗi trong quá trình gửi request, hiển thị thông báo lỗi
-            alert('Có lỗi xảy ra khi gửi yêu cầu.');
-            console.error(error);
+    // // Hàm xử lý sự kiện khi submit form
+    // async function submitForm() {
+    //     try {
+    //         // Lấy dữ liệu từ form
+    //         const formData = new FormData(document.getElementById('updateForm'));
+
+    //         // Gửi request đến controller sử dụng fetch API
+    //         const response = await fetch('/SanPhamChiTiet/Update', {
+    //             method: 'POST',
+    //             body: formData
+    //         });
+
+    //         // Kiểm tra trạng thái của response
+    //         if (response.code===200) {
+    //             // Nếu thành công, hiển thị thông báo và làm gì đó
+    //             alert('Cập nhật sản phẩm thành công.');
+    //         } else {
+    //             // Nếu thất bại, hiển thị thông báo lỗi
+    //             alert('Có lỗi xảy ra khi cập nhật sản phẩm.');
+    //         }
+    //     } catch (error) {
+    //         // Nếu có lỗi trong quá trình gửi request, hiển thị thông báo lỗi
+    //         alert('Có lỗi xảy ra khi gửi yêu cầu.');
+    //         console.error(error);
+    //     }
+    // }
+
+
+
+
+
+
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right", // Sửa từ "toast-top-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
         }
     }
+
+    function saveForm() {
+        var formData = new FormData(document.getElementById('editprofile-form'));
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Confirm Title',
+            text: 'Bạn có chắc chắn muốn sửa ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, perform the request
+                performRequest(formData);
+            } else {
+                // User canceled, do nothing
+                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+            }
+        });
+    }
+
+
+
+    function performRequest(formData) {
+        $.ajax({
+            url: '/SanPhamChiTiet/Update',
+            type: 'PUT',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+
+
+                    showNotification(results.message, "success");
+                    document.getElementById('editprofile-form').reset();
+
+                } else {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "error");
+                    document.getElementById('editprofile-form').reset();
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+
+
 </script>

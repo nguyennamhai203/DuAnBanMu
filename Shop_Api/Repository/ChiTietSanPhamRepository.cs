@@ -97,6 +97,8 @@ namespace Shop_Api.Repository
                 //chiTietSanPham.GiaThucTe = model.GiaThucTe;
                 chiTietSanPham.SoLuongTon = model.SoLuongTon;
                 //chiTietSanPham.SoLuongDaBan = model.SoLuongDaBan;
+                chiTietSanPham.TrangThaiKhuyenMai = model.TrangThaiKhuyenMai;
+                chiTietSanPham.Mota = model.Mota;
 
                 chiTietSanPham.SanPhamId = model.SanPhamId;
                 chiTietSanPham.LoaiId = model.LoaiId;
@@ -139,7 +141,8 @@ namespace Shop_Api.Repository
                 };
             }
             try
-            {              
+            {
+                chiTietSanPham.TrangThaiKhuyenMai = model.TrangThaiKhuyenMai;
                 _dbContext.ChiTietSanPhams.Update(chiTietSanPham);
                 await _dbContext.SaveChangesAsync();
                 return new ResponseDto
@@ -205,7 +208,7 @@ namespace Shop_Api.Repository
             return list;
         }
 
-        public async Task<List<SanPhamChiTietDto>> GetAsync(int? status/*, int page = 1*/)
+        public async Task<List<SanPhamChiTietDto>> GetAllAsync(int? status/*, int page = 1*/)
         {
             var list = _dbContext.ChiTietSanPhams.AsQueryable();
             var result = list.Select(sp => new SanPhamChiTietDto
@@ -238,6 +241,7 @@ namespace Shop_Api.Repository
                 TenChatLieu = sp.ChatLieu.TenChatLieu,
 
                 TrangThai = sp.TrangThai,
+                TrangThaiKhuyenMai = sp.TrangThaiKhuyenMai,
 
                 SanPhamId = sp.SanPhamId,
                 LoaiId = sp.LoaiId,
@@ -257,9 +261,10 @@ namespace Shop_Api.Repository
 
             });
 
-            if (status != null) {
-               
-                return result.Where(x=>x.TrangThai==status).ToList();
+            if (status != null)
+            {
+
+                return result.Where(x => x.TrangThai == status).ToList();
             }
             return result.ToList();
 
@@ -548,6 +553,7 @@ namespace Shop_Api.Repository
                             SoLuongTon = a.SoLuongTon,
                             SoLuongDaBan = a.SoLuongDaBan,
                             TrangThai = a.TrangThai,
+                            TrangThaiKhuyenMai = a.TrangThaiKhuyenMai,
                             MaSanPham = a.SanPham.MaSanPham,
                             TenSanPham = a.SanPham.TenSanPham,
                             MaLoai = a.Loai.MaLoai,
@@ -595,6 +601,8 @@ namespace Shop_Api.Repository
                     SoLuongTon = a.SoLuongTon,
                     SoLuongDaBan = a.SoLuongDaBan,
                     TrangThai = a.TrangThai,
+                    TrangThaiKhuyenMai = a.TrangThaiKhuyenMai,
+                    Mota = a.Mota,
                     MaSanPham = a.SanPham.MaSanPham,
                     TenSanPham = a.SanPham.TenSanPham,
                     MaLoai = a.Loai.MaLoai,

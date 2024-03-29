@@ -59,6 +59,9 @@ builder.Services.AddScoped<IPhuongThucThanhToanChiTietRepository, PhuongThucThan
 builder.Services.AddScoped<IGioHangChiTietServices, GioHangChiTietServices>();
 
 
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddHostedService<PromotionUpdateService>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

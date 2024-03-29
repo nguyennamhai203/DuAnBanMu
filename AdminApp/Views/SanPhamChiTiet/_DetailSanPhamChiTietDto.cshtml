@@ -127,6 +127,22 @@
                                                             }
                                                         </td>
                                                     </tr>
+                                                    <tr >
+                                                        <td>Trạng thái khuyến mại: </td>
+                                                        <td class="text-dark font-weight-semibold">
+                                                            @if (Model.TrangThaiKhuyenMai == 1 )
+                                                            {
+                                                                <span> Cho Phép Khuyến Mại</span>
+                                                            } else if (Model.TrangThaiKhuyenMai == 2 )
+                                                            {
+                                                                <span> Đang áp dụng khuyến mại</span>
+                                                            }
+                                                            else 
+                                                            {
+                                                                <span> Không được phép áp dụng khuyến mại</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -164,7 +180,7 @@
                                         <h4 class="card-title">Mô tả sản phẩm</h4>
                                     </div>
                                     <div class="card-body">
-                                      @*   @Html.Raw(Model.SoLuongDaBan) *@
+                                        @Html.Raw(Model.Mota)
                                     </div>
                                 </div>
                             </div>

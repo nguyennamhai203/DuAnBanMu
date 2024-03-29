@@ -1,0 +1,196 @@
+﻿@model Shop_Models.Entities.Khuyenmai
+
+@{
+    ViewData["Title"] = "Thêm Khuyến Mại";
+}
+
+<h1>Thêm Khuyến Mại</h1>
+
+<h4>Khuyenmai</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Createaa" id="editprofile-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+          @*   <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="MaKhuyenMai" class="control-label"></label>
+                <input asp-for="MaKhuyenMai" class="form-control" />
+                <span asp-validation-for="MaKhuyenMai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TenKhuyenMai" class="control-label"></label>
+                <input asp-for="TenKhuyenMai" class="form-control" />
+                <span asp-validation-for="TenKhuyenMai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgayBatDau" class="control-label"></label>
+                <input asp-for="NgayBatDau" class="form-control" />
+                <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgayKetThuc" class="control-label"></label>
+                <input asp-for="NgayKetThuc" class="form-control" />
+                <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label class="control-label">Loại hình khuyến mãi</label>
+                    <select asp-for="LoaiHinhKhuyenMai" class="form-control" asp-items="ViewBag.ListLoaiHinh" id="LoaiHinhKMSelect"></select>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label class="control-label">Mức giảm</label>
+                    <select asp-for="MucGiam" class="form-control" asp-items="ViewBag.ListGiamGia" id="MucGiamSelect"></select>
+                    <input type="text" asp-for="MucGiam" class="form-control" style="display: none" id="MucGiamInput">
+                    <span asp-validation-for="MucGiam" class="text-danger"></span>
+                </div>
+            </div>         
+                <div class="form-group col-md-4">
+                    <label class="control-label">Trạng thái</label>
+                    <select asp-for="TrangThai" class="form-control" asp-items="ViewBag.TrangThai"></select>             
+            </div>
+            <div class="form-group">
+                @* <input type="submit" value="Create" class="btn btn-primary"  /> *@
+                <button id="update-editprofile-button" type="submit" class="btn btn-primary m-t-30" onclick="saveForm()">Tạo Khuyến Mãi</button>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script>
+    $(document).ready(function () {
+        $('#LoaiHinhKMSelect').change(function () {
+            var selectedOption = $(this).val();
+            if (selectedOption === 'Khuyến mại giảm giá') {
+                $('#MucGiamSelect').prop('disabled', false).show();
+                $('#MucGiamInput').prop('disabled', true).hide();
+            } else {
+                $('#MucGiamSelect').prop('disabled', true).hide();
+                $('#MucGiamInput').prop('disabled', false).show();
+            }
+        });
+    });
+</script>
+
+<script>
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right", // Sửa từ "toast-top-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+
+
+
+    // function saveForm() {
+    //     var formData = new FormData(document.getElementById('editprofile-form'));
+    //     event.preventDefault();
+    //     // Thực hiện request và hiển thị thông báo
+    //     performRequest(formData);
+    // }
+
+    function saveForm() {
+        var formData = new FormData(document.getElementById('editprofile-form'));
+        var selectedOption = $('#LoaiHinhKMSelect').val();
+        var mucGiam;
+
+        if (selectedOption === 'Khuyến mại giảm giá') {
+            // Lấy giá trị từ select
+            mucGiam = $('#MucGiamSelect').val();
+        } else {
+            // Lấy giá trị từ input
+            mucGiam = $('#MucGiamInput').val();
+        }
+        formData.append("MucGiam", mucGiam);
+
+        Swal.fire({
+            title: 'Confirm Title',
+            text: 'Bạn có chắc chắn muốn thêm bản ghi này ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, perform the request
+                performRequest(formData);
+            } else {
+                // User canceled, do nothing
+                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+            }
+        });
+
+        event.preventDefault(); // Di chuyển lệnh này xuống phía dưới
+    }
+
+
+
+
+    function performRequest(formData) {
+        $.ajax({
+            url: '/KhuyenMai/Createaa',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+
+
+                    showNotification(results.message, "success");
+                    document.getElementById('editprofile-form').reset();
+
+                } else {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "error");
+                    // document.getElementById('editprofile-form').reset();
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+</script>

@@ -1,0 +1,234 @@
+﻿@using Shop_Models.Entities;
+
+
+@{
+    ViewData["Title"] = "Sản Phẩm Khuyến Mại";
+    // Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<div style="text-align:center">
+    <h1>Sản Phẩm Khuyến Mại</h1>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" type="text/css" href="~/Admin/css/ApplySale.css">
+<style>
+    .clickable-image {
+        cursor: pointer;
+    }
+</style>
+
+
+<div class="card" style="display: flex; flex-direction: column; height: 100vh; overflow: hidden;">
+    <div class="card-body" style="flex-shrink: 0; z-index: 1; background-color: #ffeedb; padding: 15px;">
+        <div class="row" style="margin-bottom:10px">
+            @*  <select class="custom-select" aria-label="Large select example" id="selectSale" style="display:none">
+            @foreach (var item in (SelectList)ViewData["IdSale"])
+            {
+            <option value="@item.Value">@item.Text</option>
+            }
+            </select> *@
+
+            <select class="custom-select" aria-label="Large select example" id="selectSale">
+                <option value="">TenKhuyenMai</option>
+
+                @foreach (var t in ViewBag.KhuyenMai)
+                {
+                <option value="@t.Id">@t.TenKhuyenMai</option>
+                }
+
+
+            </select>
+
+
+        </div>
+
+        <div id="swapContainer" class="form-row" style="background-color:#ffeedb">
+        </div>
+        <button id="applySaleButton" class="btn btn-primary" style="float:right">
+            <i class="anticon anticon-plus-circle m-r-5"></i>
+            <span>Hủy sale</span>
+        </button>
+    </div>
+    <div id="ex" style="overflow: auto; flex-grow: 1;">
+        <div id="sanPham">
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(document).on('click', '#select-all-checkbox', function () {
+        $('.voucher-checkbox').prop('checked', $(this).prop('checked'));
+    })
+    $(document).ready(function () {
+
+        var select = document.getElementById('selectSale');
+        var selectValue = select.value;
+        updateSwapContent(selectValue);
+        locSanPham(selectValue);
+        $('#select-all-checkbox').click(function () {
+            $('.voucher-checkbox').prop('checked', $(this).prop('checked'));
+        });
+    });
+
+    document.getElementById("applySaleButton").addEventListener("click", function () {
+        var selectedProducts = [];
+        var checkboxes = document.querySelectorAll("input[name='selectedProducts']:checked");
+        checkboxes.forEach(function (checkbox) {
+            selectedProducts.push(checkbox.value);
+        });
+        var idSale = document.getElementById("selectSale").value;
+        var formData = new FormData();
+        formData.append("idSale", idSale);
+        selectedProducts.forEach(function (productId) {
+            formData.append("selectedProducts", productId);
+        });
+        var idsale = document.getElementById("selectSale").value;
+        $.ajax({
+            url: "@Url.Action("RemoveSale", "KhuyenMaiChiTiet")",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+
+
+                    showNotification(results.message, "success");
+                    // document.getElementById('editprofile-form').reset();
+                    locSanPham(idsale);
+
+                } else {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "error");
+                    // document.getElementById('editprofile-form').reset();
+                    locSanPham(idsale);
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    });
+
+    document.getElementById('selectSale').addEventListener('change', function () {
+        updateSwapContent(this.value);
+        locSanPham(this.value);
+    });
+
+    function updateSwapContent(selectedValue) {
+        $.ajax({
+            url: "@Url.Action("viewSale", "KhuyenMaiChiTiet")",
+            type: "GET",
+            data: { id: selectedValue },
+            success: function (partialViewHtml) {
+                document.getElementById('swapContainer').innerHTML = partialViewHtml;
+            },
+            error: function () {
+                console.error('Failed to load partial view.');
+            }
+        });
+    }
+    function locSanPham(selectedValue) {
+        $('#preloader').show();
+        $.ajax({
+            url: "@Url.Action("ProductsInSale", "KhuyenMaiChiTiet")",
+            type: "GET",
+            data: { idSale: selectedValue },
+            success: function (partialViewHtml) {
+                $('#preloader').hide();
+                document.getElementById('sanPham').innerHTML = partialViewHtml;
+            },
+            error: function () {
+                console.error('Failed to load partial view.');
+            }
+        });
+    }
+    // function timKiem() {
+    //     var idThuongHieu = document.getElementById('idThuongHieu').value;
+    //     var idMauSac = document.getElementById('idMauSac').value;
+    //     var idLoaiMu = document.getElementById('idLoaiMu').value;
+    //     var select = document.getElementById('selectSale');
+    //     var selectValue = select.value;
+    //     $('#preloader').show();
+    //     $.ajax({
+    //         url: "@Url.Action("viewSanPhamFilter", "KhuyenMaiChiTiet")",
+    //         type: "GET",
+    //         data: { id: selectValue, idThuongHieu: idThuongHieu, idLoaiMu: idLoaiMu, idMauSac: idMauSac },
+    //         success: function (partialViewHtml) {
+    //             $('#preloader').hide();
+    //             document.getElementById('sanPham').innerHTML = partialViewHtml;
+    //         },
+    //         error: function () {
+    //             console.error('Failed to load partial view.');
+    //         }
+    //     });
+    // }
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right", // Sửa từ "toast-top-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        var table = $('#data-table').DataTable();
+        if (!table || !$.fn.DataTable.isDataTable('#data-table')) {
+            // Nếu bảng chưa được khởi tạo DataTables thì khởi tạo nó
+            $('#data-table').DataTable({
+                // Các tùy chọn của DataTables
+                "paging": true,
+                "lengthChange": true,
+                "lengthMenu": [10, 25, 50, 75, 100],
+                "searching": true
+            });
+        }
+
+    </script>
+    <script src="~/Admin_assets/js/pages/e-commerce-order-list.js"></script>
+    <script src="~/Admin_assets/vendors/datatables/jquery.dataTables.min.js" defer></script>
+    <script src="~/Admin_assets/vendors/datatables/dataTables.bootstrap.min.js" defer></script>
+    <script src="~/Admin_assets/js/pages/datatables.js" defer></script>
+}
+
+<style>
+    #swapContainer {
+        display: flex;
+        width: 100%;
+    }
+
+</style>
+

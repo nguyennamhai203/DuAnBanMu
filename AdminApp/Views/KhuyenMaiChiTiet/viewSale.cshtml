@@ -1,0 +1,31 @@
+﻿@using Shop_Models.Entities;
+@model Khuyenmai;
+
+@* 
+<div class="form-group col-md-4">
+    <img src="~/AnhSale/@Model.Url" alt="Ảnh khuyến mãi" style="width:200px; max-height:200px; margin-left: 20px;">
+
+
+</div> *@
+
+<div class="form-row col-md-8">
+    <div class="form-group col-md-6">
+        <strong>Mã khuyến mãi:</strong> @Model.MaKhuyenMai
+    </div>
+    <div class="form-group col-md-6">
+        <strong>Tên khuyến mãi:</strong> @Model.TenKhuyenMai
+    </div>
+    <div class="form-group col-md-6">
+        <strong>Ngày bắt đầu:</strong> @((Model.NgayBatDau.HasValue ? Model.NgayBatDau.Value.ToShortDateString() : ""))<br />
+    </div>
+    <div class="form-group col-md-6">
+        <strong>Ngày kết thúc:</strong> @((Model.NgayBatDau.HasValue ? Model.NgayKetThuc.Value.ToShortDateString() : ""))<br />
+    </div>
+    <div class="form-group col-md-6">
+        <strong>Loại hình:</strong> @(Model.LoaiHinhKhuyenMai == "Khuyến mại đồng giá" ? "Khuyến mại đồng giá" : "Khuyến mại giảm giá")<br />
+    </div>
+    <div class="form-group col-md-6">
+        <strong>Mức giảm:</strong>@((Model.LoaiHinhKhuyenMai == "Khuyến mại đồng giá") ? string.Format("{0:N0}đ", @Model.MucGiam) : Model.MucGiam + "%")<br />
+    </div>
+
+</div>

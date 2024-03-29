@@ -13,6 +13,7 @@ namespace Shop_Models.Entities
     {
         [Key]
         public Guid Id { get; set; }
+        public Guid? VoucherId { get; set; }
         public string? MaHoaDon { get; set; }
         public DateTime NgayTao { get; set; }
         public DateTime NgayThanhToan { get; set; }

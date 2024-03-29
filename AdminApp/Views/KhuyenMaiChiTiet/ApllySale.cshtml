@@ -1,0 +1,289 @@
+﻿@using Shop_Models.Entities;
+
+@* @model IEnumerable<Shop_Models.Dto.SanPhamChiTietDto>; *@
+@* @model List<Shop_Models.Dto.SanPhamChiTietDto> *@
+@{
+    ViewData["Title"] = "ApllySale";
+    // Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<div style="text-align:center">
+    <h1>Apply Sale</h1>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" type="text/css" href="~/Admin/css/ApplySale.css">
+<style>
+    .clickable-image {
+        cursor: pointer;
+    }
+</style>
+
+
+<div class="card" style="display: flex; flex-direction: column; height: 100vh; overflow: hidden;">
+    <div class="card-body" style="flex-shrink: 0; z-index: 1; background-color: #ffeedb; padding: 15px;">
+
+        <div class="row" style="margin-bottom:10px">
+            @*  <select class="custom-select" aria-label="Large select example" id="selectSale" style="display:none">
+            @foreach (var item in (SelectList)ViewData["IdSale"])
+            {
+            <option value="@item.Value">@item.Text</option>
+            }
+            </select> *@
+
+            <select class="custom-select" aria-label="Large select example" id="selectSale">
+                @if (ViewBag.KhuyenMai != null)
+                {
+                    foreach (var t in ViewBag.KhuyenMai)
+                    {
+                        <option value="@t.Id">@t.TenKhuyenMai</option>
+                    }
+                }
+
+            </select>
+
+
+            <div class="col-4" style="margin-top: 10px" id="thuonghieu">
+                <label class="font-weight-semibold">
+                    <span> Trạng Thái</span>
+                </label>
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-trademark mr-1"></i>
+                    <select id="idstauts" class="select2-active w-100" onchange="timKiem()">
+                        <option value="">Trạng Thái</option>
+                        <option value="1">Được Áp Dụng Sale</option>
+                        <option value="2">Đã Áp Dụng Sale</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-4" style="margin-top: 10px" id="thuonghieu">
+                <label class="font-weight-semibold">
+                    <span> Thương hiệu</span>
+                </label>
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-trademark mr-1"></i>
+                    <select id="idThuongHieu" class="select2-active w-100" onchange="timKiem()">
+                        <option>Chọn Thương Hiệu</option>
+                        @foreach (var t in (List<ThuongHieu>)ViewBag.GetThuongHieu)
+                        {
+                            <option value="@t.Guid">@t.TenThuongHieu</option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+            <div class="col-4" style="margin-top: 10px" id="loaigiay">
+                <label class="font-weight-semibold">Loại giầy</label>
+                <div class="d-flex align-items-center">
+                    <i class="fab fa-magento mr-1"></i>
+                    @*  <select id="idLoaiGiay" class="select2-active w-100" onchange="timKiem()">
+                    <option value="">Loại giày</option>
+                    @foreach (var item in (SelectList)ViewData["IdLoaiGiay"]!)
+                    {
+                    <option value="@item.Value">@item.Text</option>
+                    }
+                    </select> *@
+
+                    <select id="idLoaiMu" class="select2-active w-100" onchange="timKiem()">
+                        <option>Chọn Loại Mũ</option>
+                        @foreach (var t in (List<Loai>)ViewBag.GetLoai)
+                        {
+                            <option value="@t.Id">@t.TenLoai</option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+            <div class="col-4" style="margin-top: 10px" id="mausac">
+                <label class="font-weight-semibold">Màu Sắc</label>
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-palette mr-1"></i>
+                    @*     <select id="idMauSac" class="select2-active w-100" onchange="timKiem()">
+                    <option value="">Màu sắc</option>
+                    @foreach (var item in (SelectList)ViewData["IdMauSac"]!)
+                    {
+                    <option value="@item.Value">@item.Text</option>
+                    }
+                    </select> *@
+                    <select id="idMauSac" class="select2-active w-100" onchange="timKiem()">
+                        <option>Chọn Màu Sắc</option>
+                        @foreach (var t in (List<MauSac>)ViewBag.GetColor)
+                        {
+                            <option value="@t.Guid">@t.TenMauSac</option>
+                        }
+
+                    </select>
+
+                </div>
+            </div>
+
+        </div>
+        <div id="swapContainer" class="form-row" style="background-color:#ffeedb">
+        </div>
+        <button id="applySaleButton" class="btn btn-primary" style="float:right">
+            <i class="anticon anticon-plus-circle m-r-5"></i>
+            <span>Add sale</span>
+        </button>
+    </div>
+    <div id="ex" style="overflow: auto; flex-grow: 1;">
+        <div id="sanPham">
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(document).on('click', '#select-all-checkbox', function () {
+        $('.voucher-checkbox').prop('checked', $(this).prop('checked'));
+    })
+    $(document).ready(function () {
+
+        var select = document.getElementById('selectSale');
+        var selectValue = select.value;
+        updateSwapContent(selectValue);
+        locSanPham(selectValue);
+        $('#select-all-checkbox').click(function () {
+            $('.voucher-checkbox').prop('checked', $(this).prop('checked'));
+        });
+    });
+    document.getElementById("applySaleButton").addEventListener("click", function () {
+        var selectedProducts = [];
+        var checkboxes = document.querySelectorAll("input[name='selectedProducts']:checked");
+        checkboxes.forEach(function (checkbox) {
+            selectedProducts.push(checkbox.value);
+        });
+        var idSale = document.getElementById("selectSale").value;
+        var formData = new FormData();
+        formData.append("idSale", idSale);
+        selectedProducts.forEach(function (productId) {
+            formData.append("selectedProducts", productId);
+        });
+        $.ajax({
+            url: "@Url.Action("ApllySale", "KhuyenMaiChiTiet")",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                //alert("add thành công");
+                if (response.add != "") {
+                    Swal.fire({
+                        title: 'Thông báo!',
+                        text: response.add,
+                        icon: 'info',
+                        confirmButtonText: 'Đóng'
+                    }).then((result) => {
+
+                        if (result.isConfirmed || result.dismiss === Swal.DismissReason.backdrop || result.dismiss === Swal.DismissReason.esc) {
+                            location.reload();
+                        }
+                    });
+                }
+                else {
+                    Swal.fire({
+                        title: 'Thông báo!',
+                        html: "Áp dụng thành công với " + response.err + " Sản phẩm<br>" + response.err1 + " Đã áp dụng khuyến mại này",
+                        icon: 'info',
+                        confirmButtonText: 'Đóng'
+                    }).then((result) => {
+
+                        if (result.isConfirmed || result.dismiss === Swal.DismissReason.backdrop || result.dismiss === Swal.DismissReason.esc) {
+                            location.reload();
+                        }
+                    });
+                }
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    });
+
+    document.getElementById('selectSale').addEventListener('change', function () {
+        updateSwapContent(this.value);
+        locSanPham(this.value);
+    });
+
+    function updateSwapContent(selectedValue) {
+        $.ajax({
+            url: "@Url.Action("viewSale", "KhuyenMaiChiTiet")",
+            type: "GET",
+            data: { id: selectedValue },
+            success: function (partialViewHtml) {
+                document.getElementById('swapContainer').innerHTML = partialViewHtml;
+            },
+            error: function () {
+                console.error('Failed to load partial view.');
+            }
+        });
+    }
+    function locSanPham(selectedValue) {
+        $('#preloader').show();
+        $.ajax({
+            url: "@Url.Action("viewSanPhamFilter", "KhuyenMaiChiTiet")",
+            type: "GET",
+            data: { id: selectedValue, idThuongHieu: null, idLoaiMu: null, idMauSac: null },
+            success: function (partialViewHtml) {
+                $('#preloader').hide();
+                document.getElementById('sanPham').innerHTML = partialViewHtml;
+            },
+            error: function () {
+                console.error('Failed to load partial view.');
+            }
+        });
+    }
+    function timKiem() {idstauts
+        var idThuongHieu = document.getElementById('idThuongHieu').value;
+        var idMauSac = document.getElementById('idMauSac').value;
+        var idLoaiMu = document.getElementById('idLoaiMu').value;
+        var idstatus = document.getElementById('idstauts').value; console.log("idstatus:", idstauts); // Kiểm tra giá trị của idstatus trong console log
+
+        var select = document.getElementById('selectSale');
+        var selectValue = select.value;
+        $('#preloader').show();
+        $.ajax({
+            url: "@Url.Action("viewSanPhamFilter", "KhuyenMaiChiTiet")",
+            type: "GET",
+            data: { id: selectValue, idThuongHieu: idThuongHieu, idLoaiMu: idLoaiMu, idMauSac: idMauSac, status: idstatus },
+            success: function (partialViewHtml) {
+                $('#preloader').hide();
+                document.getElementById('sanPham').innerHTML = partialViewHtml;
+            },
+            error: function () {
+                console.error('Failed to load partial view.');
+            }
+        });
+    }
+
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        var table = $('#data-table').DataTable();
+        if (!table || !$.fn.DataTable.isDataTable('#data-table')) {
+            // Nếu bảng chưa được khởi tạo DataTables thì khởi tạo nó
+            $('#data-table').DataTable({
+                // Các tùy chọn của DataTables
+                "paging": true,
+                "lengthChange": true,
+                "lengthMenu": [10, 25, 50, 75, 100],
+                "searching": true
+            });
+        }
+
+    </script>
+    <script src="~/Admin_assets/js/pages/e-commerce-order-list.js"></script>
+    <script src="~/Admin_assets/vendors/datatables/jquery.dataTables.min.js" defer></script>
+    <script src="~/Admin_assets/vendors/datatables/dataTables.bootstrap.min.js" defer></script>
+    <script src="~/Admin_assets/js/pages/datatables.js" defer></script>
+}
+
+<style>
+    #swapContainer {
+        display: flex;
+        width: 100%;
+    }
+
+</style>
