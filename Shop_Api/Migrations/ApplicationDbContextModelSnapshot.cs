@@ -221,6 +221,9 @@ namespace Shop_Api.Migrations
                     b.Property<Guid?>("MauSacId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Mota")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("SanPhamId")
                         .HasColumnType("uniqueidentifier");
 
@@ -234,6 +237,9 @@ namespace Shop_Api.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("TrangThai")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TrangThaiKhuyenMai")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("XuatXuId")
@@ -393,14 +399,14 @@ namespace Shop_Api.Migrations
                     b.Property<int>("TrangThaiThanhToan")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("VouchersGuid")
+                    b.Property<Guid?>("VoucherId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NguoiDungId");
 
-                    b.HasIndex("VouchersGuid");
+                    b.HasIndex("VoucherId");
 
                     b.ToTable("HoaDon");
                 });
@@ -952,7 +958,7 @@ namespace Shop_Api.Migrations
 
                     b.HasOne("Shop_Models.Entities.Voucher", "Vouchers")
                         .WithMany("HoaDon")
-                        .HasForeignKey("VouchersGuid");
+                        .HasForeignKey("VoucherId");
 
                     b.Navigation("NguoiDung");
 

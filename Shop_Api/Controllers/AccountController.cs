@@ -31,9 +31,9 @@ namespace Shop_Api.Controllers
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             var result = await _accountRepository.LoginAsync(loginDto);
-            if (string.IsNullOrEmpty(result))
+            if (result.Success==false)
             {
-                return Unauthorized();
+                return BadRequest(result);
             }
             return Ok(result);
         }
@@ -49,22 +49,60 @@ namespace Shop_Api.Controllers
             else return Unauthorized();
         }
 
-        [HttpPost("Mail")]
+        [HttpPost("MailToAdmin")]
         public IActionResult Mail(string mail, string subjectt, string mess)
         {
             var result = _accountRepository.SendEmailAsync(mail, subjectt, mess);
-            return Ok("oke");
+            if (result.Result==true)
+            {
+                return Ok("oke");
+            }
+            return BadRequest("No");
         }
 
-        [HttpPost("xac")]
+        [HttpPost("XacNhan")]
         public async Task<IActionResult> Xac(SignUpDto model, string mail, string codeconfirm)
         {
-            var result = await _accountRepository.XacNhanTaoTkChoNhanVienAsync(model,codeconfirm,mail);
-            if (result != null) { 
-            return Ok(result); 
+            var result = await _accountRepository.XacNhanTaoTkChoNhanVienAsync(model, codeconfirm, mail);
+            if (result != null)
+            {
+                return Ok(result);
             }
             return BadRequest(result);
         }
-
+        
+        [HttpGet("FindProfileOfUser")]
+        public async Task<IActionResult> FindProfileOfUser(string userName)
+        {
+            var result = await _accountRepository.FindProfileOfUser(userName);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        
+        [HttpPut("CapNhatMatKhau")]
+        public async Task<IActionResult> CapNhatMatKhau(DoiMatKhauDto obj)
+        {
+            var result = await _accountRepository.CapNhatMatKhau(obj);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        
+        [HttpPut("CapNhatSDTDiaChi")]
+        public async Task<IActionResult> CapNhatSDTDiaChi(userSDTDiaChi obj)
+        {
+            var result = await _accountRepository.CapNhatSDTDiaChi(obj);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+       
     }
 }

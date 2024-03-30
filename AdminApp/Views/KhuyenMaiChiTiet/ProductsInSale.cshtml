@@ -1,0 +1,235 @@
+﻿@model IEnumerable<Shop_Models.Dto.SanPhamChiTietDto>
+
+@{
+    ViewData["Title"] = "ProductsInSale";
+}
+
+<h1>Các sản phẩm đang được áp dụng khuyến mại</h1>
+@* @model List<Shop_Models.Dto.SanPhamChiTietDto> *@
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+
+
+    <table id="data-table" class="table table-bordered table-hover no-footer w-100">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="select-all-checkbox" />
+                </th>
+                <th style="width: 30px">STT</th>
+                <th>MSPCT</th>
+                <th>Sản Phẩm</th>
+                <th>Thương Hiệu</th>
+                <th>Xuất Xứ</th>
+                <th>Màu</th>
+                <th>G/Thực tế</th>
+                <th>G/Bán</th>            
+                <th>Trạng thái khuyến mại</th>               
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int Stt = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>             
+                    <td>
+                        <div class="checkbox" data-id="@item.Id">
+                        <input id="check-item-@item.Id" type="checkbox" class="item" name="selectedProducts" value="@item.Id">
+                            <label for="check-item-@item.Id" class="m-b-0"></label>
+                        </div>
+                    </td>
+                    <td style="width: 30px">@Stt</td>
+                    <td>@item.MaSanPhamChiTiet</td>
+                    <td>
+                        <div class="d-flex align-items-center" style="cursor: pointer" onclick="XemSanPham('@item.Id')">
+                            <img class="img-fluid rounded" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.AnhThuNhat)" style="max-width: 60px" alt="">
+                            <h6 class="m-b-0 m-l-10">@item.TenSanPham</h6>
+                        </div>
+                    </td>
+                    <td>@item.TenThuongHieu</td>
+                    <td>@item.TenXuatXu</td>
+                    <td>@item.TenMauSac</td>
+                    <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaThucTe)</td>
+                    <td>
+                        <div class="editable-price">
+                            <span class="display-price">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                            <input class="edit-price form-control formatPrice-table" value="@item.GiaBan" style="display:none;" />
+                        </div>
+                    </td>
+                   
+                    
+                <td>
+                    @if (item.TrangThaiKhuyenMai == 1)
+                    {
+                        <i class="anticon anticon-close">Được áp dụng sale</i>
+                    }
+                    @if (item.TrangThaiKhuyenMai == 2)
+                    {
+                        <i class="anticon anticon-check">Đã áp dụng sale</i>
+                    }
+                    @if (item.TrangThaiKhuyenMai == 0)
+                    {
+                        <i class="anticon anticon-check">KKM</i>
+                    }
+                </td>
+                </tr>
+                Stt++;
+            }
+        </tbody>
+        <!-- Thêm các phần tử footer ở đây nếu cần -->
+    </table>
+
+
+
+
+
+@section Scripts{
+
+
+    <script>
+        var table = $('#data-table').DataTable();
+        if (!table || !$.fn.DataTable.isDataTable('#data-table')) {
+            // Nếu bảng chưa được khởi tạo DataTables thì khởi tạo nó
+            $('#data-table').DataTable({
+                // Các tùy chọn của DataTables
+                "paging": true,
+                "lengthChange": true,
+                "lengthMenu": [10, 25, 50, 75, 100],
+                "searching": true
+            });
+        }
+
+    </script>
+
+
+
+    <script>
+        function XemSanPham(idSanPham) {
+            console.log('Bạn vừa ấn vào nút');
+            $.ajax({
+                url: '/SanPhamChiTiet/LoadPartialView?idSanPhamChiTiet=' + idSanPham,
+                type: 'GET',
+                success: function (result) {
+                    debugger
+                    // $('#updateModal').modal("hide");
+                    $('#modal-SanPham').empty().html(result).modal("show");
+
+                    // $("#example").html(result);
+                    // // Mở modal
+                    // $("#updateModal").modal("show");
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+        // $('#modal-SanPham').on('hidden.bs.modal', function () {
+        //     $('#updateModal').modal("show");
+        // });
+    </script>
+
+    <script>
+        function EditSanPham(idSanPhamEdit) {
+            var data = {
+                idSanPhamChiTiet: idSanPhamEdit,
+            };
+            $.ajax({
+                url: '/SanPhamChiTiet/_SanPhamUpdatePartialView',
+                type: 'GET',
+                data: data,
+                success: function (result) {
+                    // $('#updateModal').modal('hide');
+                    $('#updateView-SanPham').empty().html(result).modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+
+
+        function NgungKinhDoanhSanPham(idSanPham) {
+            $('#updateModal').modal("hide");
+
+            Swal.fire({
+                title: 'Thông báo!',
+                text: 'Bạn có muốn khôi phục kinh doanh mặt hàng này!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/SanPhamChiTiet/Delete/' + idSanPham,
+                        type: 'GET',
+                        success: function (result) {
+                            if (result.code === 200) {
+                                Swal.fire({
+                                    title: 'Đã xác nhận!',
+                                    text: 'Hành động đã được thực hiện.',
+                                    icon: 'success'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                            console.log(status);
+                            console.log(error);
+                            console.log(xhr);
+                        }
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire('Đã hủy bỏ', 'Hành động không được thực hiện.', 'error').then(() => {
+                        location.reload();
+                    });
+                }
+            });
+        }
+    </script>
+}
+
+
+<style>
+    .dt-paging-button {
+        padding: 8px 12px;
+        margin: 0 2px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .dt-paging-button:hover {
+            background-color: #0056b3;
+        }
+
+        .dt-paging-button.current {
+            background-color: #0056b3;
+        }
+
+        .dt-paging-button.disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+            .dt-paging-button.disabled:hover {
+                background-color: #ccc;
+            }
+
+</style>

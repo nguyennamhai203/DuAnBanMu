@@ -1,0 +1,97 @@
+﻿ <!-- ======= Sidebar ======= -->
+@* <aside id="sidebar" class="sidebar">
+ *@
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+        <li class="nav-item">
+            <a class="nav-link " href="/Home">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+        </li><!-- End Dashboard Nav -->
+
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-menu-button-wide"></i><span>Quản Lí Sản Phẩm</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">         
+            <li>
+                <a href="/SanPhamChiTiet">
+                    <i class="bi bi-circle"></i><span>Danh Sách Sản Phẩm</span>
+                </a>
+            </li>
+            <li>
+                <a href="components-tooltips.html">
+                    <i class="bi bi-circle"></i><span>Danh Sách Thuộc Tính</span>
+                </a>
+            </li>
+        </ul>
+    </li><!-- End QLSPCT Nav -->
+
+
+    <li class="nav-item">
+        <a class="nav-link collapsed"  data-bs-toggle="collapse" href="#">
+            <i class="bi bi-menu-button-wide"></i><span>Quản lí Voucher</span>@* <i class="bi bi-chevron-down ms-auto"></i> *@
+        </a>
+    </li><!-- End Voucher Nav -->
+
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-menu-button-wide"></i><span>Danh Sách Nhân Viên</span>@* <i class="bi bi-chevron-down ms-auto"></i> *@
+        </a>
+    </li><!-- End NhanVien Nav -->
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-bar-chart"></i><span>Thống Kê</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+                <a href="charts-chartjs.html">
+                    <i class="bi bi-circle"></i><span>Chart.js</span>
+                </a>
+            </li>
+            <li>
+                <a href="charts-apexcharts.html">
+                    <i class="bi bi-circle"></i><span>ApexCharts</span>
+                </a>
+            </li>
+            <li>
+                <a href="charts-echarts.html">
+                    <i class="bi bi-circle"></i><span>ECharts</span>
+                </a>
+            </li>
+        </ul>
+    </li><!-- End ThongKe Nav -->
+
+        <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" href="/KhuyenMai">
+            <i class="fas fa-percent"></i><span>Khuyến Mại</span>
+            </a>
+    </li><!-- End Khuyến Mại Nav -->
+
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" href="/KhuyenMaiChiTiet">
+            <i class=" fas fa-tags"></i><span>Sản Phẩm Khuyến Mại</span>
+        </a>
+    </li><!-- End Sản Phẩm Khuyến Mại Nav -->
+
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" href="#">
+            <i class="fas fa-file-invoice"></i><span>Quản Lí Hóa Đơn</span>
+        </a>
+    </li><!-- End Quản Lí Hóa Đơn Nav -->
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" href="#">
+            <i class="fas fa-truck"></i><span>Quản Lí Trạng Thái Giao Hàng</span>
+        </a>
+    </li><!-- End Quản Lí Trạng Thái Giao Hàng Nav -->
+
+    </ul>
+
+@* </aside><!-- End Sidebar--> *@

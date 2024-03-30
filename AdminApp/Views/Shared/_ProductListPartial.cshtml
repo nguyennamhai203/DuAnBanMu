@@ -1,0 +1,107 @@
+﻿@* 
+
+<!-- Views/Shared/_ProductListPartial.cshtml -->
+
+@model IEnumerable<Shop_Models.Dto.SanPhamChiTietDto>
+
+<table id="productTable" class="table datatable">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product Code</th>
+            <th scope="col">Status</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.MaSanPhamChiTiet</td>
+                <td>@product.TrangThai</td>
+                <td>@product.TenSanPham</td>
+                <td>@product.GiaBan</td>
+                <td>@product.GiaNhap</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+ *@
+
+
+@* @{
+    ViewData["Title"] = "_ProductListPartial";
+} *@
+@if (ViewData["Title"] != null)
+{
+    <h5 class="card-title">@ViewData["Title"].ToString()</h5>
+}
+
+<!-- Table to display product list -->
+<table id="productTable" class="table datatable">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product Code</th>
+            <th scope="col">Status</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Product list will be dynamically loaded here -->
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Load initial product data
+            loadProductData();
+        });
+
+        function loadProductData() {
+            $.ajax({
+                url: "/test/GetTongQuanDanhSach",
+                type: "POST",
+                contentType: "application/json",
+                success: function (data) {
+                    updateProductTable(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", error);
+                }
+            });
+        }
+
+        function updateProductTable(data) {
+            if (data != null && data.length > 0) {
+                var tableBody = $("#table-sanpham tbody");
+                tableBody.empty(); // Xóa hết dữ liệu cũ
+
+                $.each(data, function (index, product) {
+                    var row = "<tr>" +
+                        "<td>" + (index + 1) + "</td>" + // Số thứ tự
+                        "<td>" + product.sanPham + "</td>" + // Tên sản phẩm
+                        "<td>" + product.thuongHieu + "</td>" + // Thương hiệu
+                        "<td>" + product.loaiMu + "</td>" + // Loại mũ
+                        "<td>" + product.xuatXu + "</td>" + // Xuất xứ
+                        "<td>" + product.chatLieu + "</td>" + // Chất liệu
+                        "<td>" + product.soMau + "</td>" + // Số mẫu
+                        "<td>" + product.tongSoLuongTon + "</td>" + // Tổng số lượng tồn
+                        "<td>" + product.tongSoLuongDaBan + "</td>" + // Tổng số lượng đã bán
+                        "</tr>";
+                    tableBody.append(row);
+                });
+            }
+        }
+
+
+
+    </script>
+}

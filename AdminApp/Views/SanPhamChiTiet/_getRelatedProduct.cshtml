@@ -1,0 +1,196 @@
+﻿@model List<Shop_Models.Dto.SanPhamChiTietDto>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+@{
+    var sumGuid = ViewBag.SumGuid;
+}
+<div id="example">
+    <div class="notification-toast top-right" id="notification-toast"></div>
+
+    <!-- Thêm nút Làm mới -->
+    <button id="refreshBtn" class="btn btn-primary">Làm mới</button>
+
+    <table id="data-table" class="table table-bordered table-hover no-footer w-100">
+        <thead>
+            <tr>
+                <th style="width: 30px">STT</th>
+                <th>MSPCT</th>
+                <th>Sản Phẩm</th>
+                <th>Màu</th>
+                <th>G/Nhập</th>
+                <th>G/Bán</th>
+                <th>SL</th>
+                <th>Đ/Bán</th>
+                <th>K/Doanh</th>
+                <th>Cho Phép km</th>
+                <th>Select</th>
+                <th>###</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int Stt = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="width: 30px">@Stt</td>
+                    <td>@item.MaSanPhamChiTiet</td>
+                    <td>
+                        <div class="d-flex align-items-center" style="cursor: pointer" onclick="XemSanPham('@item.Id')">
+                            <img class="img-fluid rounded" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.AnhThuNhat)" style="max-width: 60px" alt="">
+                            <h6 class="m-b-0 m-l-10">@item.TenSanPham</h6>
+                        </div>
+                    </td>
+                    <td>@item.TenMauSac</td>
+                    <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaNhap)</td>
+                    <td>
+                        <div class="editable-price">
+                            <span class="display-price">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                            <input class="edit-price form-control formatPrice-table" value="@item.GiaBan" style="display:none;" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="editable-soluong">
+                            <span class="display-soluong">@item.SoLuongTon</span>
+                            <input type="text" class="edit-soluong form-control" value="@item.SoLuongTon" style="display:none;" />
+                        </div>
+                    </td>
+                    <td>@item.SoLuongDaBan</td>
+                    <td>
+                        @if (item.TrangThai == 1)
+                        {
+                            <i class="anticon anticon-close">Kinh Doanh</i>
+                        }
+                        else
+                        {
+                            <i class="anticon anticon-check">Ngưng Kinh Doanh</i>
+                        }
+                    </td> 
+                    <td>
+                        @if (item.TrangThaiKhuyenMai == 1)
+                        {
+                            <i class="anticon anticon-close">Được áp dụng sale</i>
+                        }
+                        @if(item.TrangThaiKhuyenMai==2)
+                        {
+                            <i class="anticon anticon-check">Đã áp dụng sale</i>
+                        }
+                        @if (item.TrangThaiKhuyenMai == 0)
+                        {
+                            <i class="anticon anticon-check">KKM</i>
+                        }
+                    </td>
+                    <td>
+                        <div class="checkbox" data-id="@item.Id">
+                            <input id="check-item-@item.Id" type="checkbox" class="item">
+                            <label for="check-item-@item.Id" class="m-b-0"></label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group dropdown" style="cursor: pointer">
+                            <div class="dropdown">
+                               @*  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Dropdown button
+                                </button> *@
+                                <i class="fas fa-bars dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown"></i>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                                    @if (item.TrangThai != 1)
+                                    {
+                                        <li><a class="dropdown-item active" href="#" type="button" onclick="KhoiPhucSanPham('@item.Id','@sumGuid')">Khôi phục</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" href="#" type="button" onclick="NgungKinhDoanhSanPham('@item.Id','@sumGuid')">Ngừng KDoanh</a></li>
+
+                                    }
+                                    <li>  <button class="dropdown-item" type="button" onclick="EditSanPham('@item.Id')">Chỉnh sửa</button></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Coppy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                Stt++;
+            }
+        </tbody>
+        <!-- Thêm các phần tử footer ở đây nếu cần -->
+    </table>
+</div>
+ 
+<script>
+    var table = $('#data-table').DataTable();
+    if (!table || !$.fn.DataTable.isDataTable('#data-table')) {
+        // Nếu bảng chưa được khởi tạo DataTables thì khởi tạo nó
+        $('#data-table').DataTable({
+            // Các tùy chọn của DataTables
+            "paging": true,
+            "lengthChange": true,
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "searching": true
+        });
+    }
+   
+</script>
+
+<script>
+    // Xử lý sự kiện click của nút Làm mới
+    $('#refreshBtn').click(function () {
+        // Gửi yêu cầu làm mới nội dung từ cơ sở dữ liệu
+        refreshData();
+    });
+
+    // Hàm gửi yêu cầu làm mới nội dung từ cơ sở dữ liệu
+    function refreshData() {
+        // Gửi yêu cầu AJAX để làm mới dữ liệu từ cơ sở dữ liệu
+        debugger
+        $.ajax({
+            url: url, // Đường dẫn đến endpoint để làm mới dữ liệu
+            method: 'GET', // Phương thức GET hoặc POST tùy thuộc vào endpoint của bạn
+            success: function (response) {
+
+                // Cập nhật nội dung của bảng DataTable sau khi làm mới dữ liệu thành công
+                $('#example').html(response);
+
+            },
+            error: function (xhr, status, error) {
+                // Xử lý lỗi nếu có
+                console.error(error);
+                alert('Đã xảy ra lỗi khi làm mới dữ liệu.');
+            }
+        });
+    }
+</script>
+<style>
+    .dt-paging-button {
+        padding: 8px 12px;
+        margin: 0 2px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .dt-paging-button:hover {
+            background-color: #0056b3;
+        }
+
+        .dt-paging-button.current {
+            background-color: #0056b3;
+        }
+
+        .dt-paging-button.disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+            .dt-paging-button.disabled:hover {
+                background-color: #ccc;
+            }
+
+</style>
+

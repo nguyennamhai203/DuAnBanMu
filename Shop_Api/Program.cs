@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Shop_Api.Repository.IRepository;
 using Shop_Api.Repository;
+using Shop_Api.Services.IServices;
+using Shop_Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +56,11 @@ builder.Services.AddScoped<IAnhRepository, AnhRepository>();
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 builder.Services.AddScoped<IMauSacRepository, MauSacRepository>();
 builder.Services.AddScoped<IPhuongThucThanhToanChiTietRepository, PhuongThucThanhToanChiTietRepository>();
+builder.Services.AddScoped<IGioHangChiTietServices, GioHangChiTietServices>();
 
+
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddHostedService<PromotionUpdateService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -110,6 +116,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 var app = builder.Build();
+app.UseStaticFiles();// cho phép s? d?ng file
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

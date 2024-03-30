@@ -24,6 +24,13 @@ namespace Shop_Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _repository.GetAsync();
+            return Ok(result);
+        }
+
 
         [HttpPost("CreateAsync")]
         public async Task<IActionResult> CreateAsync(ChiTietKhuyenMai obj)

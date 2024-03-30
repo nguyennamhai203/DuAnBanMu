@@ -1,0 +1,308 @@
+﻿@using static Shop_Models.Heplers.TrangThai;
+@model IEnumerable<Shop_Models.Entities.Khuyenmai>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Khuyến Mại";
+    var thongBao = TempData["ThongBao"] as string;
+    TempData["ThongBao"] = null; // Xóa thông báo sau khi đã sử dụng
+}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+@if (!string.IsNullOrEmpty(thongBao))
+{
+    <script>
+        Swal.fire({
+            title: 'Thông báo!',
+            text: '@Html.Raw(Json.Serialize(thongBao))',
+            icon: 'info',
+            confirmButtonText: 'Đóng'
+        });
+    </script>
+}
+
+<nav>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/KhuyenMai"><h2>Khuyến Mại</h2></a></li>
+    </ol>
+</nav>
+
+<p>
+    <a href="/KhuyenMai/Create">Tạo Khuyến Mại</a>
+</p>
+
+
+
+<div id="example">
+    <div class="notification-toast top-right" id="notification-toast"></div>
+    <div style="display:flex;flex-direction:row;gap:10px;margin-bottom: 10px;">
+        <select class="form-control1" id="loaiKhuyenMai" onchange="timKiem()">
+            <option selected value="">Loại hình khuyến mại</option>
+            <option value="Khuyến mại đồng giá">Khuyến mại đồng giá</option>
+            <option value="Khuyến mại giảm giá">Khuyến mại giảm giá</option>
+        </select>
+
+        <select class="form-control1" id="trangThai" onchange="timKiem()">
+            <option selected value="">Tất cả</option>
+            <option value="1">Hoạt động</option>
+            <option value="0">Không hoạt động</option>
+            <option value="2">Chưa bắt đầu</option>
+            <option value="3">Ngưng hoạt động</option>
+        </select>
+    </div>
+    <table id="data-table" class="table table-bordered table-hover no-footer w-100">
+        <thead>
+            <tr>
+                <th class="hidden-column">
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.MaKhuyenMai)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TenKhuyenMai)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NgayBatDau)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NgayKetThuc)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LoaiHinhKhuyenMai)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MucGiam)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TrangThai)
+                </th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+        <tbody id="list-show">
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="hidden-column">
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @item.MaKhuyenMai
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TenKhuyenMai)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NgayBatDau)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NgayKetThuc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LoaiHinhKhuyenMai)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MucGiam)
+                    </td>
+                    <td>
+                        <div class="label-container" style="display:flex;align-items:center;gap:10px;">
+                            <strong>Trạng thái:</strong>
+                            <label class="switch">
+                                <input type="checkbox" class="status-toggle" data-id="@item.Id" data-status="@item.TrangThai" @(item.TrangThai == (int)TrangThaiSale.DangBatDau ? "checked" : "")>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </td>
+                    <td>
+
+
+                        <div class="btn-group dropdown" style="cursor: pointer">
+                            <div class="dropdown">
+                                <i class="fas fa-bars dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown"></i>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2" style="background-color: #343a40;">
+                                    <li><a href="@Url.Action("Edit","KhuyenMai", new {  Id=item.Id  })" class="dropdown-item" style="color: #ffffff;">Chỉnh Sửa</a></li>
+                                    <li><a href="@Url.Action("ApllySale","KhuyenMaiChiTiet", new {  id=item.Id })" class="dropdown-item" style="color: #ffffff;">Áp Dụng</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+@section Scripts{
+
+
+    <script>
+        var table = $('#data-table').DataTable();
+        if (!table || !$.fn.DataTable.isDataTable('#data-table')) {
+            // Nếu bảng chưa được khởi tạo DataTables thì khởi tạo nó
+            $('#data-table').DataTable({
+                // Các tùy chọn của DataTables
+                "paging": true, // Hiển thị phân trang
+                "lengthChange": true, // Cho phép thay đổi số lượng hàng trên mỗi trang
+                "lengthMenu": [10, 25, 50, 75, 100], // Các lựa chọn số lượng hàng trên mỗi trang
+                "searching": true, // Cho phép chức năng tìm kiếm
+                "ordering": true, // Cho phép sắp xếp các cột
+                "info": true, // Hiển thị thông tin số trang, số lượng bản ghi, v.v.
+                "autoWidth": true, // Tự động điều chỉnh chiều rộng của các cột
+                "responsive": true // Cho phép responsive design, tự động điều chỉnh giao diện cho các thiết bị khác nhau
+            });
+        }
+
+        function timKiem() {
+            debugger
+            var loaiKhuyenMai = document.getElementById('loaiKhuyenMai').value;
+            var trangThai = document.getElementById('trangThai').value;
+            // var tenKhuyenMai = document.getElementById('tenKhuyenMai').value;
+            var url = '@Url.Action("LstSale", "KhuyenMai")';
+            debugger
+            $.ajax({
+                type: "GET",
+                url: url, // Thay đổi đường dẫn thành url đã được tạo
+                data: {
+                    trangThaiSale: trangThai, loaiHinhKM: loaiKhuyenMai
+                },
+                success: function (response) {
+                    document.getElementById("list-show").innerHTML = response
+                },
+                error: function (error) {
+                    // Xử lý lỗi nếu cần
+                }
+            });
+
+        }
+
+    </script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            // Ẩn trường Id khi trang được tải
+            $('#data-table th:eq(0), #data-table td:eq(0)').hide();
+        });
+    </script>
+
+}
+
+
+
+<style>
+    .hidden-column {
+        display: none;
+    }
+
+
+
+    .dt-paging-button {
+        padding: 8px 12px;
+        margin: 0 2px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .dt-paging-button:hover {
+            background-color: #0056b3;
+        }
+
+        .dt-paging-button.current {
+            background-color: #0056b3;
+        }
+
+        .dt-paging-button.disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+            .dt-paging-button.disabled:hover {
+                background-color: #ccc;
+            }
+
+</style>
+
+
+<style>
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: red;
+        border-radius: 15px; /* Góc bo tròn */
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #ccc;
+            border-radius: 50%; /* Góc bo tròn */
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        background-color: lawngreen;
+        -webkit-transform: translateX(20px);
+        -ms-transform: translateX(20px);
+        transform: translateX(20px);
+    }
+
+    #data-table th,
+    #data-table td {
+        white-space: normal; /* Hiển thị nội dung trên nhiều dòng */
+    }
+
+    /* Thiết lập độ rộng cố định cho các cột */
+    #data-table th,
+    #data-table td {
+        width: 150px; /* Độ rộng cố định */
+    }
+
+</style>

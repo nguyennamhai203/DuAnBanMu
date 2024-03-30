@@ -1,0 +1,588 @@
+﻿@{
+    ViewData["Title"] = "Sản Phẩm Chi Tiết";
+
+
+}
+<style>
+    #updateModal {
+        z-index: 9999; /* Adjust the value as needed */
+    }
+
+    /* Đặt kích thước modal mặc định */
+    .modal-dialog {
+        max-width: 90%;
+        width: auto;
+        max-height: 90%;
+        height: auto;
+    }
+
+    /* Thiết lập thuộc tính cho việc kéo modal */
+    .modal-content {
+        overflow: hidden; /* Ngăn chặn nội dung bên ngoài khỏi modal */
+    }
+
+    /* Thiết lập kích thước của modal-body khi kéo */
+    .modal-body {
+        max-height: 100vh; /* Điều chỉnh kích thước tùy ý dựa trên nhu cầu của bạn */
+        overflow-y: auto;
+    }
+
+</style>
+@* <h1>Sản Phẩm Chi Tiết</h1> *@
+<div class="pagetitle">
+
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/SanPhamChiTiet">Tổng Quan Sản Phẩm</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="row w-100">
+    <div class="col-lg-8">
+        <div class="d-md-flex">
+            <div class="m-b-10">
+                <a class="btn btn-kio" href="/SanPhamChiTiet/DanhSachSanPhamNgungKinhDoanh">
+                    <i class="far fa-list-alt m-r-5"></i>
+                    <span>Danh sách sản phẩm ngừng kinh doanh</span>
+                </a>
+            </div>  <div class="m-b-10">
+                <a class="btn btn-kio" href="/SanPhamChiTiet/DanhSachSanPhamDangKinhDoanh">
+                    <i class="far fa-list-alt m-r-5"></i>
+                    <span>Danh sách sản phẩm đang kinh doanh</span>
+                </a>
+            </div>
+            <div class="m-b-10 m-l-10">
+                <a class="btn btn-kio" href="/SanPhamChiTiet/CreatePartialView">
+                    <i class="far fa-list-alt m-r-5"></i>
+                    <span>Thêm Sản Phẩm</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 text-right">
+    </div>
+</div>
+<div id="modalContent" style="display: block;">
+</div>
+
+<div id="alertMessage" class="alert" role="alert" style="display: none;"></div>
+
+
+@* <nav>
+    <button class="breadcrumb">
+        <li class="breadcrumb-item"> <a href="/SanPhamChiTiet/CreatePartialView">Thêm mới sản phẩm</a></li>
+    </button>
+</nav> *@
+<div class="datatable-top">
+    <div class="datatable-dropdown">
+        <label>
+            <select id="datatable-selector" class="datatable-selector">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+            </select> Mục nhập trên mỗi trang
+        </label>
+    </div>
+    <div class="datatable-search">
+        <input class="datatable-input" placeholder="Search..." type="search" title="Search within table">
+    </div>
+</div>
+<div id="productTableContainer" class="col-sm-12 m-t-15">
+    <!-- Table to display product list -->
+    <div class="table table-bordered table-hover no-footer w-100" id="content1">
+        <table class="table table-striped">
+            @*  <thead>
+            <tr>
+            <!-- Add table headers as needed -->
+            <th>San Pham</th>
+            <th>Chat Lieu</th>
+            <th>Loai Mu</th>
+            <th>Thuong Hieu</th>
+            <th>Xuat Xu</th>
+            <th>So Mau</th>
+            <th>Tong So Luong Ton</th>
+            <th>Tong So Luong Da Ban</th>
+            </tr>
+            </thead> *@
+            <tbody>
+                <!-- Data rows will be populated dynamically using JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <!-- Pagination buttons -->
+    <div class="pagination">
+        <button id="prevPageBtn" class="btn btn-primary" disabled>&laquo; Previous</button>
+        <button id="nextPageBtn" class="btn btn-primary">Next &raquo;</button>
+    </div>
+
+</div>
+@*
+<div class="space-y-2">
+    <!--Button trigger extra large modal-->
+    <button type="button"
+            class="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
+            data-twe-toggle="modal"
+            data-twe-target="#exampleModalXl"
+            data-twe-ripple-init
+            data-twe-ripple-color="light">
+        Extra large modal
+    </button>
+
+
+</div> *@
+<!-- Button trigger modal -->
+
+<div class="modal fade" id="updateModal">
+    <div class="modal-dialog modal-dialog-scrollable modal-custom">
+        <div class="modal-content">
+            <div class="modal-header align-items-center" style=" background: #00090b; color: white">
+                <i class="far fa-bell m-r-5" style="font-size: 33px"></i>
+                <h5 style="color: white" class="modal-title" id="ModalLabelDanhSach">DANH SÁCH SẢN PHẨM</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <i class="anticon anticon-close"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="example">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal-SanPham"></div>
+<div class="modal fade" id="updateView-SanPham"></div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Gắn sự kiện click vào các dòng trong phần thead
+            $('thead tr').click(function () {
+                // Xử lý khi người dùng nhấp vào các dòng trong phần thead
+                // Ví dụ: hiển thị thông báo
+                alert('Bạn đã nhấp vào một dòng trong phần thead!');
+            });
+        });
+    </script>
+
+    <script>
+        // Hàm để cập nhật thông tin về trang hiện tại và tổng số bản ghi trên trang
+        function updatePageInfo(page) {
+            var totalRecords = $('#content1').find('table tbody tr').length; // Số bản ghi trên trang hiện tại
+            var pageSize = $('#datatable-selector').val(); // Kích thước trang
+            var totalPages = Math.ceil(totalRecords / pageSize); // Tổng số trang
+
+            $('#currentPage').text(page); // Hiển thị số trang hiện tại
+            $('#totalRecords').text(totalRecords); // Hiển thị tổng số bản ghi trên trang
+            $('#totalPages').text(totalPages); // Hiển thị tổng số trang
+        }
+
+        // Hàm để cập nhật các số trang hiện có và có trang cuối
+        // Hàm để cập nhật các số trang hiện có và có trang cuối
+        function updatePaginationUI(page) {
+            // Xác định trạng thái của nút Previous dựa trên số trang hiện tại
+            if (page > 1) {
+                $('#prevPageBtn').prop('disabled', false); // Kích hoạt nút Previous nếu không phải là trang đầu tiên
+            } else {
+                $('#prevPageBtn').prop('disabled', true); // Vô hiệu hóa nút Previous nếu là trang đầu tiên
+            }
+
+            // Xác định trạng thái của nút Next dựa trên số trang và kích thước trang
+            var totalRecords = $('#content1').find('table tbody tr').length; // Số bản ghi trên trang hiện tại
+            var pageSize = $('#datatable-selector').val(); // Kích thước trang
+            var totalPages = Math.ceil(totalRecords / pageSize); // Tổng số trang
+            $('#totalPages').text(totalPages); // Hiển thị tổng số trang
+
+            if (totalRecords < pageSize) {
+                $('#nextPageBtn').prop('disabled', true); // Vô hiệu hóa nút Next nếu không có đủ bản ghi để hiển thị trên trang
+            } else {
+                $('#nextPageBtn').prop('disabled', false); // Kích hoạt nút Next nếu có đủ bản ghi để hiển thị trên trang
+            }
+
+            // Xác định tổng số bản ghi
+            $('#totalRecords').text(totalRecords);
+        }
+
+
+        // Hàm để gửi yêu cầu AJAX và cập nhật dữ liệu
+        function fetchData(page) {
+            var length = $('#datatable-selector').val(); // Lấy kích thước trang
+            var start = (page - 1) * length; // Tính toán chỉ số bắt đầu chính xác
+
+            var data = {
+                Length: length,
+                Start: start,
+            };
+
+            // Gửi yêu cầu AJAX để lấy dữ liệu từ máy chủ
+            $.ajax({
+                url: '/SanPhamChiTiet/DanhSachTongQuanSanPham',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (result) {
+                    $('#content1').empty().html(result); // Cập nhật dữ liệu trên trang
+                    updatePageInfo(page); // Cập nhật thông tin về trang hiện tại và tổng số bản ghi trên trang
+                    updatePaginationUI(page); // Cập nhật nút phân trang sau khi nhận dữ liệu
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $('#datatable-selector').on('change', function () {
+                fetchData(1); // Gọi hàm fetchData với trang đầu tiên khi thay đổi kích thước trang
+            });
+
+            // Khởi tạo dữ liệu ban đầu
+            fetchData(1); // Gọi hàm fetchData với trang đầu tiên khi trang tải
+
+            // Xử lý sự kiện khi nhấn nút Next
+            $('#nextPageBtn').on('click', function () {
+                var currentPage = parseInt($('#currentPage').text()); // Lấy số trang hiện tại từ giao diện
+                currentPage++; // Tăng số trang hiện tại lên 1
+                fetchData(currentPage); // Gọi hàm fetchData với trang tiếp theo
+            });
+
+            // Xử lý sự kiện khi nhấn nút Previous
+            $('#prevPageBtn').on('click', function () {
+                var currentPage = parseInt($('#currentPage').text()); // Lấy số trang hiện tại từ giao diện
+                currentPage--; // Giảm số trang hiện tại đi 1
+                fetchData(currentPage); // Gọi hàm fetchData với trang trước đó
+            });
+        });
+
+
+
+        $(document).ready(function () {
+            // Bắt sự kiện khi người dùng nhấn phím Enter trong trường tìm kiếm
+            $('.datatable-input').on('keypress', function (e) {
+                // Kiểm tra nếu phím nhấn là Enter (mã phím 13)
+                if (e.which === 13) {
+                    // Lấy giá trị nhập vào trường tìm kiếm
+                    var searchValue = $(this).val();
+                    var data = {}; // Khởi tạo đối tượng data
+
+                    // Kiểm tra nếu giá trị tìm kiếm không rỗng
+                    if (searchValue.trim() !== '') {
+                        data = {
+                            searchValue: searchValue
+                        };
+                    } else {
+                        // Nếu giá trị tìm kiếm rỗng, thiết lập giá trị mặc định
+                        data = {
+                            Length: 10,
+                            Start: 0
+                        };
+                    }
+
+                    // Gửi yêu cầu AJAX để lấy dữ liệu từ máy chủ
+                    $.ajax({
+                        url: '/SanPhamChiTiet/DanhSachTongQuanSanPham',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function (result) {
+                            $('#content1').empty().html(result); // Cập nhật dữ liệu trên trang
+
+                            // Cập nhật thông tin về trang hiện tại và tổng số bản ghi trên trang
+                            var totalRecords = $('#content1').find('table tbody tr').length; // Số bản ghi trên trang hiện tại
+                            var pageSize = $('#datatable-selector').val(); // Kích thước trang
+                            var totalPages = Math.ceil(totalRecords / pageSize); // Tổng số trang
+                            $('#totalPages').text(totalPages); // Hiển thị tổng số trang
+                            $('#totalRecords').text(totalRecords); // Hiển thị tổng số bản ghi trên trang
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                            console.log(status);
+                            console.log(error);
+                            console.log(xhr);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+
+    <!-- -->
+    <script>
+        debugger
+        var url;
+        $(document).ready(function () {
+            // Xử lý sự kiện khi click vào các thẻ tr trong phần tbody của #content1
+            $('#content1').on('click', 'tbody tr', function (event) {
+                event.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ <a>, nếu có
+                debugger;
+                console.log('Row clicked');
+                var sumGuid = $(this).data('sumguid');
+                 url = $(this).data('url');
+                // Gọi hàm AJAX để gửi sumGuid đến controller và hiển thị kết quả
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (result) {
+
+                        debugger; $("#example").html(result);
+                        // Mở modal
+                        $("#updateModal").modal("show");
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                        console.log(status);
+                        console.log(error);
+                        console.log(xhr);
+                    }
+                });
+            });
+
+
+            // Ngăn chặn sự kiện click trên các thẻ <tr> trong phần <thead> của #content1
+            $('#content1').on('click', 'thead tr', function (event) {
+                event.preventDefault();
+            });
+        });
+    </script>
+
+    <script>
+        function XemSanPham(idSanPham) {
+            console.log('Bạn vừa ấn vào nút');
+            $.ajax({
+                url: '/SanPhamChiTiet/LoadPartialView?idSanPhamChiTiet=' + idSanPham,
+                type: 'GET',
+                success: function (result) {
+                    debugger
+                    $('#updateModal').modal("hide");
+                    $('#modal-SanPham').empty().html(result).modal("show");
+
+                    // $("#example").html(result);
+                    // // Mở modal
+                    // $("#updateModal").modal("show");
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+        $('#modal-SanPham').on('hidden.bs.modal', function () {
+            $(this).empty();
+            $('#updateModal').modal("show");
+        });
+    </script>
+
+    <script>
+        function EditSanPham(idSanPhamEdit) {
+            var data = {
+                idSanPhamChiTiet: idSanPhamEdit,
+            };
+            $.ajax({
+                url: '/SanPhamChiTiet/_SanPhamUpdatePartialView',
+                type: 'GET',
+                data: data,
+                success: function (result) {
+                    $('#updateModal').modal('hide');
+                    $('#updateView-SanPham').empty().html(result).modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+        // $('#updateView-SanPham').on('hidden.bs.modal', function () {
+        //     // Làm mới nội dung của updateView-SanPham
+        //     $('#updateView-SanPham').empty(); // Xóa nội dung trong modal
+        //     // $('#updateView-SanPham').append('Nội dung mới'); // Thêm nội dung mới vào modal
+
+        //     // Hiển thị lại modal updateModal
+        //     $('#updateView-SanPham').modal('hide');
+        //     $('#updateModal').modal('show');
+        // });
+        $('#updateView-SanPham').on('hidden.bs.modal', function () {
+            // Xóa nội dung hiện tại của phần tử
+            $(this).empty();
+
+            // Hiển thị lại modal updateModal
+            $('#updateModal').modal('show');
+            console.log(url);
+        });
+
+    </script>
+
+}
+
+
+
+
+
+
+<script>
+    function showAlert(message, isSuccess) {
+        const alertMessage = document.getElementById('alertMessage');
+        alertMessage.textContent = message;
+        alertMessage.classList.add(isSuccess ? 'alert-success' : 'alert-danger');
+        alertMessage.style.display = 'block';
+        setTimeout(() => {
+            alertMessage.style.display = 'none';
+            alertMessage.classList.remove('alert-success', 'alert-danger');
+        }, 3000); // Hiển thị thông báo trong 3 giây
+    }
+</script>
+@* <script>
+    // Hàm xử lý sự kiện khi form được gửi
+    function (event) {
+        event.preventDefault(); // Ngăn chặn hành động mặc định của form
+
+        // Lấy form
+        const form = event.target;
+
+        // Gửi dữ liệu form bằng AJAX
+        fetch(form.action, {
+            method: form.method,
+            body: new FormData(form)
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Nếu cập nhật thành công, hiển thị thông báo thành công
+                    showAlert('Cập nhật sản phẩm thành công!', true);
+                } else {
+                    // Nếu cập nhật không thành công, hiển thị thông báo thất bại
+                    showAlert('Cập nhật sản phẩm thất bại. Vui lòng thử lại sau.', false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Đã xảy ra lỗi khi cập nhật sản phẩm. Vui lòng thử lại sau.', false);
+            });
+    }
+</script> *@
+
+
+
+<script>
+    // view index
+
+    function KhoiPhucSanPham(idSanPham, sumguid) {
+        $('#updateModal').modal("hide");
+        var sumGuid = sumguid;
+
+        Swal.fire({
+            title: 'Thông báo!',
+            text: 'Bạn có muốn khôi phục kinh doanh mặt hàng này!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/SanPhamChiTiet/KhoiPhuc/' + idSanPham,
+                    type: 'GET',
+                    success: function (result) {
+                        if (result.code === 200) {
+                            $.ajax({
+                                url: '/GetRelatedProducts?sumGuid=' + sumGuid,
+                                type: 'GET',
+                                success: function (results) {
+                                    $("#example").html(results);
+                                    Swal.fire({
+                                        title: 'Đã xác nhận!',
+                                        text: 'Hành động đã được thực hiện.',
+                                        icon: 'success'
+                                    }).then(() => {
+                                        $('#updateModal').modal("show");
+                                    });
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(xhr.responseText);
+                                    console.log(status);
+                                    console.log(error);
+                                    console.log(xhr);
+                                }
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                        console.log(status);
+                        console.log(error);
+                        console.log(xhr);
+                    }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire('Đã hủy bỏ', 'Hành động không được thực hiện.', 'error').then(() => {
+                    $('#updateModal').modal("show");
+                });
+            }
+        });
+    }
+
+
+    function NgungKinhDoanhSanPham(idSanPham, sumguid) {
+        $('#updateModal').modal("hide");
+        var sumGuid = sumguid;
+        Swal.fire({
+            title: 'Thông báo!',
+            text: 'Bạn có muốn ngừng kinh doanh mặt hàng này!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/SanPhamChiTiet/Delete/' + idSanPham,
+                    type: 'GET',
+                    success: function (result) {
+                        if (result.code === 200) {
+                            $.ajax({
+                                url: '/GetRelatedProducts?sumGuid=' + sumGuid,
+                                type: 'GET',
+                                success: function (result) {
+                                    $("#example").html(result);
+                                    Swal.fire({
+                                        title: 'Đã xác nhận!',
+                                        text: 'Hành động đã được thực hiện.',
+                                        icon: 'success'
+                                    }).then(() => {
+                                        $('#updateModal').modal("show");
+                                    });
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log(xhr.responseText);
+                                    console.log(status);
+                                    console.log(error);
+                                    console.log(xhr);
+                                }
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                        console.log(status);
+                        console.log(error);
+                        console.log(xhr);
+                    }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire('Đã hủy bỏ', 'Hành động không được thực hiện.', 'error').then(() => {
+                    $('#updateModal').modal("show");
+                });
+            }
+        });
+    }
+
+</script>
