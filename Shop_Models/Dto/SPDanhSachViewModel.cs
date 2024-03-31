@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Shop_Models.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +18,7 @@ namespace Shop_Models.Dto
         public string? XuatXu { get; set; }
         public string? ChatLieu { get; set; }
         public int SoMau { get; set; }
-        //public int SoSize { get; set; }
+        public List<SelectListItem>? LstMauSac { get; set; }
         public int TongSoLuongTon { get; set; }
         public double TongSoLuongDaBan { get; set; }
         //public int? tongsotrang { get; set; }

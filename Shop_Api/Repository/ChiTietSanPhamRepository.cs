@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
@@ -370,7 +371,7 @@ namespace Shop_Api.Repository
                 }
             }
 
-            var pageSize = PAGE_SIZE;
+           
 
             //if (PageSize == 0)
             //{
@@ -378,21 +379,21 @@ namespace Shop_Api.Repository
             //    query = query.Skip((int)((page - 1) * pageSize)).Take(pageSize);
             //}
             //query = query.Skip((int)((page - 1) * PageSize)).Take((int)PageSize);
-
-
             //var pageSize = 1;
-            //var totalItems = await query.CountAsync();
-            //var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
-            //page = Math.Clamp((int)page, 1, totalPages);
 
-            //query = query.Skip((int)((page - 1) * pageSize)).Take(pageSize);
+             var pageSize = PAGE_SIZE;
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            page = Math.Clamp((int)page, 1, totalPages);
 
-
-
-            //var result = await query.ToListAsync();
+            query = query.Skip((int)((page - 1) * pageSize)).Take(pageSize);
 
 
-            return query.ToList();
+
+            var result = await query.ToListAsync();
+
+
+            return result;
         }
 
 
@@ -434,6 +435,7 @@ namespace Shop_Api.Repository
 
                 .Include(sp => sp.Loai)
                 .Include(sp => sp.XuatXu)
+                .Include(sp => sp.MauSac)
                 .Include(sp => sp.ChatLieu);
 
             var viewModelResult = result
@@ -450,12 +452,11 @@ namespace Shop_Api.Repository
                     SumGuild = $"{gr.Key.SanPhamId}/{gr.Key.ThuongHieuId}/{gr.Key.LoaiId}/{gr.Key.XuatXuId}/{gr.Key.ChatLieuId}",
                     SanPham = gr.First().SanPham.TenSanPham,
                     ChatLieu = gr.First().ChatLieu.TenChatLieu,
-                    //KieuDeGiay = gr.First().KieuDeGiay.TenKieuDeGiay,
                     LoaiMu = gr.First().Loai.TenLoai,
                     ThuongHieu = gr.First().ThuongHieu.TenThuongHieu,
                     XuatXu = gr.First().XuatXu.TenXuatXu,
                     SoMau = gr.Select(it => it.MauSacId).Distinct().Count(),
-                    //SoSize = gr.Select(it => it.IdKichCo).Distinct().Count(),
+                      LstMauSac = gr.Select(it => new SelectListItem { Value = it.MauSacId.ToString(), Text = it.MauSac.TenMauSac }).ToList(),
                     TongSoLuongTon = gr.Sum(it => it.SoLuongTon.GetValueOrDefault()),
                     TongSoLuongDaBan = gr.Sum(it => it.SoLuongDaBan.GetValueOrDefault())
                 });
@@ -469,8 +470,6 @@ namespace Shop_Api.Repository
                         x.SanPham!.ToLower().Contains(searchValueLower) ||
                         x.LoaiMu!.ToLower().Contains(searchValueLower) ||
                         x.ChatLieu!.ToLower().Contains(searchValueLower)
-                        //||
-                        //x.KieuDeGiay!.ToLower().Contains(searchValueLower)
                         );
             }
 

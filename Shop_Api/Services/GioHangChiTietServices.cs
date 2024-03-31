@@ -26,8 +26,10 @@ namespace Shop_Api.Services
 		{
 			try
 			{
-				var sanPhamChiTietDTO = _reposSanPhamChiTiet.PGetProductDetail(null, codeProductDetail, null, null, null, null, null, null, null, null, null, null, null,null).Result.FirstOrDefault();
-				var sanPhamChiTiet = await _reposSanPhamChiTiet.GetAsync();
+				var sanPhamChiTietDTO1 = _reposSanPhamChiTiet.PGetProductDetail(null, codeProductDetail, null, null, null, null, null, null, null, null, null, null, null,null).Result.FirstOrDefault();
+				var sanPhamChiTietDTO = _reposSanPhamChiTiet.GetAllAsync(1).Result.Where(x=>x.MaSanPhamChiTiet==codeProductDetail).FirstOrDefault();
+
+                var sanPhamChiTiet = await _reposSanPhamChiTiet.GetAsync();
 				var user = await _userManager.FindByNameAsync(userName);
 
 				if (user == null)
