@@ -2,6 +2,7 @@
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
+using Shop_Models.ViewModels.ChatLieu;
 using System.Data.Entity;
 
 namespace Shop_Api.Repository
@@ -17,7 +18,7 @@ namespace Shop_Api.Repository
 
         public async Task<ResponseDto> CreateAsync(ChatLieu model)
         {
-            var checkMa = await _dbContext.ChatLieus.AnyAsync(x => x.MaChatLieu == model.MaChatLieu);
+            var checkMa = _dbContext.ChatLieus.Any(x => x.MaChatLieu == model.MaChatLieu);
             if (model == null || checkMa == true)
             {
                 return new ResponseDto
@@ -52,9 +53,9 @@ namespace Shop_Api.Repository
             }
         }
 
-        public async Task<ResponseDto> UpdateAsync(ChatLieu model)
+        public async Task<ResponseDto> UpdateAsync(ChatLieu model, Guid id)
         {
-            var chatLieu = await _dbContext.ChatLieus.FindAsync(model.Guid);
+            var chatLieu = await _dbContext.ChatLieus.FindAsync(id);
             if (chatLieu == null)
             {
                 return new ResponseDto
@@ -129,9 +130,9 @@ namespace Shop_Api.Repository
             }
         }
 
-        public async Task<List<ChatLieu>> GetAsync()
+        public async Task<List<ChatLieu>> GetAllAsync()
         {
-            var list =  _dbContext.ChatLieus.AsQueryable();
+            var list = _dbContext.ChatLieus.AsQueryable();
             return list.ToList();
         }
 
@@ -155,6 +156,11 @@ namespace Shop_Api.Repository
                 TrangThai = sp.TrangThai
             });
             return result.ToList();
+        }
+
+        public async Task<ChatLieu> GetByIdAsync(Guid id)
+        {
+            return await _dbContext.ChatLieus.FindAsync(id);
         }
     }
 }

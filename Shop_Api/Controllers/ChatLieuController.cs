@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Entities;
-using Shop_Models.Heplers;
+using Shop_Models.ViewModels.ChatLieu;
 
 namespace Shop_Api.Controllers
 {
@@ -27,15 +25,45 @@ namespace Shop_Api.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _repository.GetAsync();
+            var result = await _repository.GetAllAsync();
+            return Ok(result);
+        }
+        [HttpGet("GetById/{id:Guid}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await _repository.GetByIdAsync(id);
             return Ok(result);
         }
 
-        [Authorize(Roles = AppRole.Admin)]
-        [HttpPost("CreateAsync")]
-        public async Task<IActionResult> CreateAsync(ChatLieu obj)
+        /*[Authorize(Roles = AppRole.Admin)]*/
+        [HttpPost("post-chatlieu")]
+        public async Task<IActionResult> PostAsync(CreateChatLieu obj)
         {
-            var respon = await _repository.CreateAsync(obj);
+            if (obj == null)
+            {
+                return BadRequest("Du lieu them bi trong");
+            }
+            try
+            {
+                ChatLieu chatLieu = new ChatLieu();
+                chatLieu.Guid = Guid.NewGuid();
+                chatLieu.MaChatLieu = obj.MaChatLieu;
+                chatLieu.TenChatLieu = obj.TenChatLieu;
+                chatLieu.TrangThai = 0;
+                await _repository.CreateAsync(chatLieu);
+                return CreatedAtAction("Get", "ChatLieu", chatLieu);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        /*[Authorize(Roles = AppRole.Admin)]*/
+        [HttpPut("Put/{id:Guid}")]
+        public async Task<IActionResult> PutAsync(ChatLieu obj, Guid id)
+        {
+            var respon = await _repository.UpdateAsync(obj, id);
             if (respon.IsSuccess == true)
             {
                 return Ok(respon);
@@ -43,23 +71,11 @@ namespace Shop_Api.Controllers
             else return BadRequest(respon);
         }
 
-        [Authorize(Roles = AppRole.Admin)]
-        [HttpPut("UpdateAsync")]
-        public async Task<IActionResult> UpdateAsync(ChatLieu obj)
+        /*[Authorize(Roles = AppRole.Admin)]*/
+        [HttpDelete("Delete/{id:Guid}")]
+        public async Task<IActionResult> DeleteChatLieuAsync(Guid id)
         {
-            var respon = await _repository.UpdateAsync(obj);
-            if (respon.IsSuccess == true)
-            {
-                return Ok(respon);
-            }
-            else return BadRequest(respon);
-        }
-
-        [Authorize(Roles = AppRole.Admin)]
-        [HttpDelete("DeleteAsync")]
-        public async Task<IActionResult> DeleteAsync(Guid Id)
-        {
-            var respon = await _repository.DeleteAsync(Id);
+            var respon = await _repository.DeleteAsync(id);
             if (respon.IsSuccess == true)
             {
                 return Ok(respon);

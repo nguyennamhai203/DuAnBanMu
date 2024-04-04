@@ -1,0 +1,247 @@
+﻿@model IEnumerable<Shop_Models.Entities.Voucher>
+@using Shop_Models.Entities
+
+@{
+    ViewData["Title"] = "Index";
+    var voucher = (ViewData["Voucher"] as List<Voucher>);
+}
+
+<div class="pagetitle">
+    <h1>Quản lý Voucher</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active">Tổng quan</li>
+            <li class="breadcrumb-item active">Voucher</li>
+        </ol>
+    </nav>
+</div>
+<!-- End Page Title -->
+
+<section class="section dashboard">
+    <div class="row">
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+            <div class="row">
+                <!-- Recent Sales -->
+                <div class="col-12">
+                    <div class="card recent-sales overflow-auto">
+                        <div class="card-body">
+                            <table class="table table-hover datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Mã</th>
+                                        <th>Tên</th>
+                                        <th>Phần Trăm Giảm</th>
+                                        <th>Số Lượng</th>
+                                        <th>Ngày Bắt Đầu</th>
+                                        <th>Ngày Kết Thúc</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in @Model)
+                                    {
+                                        <tr>
+                                            <td>@item.MaVoucher</td>
+                                            <td>@item.TenVoucher</td>
+                                            <td>@item.PhanTramGiam</td>
+                                            <td>@item.SoLuong</td>
+                                            <td>@item.NgayBatDau</td>
+                                            <td>@item.NgayHetHan</td>
+                                            <td>
+                                                <a asp-area="Admin" asp-controller="Voucher" asp-action="Detail" asp-route-id="@item.Guid" class="btn btn-success" title="Chi tiết">
+                                                    <i class="bx bxs-detail"></i>
+                                                </a>
+                                                <a asp-controller="Voucher" asp-action="Delete" asp-route-id="@item.Guid" class="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa??')" title="Xóa">
+                                                    <i class="bx bxs-trash-alt"></i>
+                                                </a>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- End Recent Sales -->
+            </div>
+
+        </div><!-- End Left side columns -->
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+            <!-- Recent Activity -->
+            <div class="card">
+
+                <div class="card-body">
+                    <h5 class="card-title">Quản lý <span>| xx</span></h5>
+                    <!-- Default Tabs -->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="contact-tab" data-bs-toggle="tab"
+                                    data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
+                                    aria-selected="false">
+                                Chi tiết
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link " id="home-tab" data-bs-toggle="tab"
+                                    data-bs-target="#home" type="button" role="tab" aria-controls="home"
+                                    aria-selected="true">
+                                Cập nhật
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab"
+                                    data-bs-target="#profile" type="button" role="tab" aria-controls="profile"
+                                    aria-selected="false">
+                                Tạo mới
+                            </button>
+                        </li>
+                    </ul>
+
+                    @* Update *@
+                    <div class="tab-content pt-2" id="myTabContent">
+                        <div class="tab-pane fade" id="home" role="tabpanel"
+                             aria-labelledby="home-tab">
+                            @if (voucher != null)
+                            {
+                                <form asp-area="Admin" asp-controller="Voucher" asp-action="Update" asp-route-id="@voucher.First().Guid">
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Mã</label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="@voucher.First().MaVoucher" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Tên</label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="@voucher.First().TenVoucher" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Tỉ Lệ</label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="@voucher.First().PhanTramGiam" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Số Lượng</label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="@voucher.First().SoLuong" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Ngày Bắt Đầu</label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="@voucher.First().NgayBatDau" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Ngày Kết Thúc</label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="@voucher.First().NgayHetHan" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+
+
+                                    <button class="btn btn-warning" onclick="return confirm('Bạn chắc chắn có muốn sửa??')">Lưu</button>
+                                </form>
+                            }
+                        </div>
+
+                        @* Create *@
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <form asp-area="Admin" asp-controller="Voucher" asp-action="Create">
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label">Mã</label>
+                                    <div class="col-sm-8">
+                                        <input name="MaVoucher" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label">Tên</label>
+                                    <div class="col-sm-8">
+                                        <input name="TenVoucher" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label">Tỉ Lệ</label>
+                                    <div class="col-sm-8">
+                                        <input name="PhanTramGiam" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label">Sô Lượng</label>
+                                    <div class="col-sm-8">
+                                        <input name="SoLuong" type="number" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label">Ngày Bắt Đầu</label>
+                                    <div class="col-sm-8">
+                                        <input name="NgayBatDau" type="date" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label">Ngày Kết Thúc</label>
+                                    <div class="col-sm-8">
+                                        <input name="NgayHetHan" type="date" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-success">Thêm</button>
+                            </form><!-- End Multi Columns Form -->
+                        </div>
+
+                        @* Detail *@
+                        <div class="tab-pane fade show active" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            @if (voucher != null)
+                            {
+                                <div class="row">
+                                    <label class="col-sm-4 col-form-label">
+                                        <p>Mã</p>
+                                        <p>Tên</p>
+                                        <p>Tỉ Lệ</p>
+                                        <p>Số Lượng</p>
+                                        <p>Ngày tạo</p>
+                                        <p>Ngày sửa</p>
+                                        <span>Trạng thái</span>
+                                    </label>
+                                    <label class="col-sm-8 col-form-label">
+                                        @foreach (var item in voucher)
+                                        {
+                                            <p>@item.MaVoucher</p>
+                                            <p>@item.TenVoucher</p>
+                                            <p>@item.PhanTramGiam</p>
+                                            <p>@item.SoLuong</p>
+                                            <p>@item.NgayBatDau</p>
+                                            <p>@item.NgayHetHan</p>
+                                            @if (item.TrangThai == 0)
+                                            {
+                                                <span>Mới</span>
+                                            }
+                                            else if (item.TrangThai == 1)
+                                            {
+                                                <span>Đã sửa</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Đã xóa</span>
+                                            }
+                                        }
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div><!-- End Default Tabs -->
+
+                </div>
+
+            </div>
+        </div><!-- End Recent Activity -->
+
+    </div><!-- End Right side columns -->
+
+</section>

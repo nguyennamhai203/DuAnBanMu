@@ -1,4 +1,5 @@
-﻿using Shop_Api.AppDbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
@@ -36,51 +37,46 @@ namespace Shop_Api.Repository
             }
         }
 
-        public async Task<ResponseDto> DeleteVoucher(Guid Id)
+        public async Task<ResponseDto> DeleteVoucher(Guid id)
         {
-            var iddelete = await contextVC.Vouchers.FindAsync(Id);
+            var voucher = await contextVC.Vouchers.FindAsync(id);
+            if (voucher == null)
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    IsSuccess = false,
+                    Code = 404,
+                    Message = "Không Tim Thấy Bản Ghi",
+                };
+            }
             try
             {
-                contextVC.Vouchers.Remove(iddelete);
+                contextVC.Vouchers.Remove(voucher);
                 await contextVC.SaveChangesAsync();
                 return new ResponseDto
                 {
+                    Content = null,
+                    IsSuccess = true,
                     Code = 200,
-                    Message = "Xoa thanh cong"
+                    Message = "Xóa Thành Công",
                 };
             }
             catch (Exception)
             {
                 return new ResponseDto
                 {
+                    Content = null,
+                    IsSuccess = false,
                     Code = 500,
-                    Message = "Xoa loi roi"
+                    Message = "Lỗi Hệ Thống",
                 };
             }
         }
 
-        public async Task<ResponseDto> GetByIdVoucher(Guid id)
+        public async Task<Voucher> GetByIdVoucher(Guid id)
         {
-            var getid = await contextVC.Vouchers.FindAsync(id);
-            try
-            {
-                return new ResponseDto
-                {
-                    IsSuccess = true,
-                    Content = getid,
-                    Code = 200,
-                    Message = "Da tim thay du lieu"
-                };
-            }
-            catch (Exception)
-            {
-                return new ResponseDto
-                {
-                    IsSuccess = false,
-                    Code = 500,
-                    Message = "Khong thay du lieu"
-                };
-            }
+            return await contextVC.Vouchers.FindAsync(id);
         }
 
         public async Task<List<Voucher>> GetListVoucher(int? status, int page = 1)
@@ -106,12 +102,13 @@ namespace Shop_Api.Repository
 
         public async Task<List<Voucher>> GetVoucher()
         {
-            return await contextVC.Vouchers.ToListAsync();
+            var list = contextVC.Vouchers.AsQueryable();
+            return list.ToList();
         }
 
-        public async Task<ResponseDto> UpdateVoucher(Voucher update)
+        public async Task<ResponseDto> UpdateVoucher(Voucher update, Guid id)
         {
-            var idupdate = await contextVC.Vouchers.FindAsync(update.Guid);
+            var idupdate = await contextVC.Vouchers.FindAsync(id);
             try
             {
                 idupdate.MaVoucher = update.MaVoucher;
@@ -120,8 +117,8 @@ namespace Shop_Api.Repository
                 idupdate.SoLuong = update.SoLuong;
                 idupdate.NgayBatDau = update.NgayBatDau;
                 idupdate.NgayHetHan = update.NgayHetHan;
-                idupdate.TrangThai = update.TrangThai;
-                contextVC.Vouchers.Update(update);
+                /*idupdate.TrangThai = update.TrangThai;*/
+                contextVC.Vouchers.Update(idupdate);
                 await contextVC.SaveChangesAsync();
                 return new ResponseDto
                 {

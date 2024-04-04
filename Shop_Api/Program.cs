@@ -1,21 +1,15 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Shop_Api.AppDbContext;
+using Shop_Api.Repository;
+using Shop_Api.Repository.IRepository;
+using Shop_Api.Services;
+using Shop_Api.Services.IServices;
 using Shop_Models.Entities;
 using System.Text;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-//using Shop_API.Repository.IRepository;
-//using Shop_API.Repository;
-using Microsoft.OpenApi.Models;
-using Shop_Api.Repository.IRepository;
-using Shop_Api.Repository;
-using Shop_Api.Services.IServices;
-using Shop_Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -127,6 +121,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication(); // Add this line to configure authentication
 
 app.UseAuthorization();
+
+app.UseCors();
 
 app.MapControllers();
 
