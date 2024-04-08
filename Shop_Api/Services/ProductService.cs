@@ -92,7 +92,7 @@ namespace Shop_Api.Services
                             // Cập nhật giá sản phẩm dựa trên loại hình khuyến mãi
                             if (currentPromotion.LoaiHinhKhuyenMai == "Khuyến mại giảm giá")
                             {
-                                product.GiaBan = product.GiaBan - (product.GiaBan * currentPromotion.MucGiam / 100);
+                                product.GiaBan = product.GiaThucTe - (product.GiaThucTe * currentPromotion.MucGiam / 100);
                             }
                             else if (currentPromotion.LoaiHinhKhuyenMai == "Khuyến mại đồng giá")
                             {

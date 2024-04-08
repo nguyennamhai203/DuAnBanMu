@@ -12,6 +12,7 @@ namespace Shop_Models.Dto
         public int Start { get; set; }
         public int Length { get; set; }
         public string? SearchValue { get; set; }
+        public string? SumGuid { get; set; }
         public Guid? IdSanPham { get; set; }
         public Guid? IdThuongHieu { get; set; }
         public Guid? IdChatLieu { get; set; }

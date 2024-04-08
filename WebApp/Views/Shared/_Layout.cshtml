@@ -82,11 +82,13 @@
         </nav>
     </header> *@
     @await Html.PartialAsync("_Header")
-    @* <div class="container">
-        <main role="main" class="pb-3"> *@
+
+
+     @*    <main role="main" class="pb-3">  *@
             @RenderBody()
-        @* </main>
-    </div> *@
+         @* </main> *@
+
+
     @await Html.PartialAsync("_Footer")
     @* <footer class="border-top footer text-muted"> *@
         @* <div class="container"> *@

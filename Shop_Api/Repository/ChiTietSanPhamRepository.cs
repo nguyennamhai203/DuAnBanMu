@@ -5,6 +5,8 @@ using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Shop_Models.Heplers.TrangThai;
 //using System.Data.Entity;
 
 namespace Shop_Api.Repository
@@ -279,7 +281,7 @@ namespace Shop_Api.Repository
             var query = _dbContext.ChiTietSanPhams.AsQueryable()
                 .AsNoTracking()
                 .Include(a => a.Anhs)
-                .Where(a => (status == null || a.TrangThai == status) && (codeProductDetail != null ? a.MaSanPham == codeProductDetail : true))
+                //.Where(a => (status == null || a.TrangThai == status) && (codeProductDetail != null ? a.MaSanPham == codeProductDetail : true))
                 .Select(a => new SanPhamChiTietDto
                 {
                     Id = a.Id,
@@ -352,6 +354,10 @@ namespace Shop_Api.Repository
             {
                 query = query.Where(x => x.TenChatLieu.Contains(chatLieu));
             };
+            if (!string.IsNullOrEmpty(codeProductDetail))
+            {
+                query = query.Where(x => x.MaSanPhamChiTiet.Contains(codeProductDetail));
+            };
 
 
 
@@ -371,7 +377,7 @@ namespace Shop_Api.Repository
                 }
             }
 
-           
+
 
             //if (PageSize == 0)
             //{
@@ -381,7 +387,7 @@ namespace Shop_Api.Repository
             //query = query.Skip((int)((page - 1) * PageSize)).Take((int)PageSize);
             //var pageSize = 1;
 
-             var pageSize = PAGE_SIZE;
+            var pageSize = PAGE_SIZE;
             var totalItems = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
             page = Math.Clamp((int)page, 1, totalPages);
@@ -402,6 +408,26 @@ namespace Shop_Api.Repository
         {
             var query = _dbContext.ChiTietSanPhams.AsQueryable();
 
+            // Lọc theo SumGuild nếu SumGuild được chỉ định trong tham số
+            if (!string.IsNullOrEmpty(parametersTongQuanDanhSach.SumGuid))
+            {
+                var sumGuidParts = parametersTongQuanDanhSach.SumGuid.Split('/');
+                if (sumGuidParts.Length == 5)
+                {
+                    var idSanPham = Guid.Parse(sumGuidParts[0]);
+                    var idThuongHieu = Guid.Parse(sumGuidParts[1]);
+                    var idLoai = Guid.Parse(sumGuidParts[2]);
+                    var idXuatXu = Guid.Parse(sumGuidParts[3]);
+                    var idChatLieu = Guid.Parse(sumGuidParts[4]);
+
+                    query = query.Where(it =>
+                        it.SanPhamId == idSanPham &&
+                        it.ThuongHieuId == idThuongHieu &&
+                        it.LoaiId == idLoai &&
+                        it.XuatXuId == idXuatXu &&
+                        it.ChatLieuId == idChatLieu);
+                }
+            }
             if (parametersTongQuanDanhSach.IdSanPham == Guid.Empty)
             {
                 query = query.Where(it => it.SanPhamId == parametersTongQuanDanhSach.IdSanPham);
@@ -447,19 +473,28 @@ namespace Shop_Api.Repository
                     gr.XuatXuId,
                     gr.LoaiId,
                 })
-                .Select(gr => new SPDanhSachViewModel
-                {
-                    SumGuild = $"{gr.Key.SanPhamId}/{gr.Key.ThuongHieuId}/{gr.Key.LoaiId}/{gr.Key.XuatXuId}/{gr.Key.ChatLieuId}",
-                    SanPham = gr.First().SanPham.TenSanPham,
-                    ChatLieu = gr.First().ChatLieu.TenChatLieu,
-                    LoaiMu = gr.First().Loai.TenLoai,
-                    ThuongHieu = gr.First().ThuongHieu.TenThuongHieu,
-                    XuatXu = gr.First().XuatXu.TenXuatXu,
-                    SoMau = gr.Select(it => it.MauSacId).Distinct().Count(),
-                      LstMauSac = gr.Select(it => new SelectListItem { Value = it.MauSacId.ToString(), Text = it.MauSac.TenMauSac }).ToList(),
-                    TongSoLuongTon = gr.Sum(it => it.SoLuongTon.GetValueOrDefault()),
-                    TongSoLuongDaBan = gr.Sum(it => it.SoLuongDaBan.GetValueOrDefault())
-                });
+               .Select(gr => new SPDanhSachViewModel
+               {
+                   SumGuild = $"{gr.Key.SanPhamId}/{gr.Key.ThuongHieuId}/{gr.Key.LoaiId}/{gr.Key.XuatXuId}/{gr.Key.ChatLieuId}",
+                   SanPham = gr.First().SanPham.TenSanPham,
+                   ChatLieu = gr.First().ChatLieu.TenChatLieu,
+                   LoaiMu = gr.First().Loai.TenLoai,
+                   ThuongHieu = gr.First().ThuongHieu.TenThuongHieu,
+                   XuatXu = gr.First().XuatXu.TenXuatXu,
+                   SoMau = gr.Select(it => it.MauSacId).Distinct().Count(),
+                   LstMauSac = gr.Select(it => new SelectListItem { Value = it.MauSacId.ToString(), Text = it.MauSac.TenMauSac }).ToList(),
+                   LstMauSac2 = gr.Select(x => x.MauSac.TenMauSac).Distinct().ToList()!,
+                   TongSoLuongTon = gr.Sum(it => it.SoLuongTon.GetValueOrDefault()),
+                   TongSoLuongDaBan = gr.Sum(it => it.SoLuongDaBan.GetValueOrDefault()),
+                   LinkAnh = _dbContext.Anhs
+        .Where(image => image.ChiTietSanPhamId == gr.First().Id && image.MaAnh == "Anh1")
+        .Select(image => image.URL)
+        .FirstOrDefault(),
+                   GiaBanNhoNhat = gr.Min(it => it.GiaBan), // Giá bán nhỏ nhất
+                   GiaBanLonNhat = gr.Max(it => it.GiaBan), // Giá bán lớn nhất
+                   Id = gr.Select(it => new SelectListItem { Value = it.Id.ToString(), Text = it.MauSac.TenMauSac }).ToList(),
+               });
+
 
             if (!string.IsNullOrEmpty(parametersTongQuanDanhSach.SearchValue))
             {
@@ -474,6 +509,204 @@ namespace Shop_Api.Repository
             }
 
             return await viewModelResult.ToListAsync();
+        }
+
+        public async Task<List<SPDanhSachViewModel>> GetItemShopViewModelAsync(string sumguid)
+        {
+            try
+            {
+                var listGuid = sumguid.Split('/');
+                var idSanPham = Guid.Parse(listGuid[0]);
+                var idThuongHieu = Guid.Parse(listGuid[1]);
+                var idLoai = Guid.Parse(listGuid[2]);
+                var idXuatXu = Guid.Parse(listGuid[3]);
+                var idChatLieu = Guid.Parse(listGuid[4]);
+                var query = _dbContext.ChiTietSanPhams.AsQueryable();
+                //var sanPham = await _dbContext.ChiTietSanPhams.AsQueryable()
+                //    .Include(sp => sp.SanPham)
+                //    .Include(sp => sp.ThuongHieu)
+                //    .Include(sp => sp.Loai)
+                //    .Include(sp => sp.XuatXu)
+                //    .Include(sp => sp.MauSac)
+                //    .Include(sp => sp.ChatLieu)
+                //    .Where(sp =>
+                //        sp.SanPhamId == idSanPham &&
+                //        sp.ThuongHieuId == idThuongHieu &&
+                //        sp.LoaiId == idLoai &&
+                //        sp.XuatXuId == idXuatXu &&
+                //    sp.ChatLieuId == idChatLieu);
+
+                var sanPham = query.Where(it =>
+                      it.SanPhamId == idSanPham &&
+                      it.ThuongHieuId == idThuongHieu &&
+                      it.LoaiId == idLoai &&
+                      it.XuatXuId == idXuatXu &&
+                      it.ChatLieuId == idChatLieu);
+
+
+
+                var viewModelResult = sanPham
+                .GroupBy(gr => new
+                {
+                    gr.ChatLieuId,
+                    gr.SanPhamId,
+                    gr.ThuongHieuId,
+                    gr.XuatXuId,
+                    gr.LoaiId,
+                })
+               .Select(gr => new SPDanhSachViewModel
+               {
+                   SumGuild = $"{gr.Key.SanPhamId}/{gr.Key.ThuongHieuId}/{gr.Key.LoaiId}/{gr.Key.XuatXuId}/{gr.Key.ChatLieuId}",
+                   SanPham = gr.First().SanPham.TenSanPham,
+                   ChatLieu = gr.First().ChatLieu.TenChatLieu,
+                   LoaiMu = gr.First().Loai.TenLoai,
+                   ThuongHieu = gr.First().ThuongHieu.TenThuongHieu,
+                   XuatXu = gr.First().XuatXu.TenXuatXu,
+                   SoMau = gr.Select(it => it.MauSacId).Distinct().Count(),
+                   LstMauSac = gr.Select(it => new SelectListItem { Value = it.MauSacId.ToString(), Text = it.MauSac.TenMauSac }).ToList(),
+                   LstMauSac2 = gr.Select(x => x.MauSac.TenMauSac).Distinct().ToList()!,
+                   TongSoLuongTon = gr.Sum(it => it.SoLuongTon.GetValueOrDefault()),
+                   TongSoLuongDaBan = gr.Sum(it => it.SoLuongDaBan.GetValueOrDefault()),
+                   LinkAnh = _dbContext.Anhs
+        .Where(image => image.ChiTietSanPhamId == gr.First().Id && image.MaAnh == "Anh1")
+        .Select(image => image.URL)
+        .FirstOrDefault(),
+                   GiaBanNhoNhat = gr.Min(it => it.GiaBan), // Giá bán nhỏ nhất
+                   GiaBanLonNhat = gr.Max(it => it.GiaBan), // Giá bán lớn nhất
+                   //LstMauSac = gr.Select(it => new SelectListItem { Value = it.Id.ToString(), Text = it.MauSac.TenMauSac }).ToList(),
+               });
+
+
+                //if (!string.IsNullOrEmpty(parametersTongQuanDanhSach.SearchValue))
+                //{
+                //    parametersTongQuanDanhSach.Length = query.Count();
+                //    string searchValueLower = parametersTongQuanDanhSach.SearchValue.ToLower();
+                //    viewModelResult = viewModelResult
+                //        .Where(x =>
+                //            x.SanPham!.ToLower().Contains(searchValueLower) ||
+                //            x.LoaiMu!.ToLower().Contains(searchValueLower) ||
+                //            x.ChatLieu!.ToLower().Contains(searchValueLower)
+                //            );
+                //}
+
+                return await viewModelResult.ToListAsync();
+            }
+            catch (Exception)
+            {
+                return null; // Trả về null nếu có lỗi xảy ra
+            }
+        }
+
+        public async Task<List<ItemShopViewModel>> GetItemShopViewModelAsync2(string? sumguid)
+        {
+            try
+            {
+
+                var query = _dbContext.ChiTietSanPhams.AsQueryable();
+                var result = query
+               .Include(sp => sp.SanPham)
+               .Include(sp => sp.ThuongHieu)
+
+               .Include(sp => sp.Loai)
+               .Include(sp => sp.XuatXu)
+               .Include(sp => sp.MauSac)
+               .Include(sp => sp.ChatLieu);
+
+                var viewModelResult = result
+                    .GroupBy(gr => new
+                    {
+                        gr.ChatLieuId,
+                        gr.SanPhamId,
+                        gr.ThuongHieuId,
+                        gr.XuatXuId,
+                        gr.LoaiId,
+                    }).Select(gr => new ItemShopViewModel
+                    {
+                        IdChiTietSp = gr.First().Id.ToString(),
+                        MaSanPham = gr.First().MaSanPham,
+                        ThuongHieu = gr.First().ThuongHieu.TenThuongHieu,
+                        MauSac = gr.First().MauSac.TenMauSac,
+                        TheLoai = gr.First().Loai.TenLoai,
+                        TenSanPham = gr.First().SanPham.TenSanPham,
+                        GiaMin = gr.Min(sp => sp.GiaBan),
+                        GiaBan = gr.First().GiaThucTe.GetValueOrDefault(),
+                        SoLuongTon = gr.Sum(sp => sp.SoLuongTon),
+                        GiaGoc = gr.First().GiaThucTe,
+                        GiaMax = gr.Max(sp => sp.GiaBan),
+                        MoTaSanPham = gr.First().Mota,
+                        GiaKhuyenMai = gr.First().GiaBan,
+                        LstMauSac = gr.Select(it => new SelectListItem { Value = it.MauSacId.ToString(), Text = it.MauSac.TenMauSac }).ToList(),
+                        IsKhuyenMai = gr.First().TrangThaiKhuyenMai
+                    }).ToListAsync();
+
+                return await viewModelResult;
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<ItemDetailViewModel?> GetItemDetailViewModelAynsc(string id)
+        {
+            Guid ID = Guid.Parse(id);
+
+            var sanPhamChiTiet = await _dbContext.ChiTietSanPhams
+                .Include(sp => sp.Anhs)
+                .Include(x => x.SanPham)
+                .Include(x => x.ThuongHieu)
+                .Include(x => x.ChatLieu)
+                .Include(x => x.XuatXu)
+                .Include(x => x.Loai)
+                .Include(x => x.MauSac)
+                .Include(x => x.SanPhamYeuThich)
+                .FirstOrDefaultAsync(sp => sp.Id == ID);
+
+            if (sanPhamChiTiet == null)
+            {
+                return null;
+            }
+
+            // Fetch related products based on criteria
+            var lstBienThe = await _dbContext.ChiTietSanPhams
+                .Include(x => x.MauSac)
+                .Where(sp =>
+                    sp.TrangThai == 1 &&
+                    sp.LoaiId == sanPhamChiTiet.LoaiId &&
+                    sp.ThuongHieuId == sanPhamChiTiet.ThuongHieuId &&
+                    sp.XuatXuId == sanPhamChiTiet.XuatXuId &&
+                    sp.ChatLieuId == sanPhamChiTiet.ChatLieuId &&
+                    sp.SanPhamId == sanPhamChiTiet.SanPhamId
+                ).ToListAsync();
+
+            // Extract distinct colors from related products
+            var distinctColors = lstBienThe.Select(x => x.MauSac.TenMauSac).Distinct().ToList();
+            var distinctColors2 = lstBienThe.Select(it => new SelectListItem { Value = it.MauSacId.ToString(), Text = it.MauSac.TenMauSac }).ToList();
+
+            var itemDetailViewModel = new ItemDetailViewModel
+            {
+                IdChiTietSp = sanPhamChiTiet.Id.ToString(),
+                MaSanPham = sanPhamChiTiet.MaSanPham,
+                ThuongHieu = sanPhamChiTiet.ThuongHieu.TenThuongHieu,
+                XuatXu = sanPhamChiTiet.XuatXu.TenXuatXu,
+                ChatLieu = sanPhamChiTiet.ChatLieu.TenChatLieu,
+                MauSac = sanPhamChiTiet.MauSac.TenMauSac,
+                TheLoai = sanPhamChiTiet.Loai.TenLoai,
+                LoaiMu = sanPhamChiTiet.Loai.TenLoai,
+                TenSanPham = sanPhamChiTiet.SanPham.TenSanPham,
+                GiaMin = lstBienThe.Min(sp => sp.GiaBan),
+                GiaBan = sanPhamChiTiet.GiaThucTe,
+                SoLuongTon = sanPhamChiTiet.SoLuongTon,
+                GiaGoc = sanPhamChiTiet.GiaThucTe,
+                GiaKhuyenMai = sanPhamChiTiet.GiaBan,
+                GiaMax = lstBienThe.Max(sp => sp.GiaBan),
+                MoTaSanPham = sanPhamChiTiet.Mota,
+                itemShopListColor = distinctColors,
+                LstMauSac = distinctColors2,
+                
+            };
+            return itemDetailViewModel;
         }
 
 
@@ -537,11 +770,7 @@ namespace Shop_Api.Repository
                         ).
                         Include(sp => sp.SanPham).
                         Include(sp => sp.MauSac).
-                        ////Include(sp => sp.Anh).
-                        //AsEnumerable().
-                        //GroupBy(sp => sp.MauSacId).
-                        //OrderBy(gr => gr.Key).
-                        //SelectMany(gr => gr.OrderBy(sp => sp.KichCo.SoKichCo.GetValueOrDefault())).
+
                         Select(a => new SanPhamChiTietDto
                         {
                             Id = a.Id,
@@ -628,6 +857,88 @@ namespace Shop_Api.Repository
             return (SanPhamChiTietDto)query;
         }
 
+        public async Task<ItemDetailViewModel?> GetItemDetailViewModelWhenSelectColorAynsc(string id, string color)
+        {
+            var IdSanpham = Guid.Parse(id);
+            var sanPhamGet = await _dbContext.ChiTietSanPhams
+                  .Include(sp => sp.Anhs)
+                  .Include(x => x.SanPham)
+                  .Include(x => x.ThuongHieu)
+                  .Include(x => x.ChatLieu)
+                  .Include(x => x.XuatXu)
+                  .Include(x => x.Loai)
+                  .Include(x => x.MauSac)
+                  .Include(x => x.SanPhamYeuThich)
+                  .FirstOrDefaultAsync(sp => sp.Id == IdSanpham);
+
+            if (sanPhamGet == null)
+                return null;
+
+            var mauSacEntity = await _dbContext.MauSacs.FirstOrDefaultAsync(x => x.TenMauSac == color);
+
+            if (mauSacEntity == null)
+                return null;
+
+            var idMauSac = mauSacEntity.Guid;
+
+            var query = _dbContext.ChiTietSanPhams
+                .Where(sp =>
+                    sp.TrangThai == 1 &&
+                    sp.LoaiId == sanPhamGet.LoaiId &&
+                    sp.ThuongHieuId == sanPhamGet.ThuongHieuId &&
+                    sp.XuatXuId == sanPhamGet.XuatXuId &&
+                    sp.ChatLieuId == sanPhamGet.ChatLieuId &&
+                    sp.SanPhamId == sanPhamGet.SanPhamId &&
+                    sp.MauSacId == idMauSac
+                ).FirstOrDefault();
+                //.Include(x => x.MauSac)
+                //.Include(x => x.ChatLieu)
+                //.Include(x => x.ThuongHieu)
+                //.Include(x => x.Loai)
+                //.Include(x => x.XuatXu)
+                //.Include(x => x.Anhs);
+
+            //var lstBienThe = await query.ToListAsync();
+
+            var lstBienThe = await _dbContext.ChiTietSanPhams
+                .Include(x => x.MauSac)
+                .Where(sp =>
+                    sp.TrangThai == 1 &&
+                    sp.LoaiId == sanPhamGet.LoaiId &&
+                    sp.ThuongHieuId == sanPhamGet.ThuongHieuId &&
+                    sp.XuatXuId == sanPhamGet.XuatXuId &&
+                    sp.ChatLieuId == sanPhamGet.ChatLieuId &&
+                    sp.SanPhamId == sanPhamGet.SanPhamId
+                ).ToListAsync();
+            // Extract distinct colors from related products
+            var distinctColors = lstBienThe.Select(x => x.MauSac.TenMauSac).Distinct().ToList();
+            var distinctColors2 = lstBienThe.Select(it => new SelectListItem { Value = it.MauSacId.ToString(), Text = it.MauSac.TenMauSac }).ToList();
+
+            var itemDetailViewModel = new ItemDetailViewModel
+            {
+                IdChiTietSp = query.Id.ToString(),
+                MaSanPham = query.MaSanPham,
+                ThuongHieu = query.ThuongHieu.TenThuongHieu,
+                XuatXu = query.XuatXu.TenXuatXu,
+                ChatLieu = query.ChatLieu.TenChatLieu,
+                MauSac = query.MauSac.TenMauSac,
+                TheLoai = query.Loai.TenLoai,
+                LoaiMu = query.Loai.TenLoai,
+                TenSanPham = query.SanPham.TenSanPham,
+                GiaMin = lstBienThe.Min(sp => sp.GiaBan),
+                GiaBan = query.GiaThucTe,
+                SoLuongTon = query.SoLuongTon,
+                GiaGoc = query.GiaThucTe,
+                GiaKhuyenMai = query.GiaBan,
+                GiaMax = lstBienThe.Max(sp => sp.GiaBan),
+                MoTaSanPham = query.Mota,
+                itemShopListColor = distinctColors,
+                LstMauSac = distinctColors2,
+
+            };
+            return itemDetailViewModel;
+
+        }
 
     }
 }

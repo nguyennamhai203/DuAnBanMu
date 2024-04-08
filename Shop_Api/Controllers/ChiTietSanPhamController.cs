@@ -26,7 +26,7 @@ namespace Shop_Api.Controllers
             var result = await _repository.GetAllAsync(status);
             return Ok(result);
         }
-        
+
         [HttpGet("Get")]
         public async Task<IActionResult> Get()
         {
@@ -41,7 +41,7 @@ namespace Shop_Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = AppRole.Admin)]
+        //[Authorize(Roles = AppRole.Admin)]
         [HttpPost("GetFilteredDaTaDSTongQuanAynsc")]
         public async Task<IActionResult> GetFilteredDaTaDSTongQuanAynsc(ParametersTongQuanDanhSach parameters)
         {
@@ -49,18 +49,36 @@ namespace Shop_Api.Controllers
             {
                 var viewModelResult = await _repository.GetFilteredDaTaDSTongQuanAynsc(parameters);
                 //var totalItems = await query.CountAsync();
-                var totalPages = (int)Math.Ceiling(viewModelResult.Count / (double)parameters.Length);
-                var paginatedResult = viewModelResult
-                    .Skip(parameters.Start)
-                    .Take(parameters.Length)
-                    .ToList();
-                var result = new ResponseDto()
+                if (parameters.SumGuid != null)
                 {
-                    Content = paginatedResult,
-                    Count = viewModelResult.Count,
-                    TotalPage = totalPages
-                };
-                return new ObjectResult(result);
+                    var totalPages = (int)Math.Ceiling(viewModelResult.Count / (double)parameters.Length);
+                    var paginatedResult = viewModelResult
+                        .Skip(parameters.Start)
+                        .Take(parameters.Length)
+                        .ToList();
+                    var result = new ResponseDto()
+                    {
+                        Content = viewModelResult,
+                        Count = viewModelResult.Count,
+                        TotalPage = totalPages
+                    };
+                    return new ObjectResult(result);
+                }
+                else
+                {
+                    var totalPages = (int)Math.Ceiling(viewModelResult.Count / (double)parameters.Length);
+                    var paginatedResult = viewModelResult
+                        .Skip(parameters.Start)
+                        .Take(parameters.Length)
+                        .ToList();
+                    var result = new ResponseDto()
+                    {
+                        Content = paginatedResult,
+                        Count = viewModelResult.Count,
+                        TotalPage = totalPages
+                    };
+                    return new ObjectResult(result);
+                }
             }
             catch (Exception ex)
             {
@@ -80,6 +98,60 @@ namespace Shop_Api.Controllers
             return Ok(reuslt);
         }
 
+        [HttpGet("GetItemShopViewModelAsync")]
+        public async Task<IActionResult> GetItemShopViewModelAsync(string Id)
+        {
+            var viewModelResult = await _repository.GetItemShopViewModelAsync(Id);
+            var result = new ResponseDto()
+            {
+                Content = viewModelResult,
+
+
+            };
+            return new ObjectResult(result);
+        }
+        [HttpGet("GetItemShopViewModelAsync2")]
+        public async Task<IActionResult> GetItemShopViewModelAsync2(string? Id, int pageNumber = 1)
+        {
+            int itemsPerPage = 12;
+            var viewModelResult = await _repository.GetItemShopViewModelAsync2(Id);
+            var pagedViewModelResult = viewModelResult.Skip((pageNumber - 1) * itemsPerPage).Take(itemsPerPage).ToList();
+
+            var result = new ResponseDto()
+            {
+                Content = pagedViewModelResult,
+                PagingInfo = new PagingInfo()
+                {
+                    TongSoItem = viewModelResult.Count(),
+                    SoItemTrenMotTrang = itemsPerPage,
+                    SoItemTrenTrangHienTai = pagedViewModelResult.Count(),
+                    TrangHienTai = pageNumber,
+                }
+            };
+            return new ObjectResult(result);
+        }
+
+
+
+        [HttpGet("GetItemDetailViewModelAynsc")]
+        public async Task<IActionResult> GetItemDetailViewModelAynsc(string Id)
+        {
+            var viewModelResult = await _repository.GetItemDetailViewModelAynsc(Id);
+            var result = new ResponseDto()
+            {
+                Content = viewModelResult,
+
+
+            };
+            return new ObjectResult(result);
+        }
+
+        [HttpGet("Get-ItemDetailViewModel/{id}/{mauSac}")]
+        public async Task<IActionResult?> GetItemDetailViewModelWhenSelectColor(string id, string mauSac)
+        {
+            var respon = await _repository.GetItemDetailViewModelWhenSelectColorAynsc(id, mauSac);
+            return Ok(respon);
+        }
 
         [Authorize(Roles = AppRole.Admin)]
         [HttpPost("CreateAsync")]
@@ -103,8 +175,8 @@ namespace Shop_Api.Controllers
                 return Ok(respon);
             }
             else return BadRequest(respon);
-        } 
-        
+        }
+
         //[Authorize(Roles = AppRole.Admin)]
         [HttpPut("UpdateAsync2")]
         public async Task<IActionResult> UpdateAsync2(ChiTietSanPham obj)
@@ -150,7 +222,7 @@ namespace Shop_Api.Controllers
             var sanPhamChiTiet = _repository.GetAsync().Result.FirstOrDefault(x => x.Id == id);
             if (sanPhamChiTiet != null)
             {
-                sanPhamChiTiet.TrangThai =1;
+                sanPhamChiTiet.TrangThai = 1;
                 var result = await _repository.UpdateAsync(sanPhamChiTiet);
                 if (result.IsSuccess == true)
                 {

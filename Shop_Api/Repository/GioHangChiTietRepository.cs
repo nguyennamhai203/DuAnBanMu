@@ -85,7 +85,7 @@ namespace Shop_Api.Repository
         {
             var cartItem = await GetCartItem(username);
             if (cartItem == null)
-            {          
+            {
                 return new ResponseDto
                 {
                     Content = null,
@@ -96,7 +96,7 @@ namespace Shop_Api.Repository
             }
             else
             {
-                
+
                 return new ResponseDto
                 {
                     Content = cartItem,
@@ -106,7 +106,7 @@ namespace Shop_Api.Repository
             }
 
         }
-        public async Task<IEnumerable<GioHangChiTiet>> GetCartItem(string username)
+        public async Task<IEnumerable<GioHangChiTietViewModel>> GetCartItem(string username)
         {
             // Truyền vào tên tào khoản của người dùng
             try
@@ -116,24 +116,29 @@ namespace Shop_Api.Repository
                 // Nếu tìm trực tiếp sẽ không phân biệt được chữ hoa, chữ thường
                 // Lấy ra ìd người dùng//x => x.UserName == username
                 // Dùng CartItemDto để hiển thị kết quả
-                List<GioHangChiTiet> cartItem = new List<GioHangChiTiet>();// Khởi tao 1 list
+                List<GioHangChiTietViewModel> cartItem = new List<GioHangChiTietViewModel>();// Khởi tao 1 list
                 cartItem = (
                            // Join các bảng lại để lấy dữ liệu
                            from x in await _context.GioHangs.ToListAsync()
                            join y in await _context.GioHangChiTiets.ToListAsync() on x.IdNguoiDung equals y.GioHangId
                            join a in await _context.ChiTietSanPhams.ToListAsync() on y.ChiTietSanPhamId equals a.Id
+                           join loai in await _context.Loais.ToListAsync() on a.LoaiId equals loai.Id
+                           join sp in await _context.SanPhams.ToListAsync() on a.SanPhamId equals sp.IdSanPham
 
-                           select new GioHangChiTiet// Dùng kiểu đối tượng ẩn danh (anonymous type)
+                           select new GioHangChiTietViewModel// Dùng kiểu đối tượng ẩn danh (anonymous type)
                            {
                                Id = y.Id,
                                GioHangId = x.IdNguoiDung,
                                SoLuong = y.SoLuong,
                                TrangThai = y.TrangThai,
                                ChiTietSanPhamId = a.Id,
+                               MaSPCT = a.MaSanPham,
+                               SoLuongBanSanPham = (int)a.SoLuongTon,
+                               TenSanPhamChiTiet = a.MaSanPham + " " + sp.TenSanPham + " " + loai.TenLoai, // Kết hợp tên sản phẩm chi tiết
                                GiaBan = (double)a.GiaBan,
                            }
                     ).ToList();
-                return cartItem.Where(x => x.GioHangId == user.Id);// Trả về list với điểu kiện 
+                return (IEnumerable<GioHangChiTietViewModel>)cartItem.Where(x => x.GioHangId == user.Id);// Trả về list với điểu kiện 
             }
             catch (Exception)
             {
@@ -143,5 +148,15 @@ namespace Shop_Api.Repository
             }
 
         }
+
+        public async Task<GioHangChiTiet> TimGioHangChiTIet(string username, string codeproduct)
+        {
+            var user = await _context.NguoiDungs.FirstOrDefaultAsync(x => x.UserName == username);
+            var scpct = await _context.ChiTietSanPhams.FirstOrDefaultAsync(x => x.MaSanPham == codeproduct);
+            var search =  _context.GioHangChiTiets.Where(x => x.GioHangId == user.Id && x.ChiTietSanPhamId == scpct.Id).First();
+            return search;
+        }
+
     }
 }
+
