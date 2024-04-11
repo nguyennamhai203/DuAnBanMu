@@ -58,8 +58,7 @@ builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 builder.Services.AddScoped<IMauSacRepository, MauSacRepository>();
 builder.Services.AddScoped<IPhuongThucThanhToanChiTietRepository, PhuongThucThanhToanChiTietRepository>();
 builder.Services.AddScoped<IGioHangChiTietServices, GioHangChiTietServices>();
-
-
+builder.Services.AddScoped<IHoaDonServices, HoaDonServices>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddHostedService<PromotionUpdateService>();
 

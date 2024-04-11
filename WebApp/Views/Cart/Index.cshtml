@@ -63,6 +63,7 @@
         }
 
 </style>
+
 <script>
     // function incrementQuantity(button) {
     //     var input = $(button).siblings('.qty')[0];
@@ -329,6 +330,10 @@
         document.getElementById("result").innerHTML = "Bạn đã chọn: " + text;
     }
 
+    function setPaymentMethod(method) {
+        document.getElementById("paymentMethod").value = method;
+        document.getElementById("MaPTTT").value = method;
+    }
 
 
 

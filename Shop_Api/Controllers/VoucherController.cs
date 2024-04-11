@@ -33,7 +33,7 @@ namespace Shop_Api.Controllers
 
         // POST api/<VoucherController>
         [HttpPost("post-voucher")]
-        public async Task<IActionResult> PostVoucherAsync(Guid guid,string mavoucher,string tenvoucher,int phantramgiam,int soluong,DateTime ngaybatdau,DateTime ngayketthuc,int trangthai)
+        public async Task<IActionResult> PostVoucherAsync(Guid guid, string mavoucher, string tenvoucher, int phantramgiam, int soluong, DateTime ngaybatdau, DateTime ngayketthuc, int trangthai)
         {
             var obj = new Voucher();
             obj.Guid = guid;
@@ -51,7 +51,7 @@ namespace Shop_Api.Controllers
             try
             {
                 await res.CreateVoucher(obj);
-                return CreatedAtAction("GetVoucher","Voucher", obj);
+                return CreatedAtAction("GetVoucher", "Voucher", obj);
             }
             catch (Exception ex)
             {
@@ -86,5 +86,20 @@ namespace Shop_Api.Controllers
             await res.DeleteVoucher(id);
             return NoContent();
         }
+
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+
+            var result = await res.GetAll();
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NoContent();
+        }
+
+
+
     }
 }

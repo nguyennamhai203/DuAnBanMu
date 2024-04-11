@@ -689,12 +689,75 @@
     //     url += '?codeProductDetail=' + codeProductDetail + '&soluong=' + quantity;
     //     window.location.href = url;
     // });
-    document.getElementById('addToCartBtn').addEventListener('click', function () {
+    // document.getElementById('addToCartBtn').addEventListener('click', function () {
+    //     var quantity = document.getElementById('sst').value;
+    //     var codeProductDetail = '@Model.MaSanPham';
+    //     var encodedCodeProductDetail = encodeURIComponent(codeProductDetail);
+    //     var url = '@Url.Action("AddProductToCart", "Cart")';
+    //     url += '?codeProductDetail=' + encodedCodeProductDetail + '&soluong=' + quantity;
+    //     window.location.href = url;
+    // });
+
+
+    function addToCartBtn() {
         var quantity = document.getElementById('sst').value;
         var codeProductDetail = '@Model.MaSanPham';
-        var encodedCodeProductDetail = encodeURIComponent(codeProductDetail);
-        var url = '@Url.Action("AddProductToCart", "Cart")';
-        url += '?codeProductDetail=' + encodedCodeProductDetail + '&soluong=' + quantity;
-        window.location.href = url;
-    });
+        $.ajax({
+            url: '/Cart/AddProductToCart',
+            type: 'POST',
+            data: { codeProductDetail: codeProductDetail, soluong: quantity },
+            // contentType: false,
+            // processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message); alert(results.message);
+                    showNotification(results.message, "success");
+                    document.getElementById('editprofile-form').reset();
+                } else {
+                    debugger
+                    console.log(results.message);
+                    alert(results.message);
+                    document.getElementById('editprofile-form').reset();
+                    showNotification(results.message, "error");
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right", // Sửa từ "toast-bot-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+
 </script>

@@ -24,13 +24,13 @@ namespace WebApp.Controllers
         {
             var httpclient = _httpClientFactory.CreateClient("BeHat");
 
-            HttpResponseMessage responseVoucher = await httpclient.GetAsync($"https://localhost:7050/api/Voucher/get-voucher?page=1");
+            HttpResponseMessage responseVoucher = await httpclient.GetAsync($"https://localhost:7050/api/Voucher/GetAll");
 
             if (responseVoucher.IsSuccessStatusCode)
             {
                 var resultString = await responseVoucher.Content.ReadAsStringAsync();
-                // var resultResponse = JsonConvert.DeserializeObject<ResponseDto>(resultString);
-                ViewBag.listVoucher = JsonConvert.DeserializeObject<IEnumerable<Voucher>>(resultString);
+                ViewBag.listVoucher = JsonConvert.DeserializeObject<IEnumerable<Voucher>>(resultString).Where(x => x.TrangThai != 0);
+
             }
             var userName = HttpContext.Session.GetString("username");
             if (!string.IsNullOrEmpty(userName))
@@ -79,13 +79,13 @@ namespace WebApp.Controllers
 
             var userName = HttpContext.Session.GetString("username");
 
-            HttpResponseMessage responseVoucher = await httpclient.GetAsync($"https://localhost:7050/api/Voucher/get-voucher?page=1");
+            HttpResponseMessage responseVoucher = await httpclient.GetAsync($"https://localhost:7050/api/Voucher/GetAll");
 
             if (responseVoucher.IsSuccessStatusCode)
             {
                 var resultString = await responseVoucher.Content.ReadAsStringAsync();
                 // var resultResponse = JsonConvert.DeserializeObject<ResponseDto>(resultString);
-                ViewBag.listVoucher = JsonConvert.DeserializeObject<IEnumerable<Voucher>>(resultString);
+                ViewBag.listVoucher = JsonConvert.DeserializeObject<IEnumerable<Voucher>>(resultString).Where(x=>x.TrangThai!=0);
             }
 
             if (!string.IsNullOrEmpty(userName))
@@ -189,7 +189,10 @@ namespace WebApp.Controllers
 
                         }
                         SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
-                        return RedirectToAction("Index");
+                        //return RedirectToAction("Index");
+
+                        return Json(new { code = 200, message = "Thêm Vào Giỏ Hàng Thành Công" });
+
                     }
 
 
@@ -204,7 +207,8 @@ namespace WebApp.Controllers
                         s.GiaBan = (float)(product.GiaBan);
                         Cart.Add(s);
                         SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
-                        return RedirectToAction("Index");
+                        return Json(new { code = 200, message = "Thêm Vào Giỏ Hàng Thành Công" });
+
                     }
                     else
                     {
@@ -215,7 +219,8 @@ namespace WebApp.Controllers
                             s.GiaBan = (float)(product.GiaBan);
                             s.SoLuongBanSanPham = (int)product.SoLuongTon;
                             SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
-                            return RedirectToAction("Index");
+                            return Json(new { code = 200, message = "Thêm Vào Giỏ Hàng Thành Công" });
+
                         }
                         else
                         {
@@ -226,7 +231,8 @@ namespace WebApp.Controllers
                             s.SoLuongBanSanPham = (int)product.SoLuongTon;
                             Cart.Add(s);
                             SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
-                            return RedirectToAction("Index");
+                            return Json(new { code = 200, message = "Thêm Vào Giỏ Hàng Thành Công" });
+
                         }
                     }
                 }
@@ -425,6 +431,41 @@ namespace WebApp.Controllers
             return RedirectToAction("Index"); // Redirect to cart page or any other page you want
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateBill(RequestBillDto request, double? totalAmount, bool useAllPoints)
+        {
+            try
+            {
+                using (var client = _httpClientFactory.CreateClient("BeHat"))
+                {
+                    request.CartItem = new List<GioHangChiTietViewModel>();
+                    request.Usename = HttpContext.Session.GetString("username");
+                    var cartSession = SessionService.GetObjFromSession(HttpContext.Session, "Cart");
 
+                  
+                    foreach (var i in cartSession)
+                    {
+                        request.CartItem.Add(i);
+                    }
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync($"/CreateBill", request);
+                    if (response.IsSuccessStatusCode)
+                    {
+
+                        var codeBill = await response.Content.ReadAsStringAsync();
+                        //await client.PutAsJsonAsync($"/api/Voucher/UpdateSL?codeVoucher={request.CodeVoucher}", String.Empty);
+                        await client.DeleteAsync($"api/Cart/Delete?username={request.Usename}");
+                        HttpContext.Session.Remove("Cart");
+                        return RedirectToAction("ShowBill", new { invoiceCode = $"{codeBill}" });
+                    }
+                    return View();
+                }
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+        }
     }
 }

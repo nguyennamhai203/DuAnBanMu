@@ -77,7 +77,7 @@ namespace Shop_Api.Controllers
                     hdct => hdct.HoaDonId,
                     (hd, hdct) => new
                     {
-                        Daily = hd.NgayThanhToan.Day,
+                        Daily = hd.NgayThanhToan.HasValue ? hd.NgayThanhToan.Value.Day : 0,
                         Amount = hdct.GiaBan * hdct.SoLuong
                     }
                 )

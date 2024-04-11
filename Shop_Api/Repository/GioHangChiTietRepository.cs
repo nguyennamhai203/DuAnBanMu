@@ -105,6 +105,20 @@ namespace Shop_Api.Repository
                 };
             }
 
+        }  
+        public async Task<IEnumerable<GioHangChiTietViewModel>> GetCartDetailByUserName(string username)
+        {
+            var cartItem = await GetCartItem(username);
+            if (cartItem == null)
+            {
+                return null;
+            }
+            else
+            {
+                return cartItem.ToList();
+               
+            }
+
         }
         public async Task<IEnumerable<GioHangChiTietViewModel>> GetCartItem(string username)
         {

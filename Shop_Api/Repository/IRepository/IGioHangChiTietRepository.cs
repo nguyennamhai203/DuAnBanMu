@@ -11,6 +11,7 @@ namespace Shop_Api.Repository.IRepository
         Task<GioHangChiTiet> GetById(Guid id);
         Task<IEnumerable<GioHangChiTiet>> GetAll();
         public Task<ResponseDto> GetCartJoinForUser(string username);
+        public Task<IEnumerable<GioHangChiTietViewModel>> GetCartDetailByUserName(string username);
         public Task<GioHangChiTiet> TimGioHangChiTIet(string username,string codeproduct);
 
     }

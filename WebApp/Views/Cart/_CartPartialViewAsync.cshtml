@@ -88,108 +88,40 @@
                                 </tr>
                             }
 
-                            <tr class="bottom_button">
-                                <td>
-                                    <button class="gray_btn update-cart-link">Update Cart</button>
-                                </td>
-
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                    <div class="cupon_text d-flex align-items-center">
-                                        <input type="text" placeholder="Coupon Code">
-                                        <a class="primary-btn" href="#">Apply</a>
-                                        <a class="gray_btn" style="width:184.28px;height:40.03px" href="#">Close Coupon</a>
-                                    </div>
-                                </td>
-                            </tr>
                             <tr>
                                 <td>
-                                </td><td>
-                                </td><td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                    <h5 style="white-space: nowrap;">Tổng thành tiền:</h5>
-                                </td>
-                                <td>
-                                    <h5 style="white-space: nowrap;">$@tongTien</h5>
-                                </td>
-                            </tr>
-                            @*   <tr class="shipping_area">
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        <h5>Shipping</h5>
-                        </td>
-                        <td>
-                        <div class="shipping_box">
-                        <ul class="list">
-                        <li><a href="#">Flat Rate: $5.00</a></li>
-                        <li><a href="#">Free Shipping</a></li>
-                        <li><a href="#">Flat Rate: $10.00</a></li>
-                        <li class="active"><a href="#">Local Delivery: $2.00</a></li>
-                        </ul>
-                        <h6>Calculate Shipping <i class="fa fa-caret-down" aria-hidden="true"></i></h6>
-                        <select class="shipping_select">
-                        <option value="1">Bangladesh</option>
-                        <option value="2">India</option>
-                        <option value="4">Pakistan</option>
-                        </select>
-                        <select class="shipping_select">
-                        <option value="1">Select a State</option>
-                        <option value="2">Select a State</option>
-                        <option value="4">Select a State</option>
-                        </select>
-                        <input type="text" placeholder="Postcode/Zipcode">
-                        <a class="gray_btn" href="#">Update Details</a>
-                        </div>
-                        </td>
-                        </tr> *@
-                            <tr class="out_button_area">
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
                                     <div class="checkout_btn_inner d-flex align-items-center">
-                                        <a class="gray_btn" style="width:245px;height:40.03px" href="#">Continue Shopping</a>
-                                        <a class="primary-btn" href="#">Proceed to checkout</a>
+                                        <a class="gray_btn" @* style="width:245px;height:40.03px" *@ href="#">Tiếp tục mua sắm</a>
+
                                     </div>
                                 </td>
                             </tr>
+                         
 
                         </tbody>
                     </table>
                 </div>
                 <div class="card shadow-2-strong mb-5 mb-lg-0" style="border-radius: 16px;">
                     <div class="card-body p-4">
-                        <form asp-controller="Client" asp-action="CreateBill">
+                        <form asp-controller="Cart" asp-action="CreateBill">
                             <div class="row">
                                 <div class="col-md-4 col-sm-4" style="border: solid 1px darkorchid;">
                                     <h3>Chọn phương thức thanh toán:</h3>
                                     <div>
-                                        <input type="radio" id="option1" name="options" onclick="displayText('Nhận hàng và thanh toán tiền tại cửa hàng Laptop Phương Thảo: Số 18 phố Linh Lang, Ba Đình, Hà Nội')">
-                                        <label for="option1">Thanh toán tại cửa hàng</label><br />
+                                     @*    <input type="radio" id="option1" name="options" value="1" onclick="displayText('Thanh toán tại cửa hàng'); setPaymentMethod(1); document.getElementById('MaPTTT').value = 'ThanhToanTaiCuaHang';">
+                                        <label for="option1">Thanh toán tại cửa hàng</label><br /> *@
 
-                                        <input type="radio" id="option2" name="options" onclick="displayText('Trả tiền mặt khi giao hàng')">
+                                        <input type="radio" id="option2" name="options" onclick="displayText('Trả tiền mặt khi giao hàng');setPaymentMethod(2); document.getElementById('MaPTTT').value = 'ThanhToanKhiNhanHang';">
                                         <label for="option2">Thanh toán khi nhận hàng (COD)</label><br />
 
-                                        <input type="radio" id="option3" name="options" onclick="displayText('Thực hiện thanh toán vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn trong phần Nội dung đơn đặt hàng thành công. Đơn hàng sẽ đươc giao sau khi tiền đã chuyển. Thông tin tài Khoản ngân hàng: – STK: 08489497321 – Chủ TK: Phạm Thùy Linh – Tại ngân hàng TCB chi nhánh Nam Từ Liêm')">
+                                        <input type="radio" id="option3" name="options" onclick="displayText('Thực hiện thanh toán vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn trong phần Nội dung đơn đặt hàng thành công. Đơn hàng sẽ đươc giao sau khi tiền đã chuyển.Thông tin tài Khoản ngân hàng: – STK: 08489497321 – Chủ TK: Phạm Thùy Linh – Tại ngân hàng TCB chi nhánh Nam Từ Liêm'); setPaymentMethod(3); document.getElementById('MaPTTT').value = 'ChuyenKhoanNganHang';">
                                         <label for="option3">Thanh toán bằng chuyển khoản ngân hàng</label>
 
                                         <div id="result" style="background-color:aqua"></div>
+
+                                        <input type="hidden" id="paymentMethod" name="PaymentMethod" value="">
+                                        <input type="hidden" id="MaPTTT" name="MaPTTT" value="">
+
                                     </div>
 
                                 </div>
@@ -205,9 +137,13 @@
                                         <input type="text" name="Address" class="form-control" @* value="@address" *@ required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Số điện thoại</label>
-                                        <input type="text" name="PhoneNumber" class="form-control" @* value="@phoneNumber" *@ required>
+                                        <label class="form-label">Số điện thoại (Việt Nam)</label>
+                                        <input type="text" name="PhoneNumber" id="phoneNumberInput" class="form-control" pattern="(0|\+84)?(3|5|7|8|9)[0-9]{8}" title="Số điện thoại phải là số và theo định dạng của Việt Nam" required>
+                                        <div id="phoneNumberHint" style="color: #6c757d; font-size: 0.8em;">Ví dụ: 0912345678 hoặc +84912345678</div>
+                                        <div id="phoneNumberError" style="color: red; display: none;">Số điện thoại không hợp lệ. Vui lòng nhập lại.</div>
                                     </div>
+
+                               
 
                                 </div>
                                 <div class="col-md-4 col-sm-4" style="border: solid 1px darkorchid;">
@@ -240,18 +176,17 @@
                                         <p class="mb-2">Thành tiền</p>
                                         <p class="mb-2" id="thanhtien">@tongTien</p>
                                     </div>
-                                    <input type="number" name="giaTriGioHang" id="giaTriGioHang" hidden />
-                                    <button class="btn btn-primary btn-block btn-lg" style="max-width:200px" type="submit" onclick="validateForm(event)">
+                                    <input type="number" name="Payment" id="Payment" class="form-control" value="@tongTien" hidden />
+                                    <button class="btn primary-btn btn-block btn-lg" style="max-width:200px; border-radius:10px;" type="submit" onclick="validateForm(event)">
                                         <div class="d-flex justify-content-between">
                                             <span>Đặt hàng</span>
-
                                         </div>
                                     </button>
 
+                                  
                                 </div>
                             </div>
-                        </form>
-                        <button id="checkz">Đặt hàng</button>
+                        </form>                     
                     </div>
                 </div>
             }
@@ -262,3 +197,16 @@
     </div>
 </section>
 <!--================End Cart Area =================-->
+<script>
+    var phoneNumberInput = document.getElementById('phoneNumberInput');
+    var phoneNumberError = document.getElementById('phoneNumberError');
+
+    phoneNumberInput.addEventListener('blur', function () {
+        if (!phoneNumberInput.checkValidity()) {
+            phoneNumberError.style.display = 'block';
+        } else {
+            phoneNumberError.style.display = 'none';
+        }
+    });
+
+</script>
