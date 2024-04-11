@@ -6,17 +6,21 @@ using Shop_Models.Entities;
 using Shop_Models.Dto;
 using System;
 using Microsoft.EntityFrameworkCore;
-
+using Shop_Api.Services.IServices;
+using Shop_Api.Services;
 
 namespace Shop_Api.Controllers
 {
-    
+    //[Route("api/[controller]")]
+    [ApiController]
     public class HoaDonController : ControllerBase
     {
         private readonly IHoaDonRepository _db;
-        public HoaDonController(IHoaDonRepository _db1)
+        private readonly IHoaDonServices _hoaDonServices;
+        public HoaDonController(IHoaDonRepository _db1, IHoaDonServices hoaDonServices)
         {
             _db = _db1;
+            _hoaDonServices = hoaDonServices;
 
         }
         [HttpGet("Get-All-HoaDon")]
@@ -95,6 +99,16 @@ namespace Shop_Api.Controllers
             }
         }
 
-        
+        [HttpPost("CreateBill")]
+        public async Task<IActionResult> CreateBill(RequestBillDto request)
+        {
+            var reponse = await _hoaDonServices.CreateBill(request);
+            if (reponse.IsSuccess)
+            {
+                return Ok(reponse.Message);
+            }
+            return BadRequest("");
+        }
     }
 }
+    

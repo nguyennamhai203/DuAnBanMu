@@ -5,7 +5,6 @@ using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
-using System.Data.Entity;
 
 namespace Shop_Api.Repository
 {

@@ -103,6 +103,22 @@ namespace Shop_Api.Repository
             });
             return result.ToList();
         }
+        public async Task<List<Voucher>> GetAll()
+        {
+            var list = contextVC.Vouchers.AsQueryable();        
+            var result = list.Select(x => new Voucher
+            {
+                Guid = x.Guid,
+                MaVoucher = x.MaVoucher,
+                TenVoucher = x.TenVoucher,
+                PhanTramGiam = x.PhanTramGiam,
+                SoLuong = x.SoLuong,
+                NgayBatDau = x.NgayBatDau,
+                NgayHetHan = x.NgayHetHan,
+                TrangThai = x.TrangThai
+            });
+            return result.ToList();
+        }
 
         public async Task<List<Voucher>> GetVoucher()
         {

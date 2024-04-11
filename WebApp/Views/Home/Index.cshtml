@@ -62,6 +62,65 @@
     </div>
 </section>
 <!-- End banner Area -->
+
+<section> <!-- sản phẩm-->
+    <!-- single product slide -->
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="section-title">
+                    <h1>Sản Phẩm Mới</h1>
+                    @* <p>
+                        là một tập hợp các sản phẩm được tổ chức hoặc phân loại lại thành các nhóm dựa trên loại sản phẩm, thương hiệu, xuất xứ, chất liệu.
+                    </p> *@
+                </div>
+            </div>
+        </div>
+        <div class="row" id="productList">
+            <!-- single product -->
+            <div class="col-lg-3 col-md-6">
+                <div class="single-product">
+                    <img class="img-fluid" src="~/behat-master/img/product/p1.jpg" alt="">
+                    <div class="product-details">
+                        <h6>
+                            addidas New Hammer sole
+                            for Sports person
+                        </h6>
+                        <div class="price">
+                            <h6>$150.00</h6>
+                            <h6 class="l-through">$210.00</h6>
+                        </div>
+                        <div class="prd-bottom">
+
+                            <a href="" class="social-info">
+                                <span class="ti-bag"></span>
+                                <p class="hover-text">add to bag</p>
+                            </a>
+                            <a href="" class="social-info">
+                                <span class="lnr lnr-heart"></span>
+                                <p class="hover-text">Wishlist</p>
+                            </a>
+                            <a href="" class="social-info">
+                                <span class="lnr lnr-sync"></span>
+                                <p class="hover-text">compare</p>
+                            </a>
+                            <a href="" class="social-info">
+                                <span class="lnr lnr-move"></span>
+                                <p class="hover-text">view more</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ..
+        </div>
+        @*   <div id="productTableContainer" >
+        <div id="productList" class="row"></div>
+        </div> *@
+    </div>
+</section>
+
 <!-- start features Area -->
 <section class="features-area section_gap">
     <div class="container">
@@ -1014,18 +1073,101 @@
             </div>
         </div>
     </div>
+
+   @*  <div id="productTableContainer" >
+        <div id="productList" class="row"></div>
+    </div> *@
+
+   
 </section>
 <!-- End related-product Area -->
 
+
+
 <script>
 
-    // $(".active-banner-slider").owlCarousel({
-    //     items: 1,
-    //     autoplay: false,
-    //     autoplayTimeout: 5000,
-    //     loop: true,
-    //     nav: true,
-    //     navText: ["<img src='behat-master/img/banner/prev.png'>", "<img src='behat-master/img/banner/next.png'>"],
-    //     dots: false
-    // });
+    // Hàm fetchData2 để gửi yêu cầu AJAX và chuyển hướng
+    function fetchData2(sumguid) {
+        debugger
+
+        var data2 = {
+            SumGuid: sumguid
+        };
+        console.log(sumguid);
+        console.log(data2);
+        // Gửi yêu cầu AJAX để lấy dữ liệu từ máy chủ
+        $.ajax({
+            url: '/SanPhamChiTiet/Details',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data2),
+            success: function (result) {
+                // Chuyển hướng sang trang trả về từ yêu cầu AJAX
+                alert(result);
+                $('#main').html(result);
+
+                window.location.href = result;
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+                console.log(status);
+                console.log(error);
+                console.log(xhr);
+            }
+        });
+    } 
+    $(document).ready(function () {
+        // Khởi tạo dữ liệu ban đầu
+        fetchData(1); // Gọi hàm fetchData với trang đầu tiên khi trang tải
+        var isFirstLoad = true; // Cờ để kiểm tra xem trang đã được tải lần đầu hay chưa
+
+        // Hàm fetchData để gửi yêu cầu AJAX và cập nhật dữ liệu
+        function fetchData(page) {
+            var length = 4; // Kích thước trang mặc định
+            var start = (page - 1) * length; // Tính toán chỉ số bắt đầu chính xác
+
+            var data1 = {
+                Length: length,
+                Start: start,
+            };
+
+            // Gửi yêu cầu AJAX để lấy dữ liệu từ máy chủ
+            $.ajax({
+                url: '/Home/DanhSachTongQuanSanPham',
+                type: 'GET',
+                contentType: 'application/json',
+                // data: JSON.stringify(data1),
+                success: function (result) {
+                    $('#productList').empty(); // Xóa nội dung hiện tại của danh sách sản phẩm
+                    $(result).appendTo('#productList'); // Thêm dữ liệu mới vào danh sách sản phẩm
+                    updatePageInfo(page); // Cập nhật thông tin về trang hiện tại và tổng số bản ghi trên trang
+                    updatePaginationUI(page); // Cập nhật nút phân trang sau khi nhận dữ liệu
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+      
+
+       
+
+        // Xử lý sự kiện khi nhấn nút Next  
+        $('#nextPageBtn').on('click', function () {
+            var currentPage = parseInt($('#currentPage').text()); // Lấy số trang hiện tại từ giao diện
+            currentPage++; // Tăng số trang hiện tại lên 1
+            fetchData(currentPage); // Gọi hàm fetchData với trang tiếp theo
+        });
+
+        // Xử lý sự kiện khi nhấn nút Previous
+        $('#prevPageBtn').on('click', function () {
+            var currentPage = parseInt($('#currentPage').text()); // Lấy số trang hiện tại từ giao diện
+            currentPage--; // Giảm số trang hiện tại đi 1
+            fetchData(currentPage); // Gọi hàm fetchData với trang trước đó
+        });
+    });
 </script>

@@ -10,6 +10,7 @@ namespace Shop_Api.Repository.IRepository
         public Task<ResponseDto> DeleteVoucher(Guid Id);
         public Task<List<Voucher>> GetVoucher();
         public Task<List<Voucher>> GetListVoucher(int? status, int page = 1);
+        public Task<List<Voucher>> GetAll();
         public Task<ResponseDto> GetByIdVoucher(Guid id);
     }
 }

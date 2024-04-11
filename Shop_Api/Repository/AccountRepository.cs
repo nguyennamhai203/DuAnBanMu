@@ -195,7 +195,17 @@ namespace Shop_Api.Repository
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto model)
         {
-            var user = await _userManager.FindByNameAsync(model.NameAccount);
+			if (model.NameAccount==null ||model.Password==null)
+			{
+				return new LoginResponseDto
+				{
+					Message = "Vui Lòng Nhập Thông Tin !",
+					Success = false,
+					Code = 405,
+				};
+			}
+
+			var user = await _userManager.FindByNameAsync(model.NameAccount);
 
             var passWordVaild = await _userManager.CheckPasswordAsync(user, model.Password);
 
@@ -503,10 +513,114 @@ namespace Shop_Api.Repository
             }
         }
 
+		public async Task<ResponseDto> SignUpKhacHangAsync(SignUpDto model)
+		{
+			// Kiểm tra xem email đã tồn tại chưa
+			//existingUser = await _userManager.FindByEmailAsync(model.Email);
+			var existingEMail = _context.NguoiDungs.FirstOrDefault(x => x.Email == model.Email);
+
+			if (existingEMail != null)
+			{
+				return new ResponseDto
+				{
+					IsSuccess = false,
+					Code = 400,
+					Message = "Email đã được sử dụng để đăng ký. Vui lòng sử dụng email khác."
+				};
+			}
+
+            var existingUserName = _context.NguoiDungs.FirstOrDefault(x => x.UserName == model.UserName);
+
+            if (existingUserName != null)
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "username đã được sử dụng để đăng ký. Vui lòng sử dụng username khác."
+                };
+            }
+
+            // Tiếp tục thực hiện đăng ký người dùng
+            var user = new NguoiDung
+			{
+				MaNguoiDung = GenerateUserIdAsync(model.TenNguoiDung),
+				TenNguoiDung = model.TenNguoiDung,
+				UserName = model.UserName,
+				Email = model.Email,
+				SoDienThoai = model.SDT
+			};
 
 
-        // For Admin
-        public async Task<ResponseDto> XacNhanTaoTkChoNhanVienAsync(SignUpDto model, string maxacnhan, string emailAdmin)
+			// Kiểm tra mật khẩu
+			if (!model.PassWord.Any(char.IsUpper))
+			{
+				return new ResponseDto
+				{
+					IsSuccess = false,
+					Code = 400,
+					Message = "Mật khẩu phải chứa ít nhất một ký tự in hoa."
+				};
+			}
+			if (!model.PassWord.Any(char.IsDigit))
+			{
+				return new ResponseDto
+				{
+					IsSuccess = false,
+					Code = 400,
+					Message = "Mật khẩu phải chứa ít nhất một chữ số."
+				};
+			}
+			if (!model.PassWord.Any(char.IsSymbol) && !model.PassWord.Any(char.IsPunctuation))
+			{
+				return new ResponseDto
+				{
+					IsSuccess = false,
+					Code = 400,
+					Message = "Mật khẩu phải chứa ít nhất một ký tự đặc biệt."
+				};
+			}
+
+			var result = await _userManager.CreateAsync(user, model.PassWord);
+			if (result.Succeeded)
+			{
+				// Kiểm tra role "NhanVien" đã tồn tại chưa
+				if (!await _roleManager.RoleExistsAsync("KhachHang"))
+				{
+					// Nếu chưa tồn tại, tạo mới chức vụ "NhanVien"
+					var newRole = new ChucVu
+					{
+						Name = "KhachHang",
+						MaChucVu = "1" + Guid.NewGuid(),
+						TenChucVu = "Khách Hàng",
+						TrangThai = 1 // Set trạng thái mặc định cho chức vụ
+					};
+					await _roleManager.CreateAsync(newRole);
+				}
+
+				// Gán chức vụ "NhanVien" cho người dùng
+				await _userManager.AddToRoleAsync(user, "KhachHang");
+
+				return new ResponseDto
+				{
+                    IsSuccess = true,
+                    Code = 200,
+                    Message = "Đăng ký thành công.",
+				};
+			}
+			else
+			{
+				return new ResponseDto
+				{
+					IsSuccess = false,
+					Code = 400,
+					Message = "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin."
+				};
+			}
+		}
+
+		// For Admin
+		public async Task<ResponseDto> XacNhanTaoTkChoNhanVienAsync(SignUpDto model, string maxacnhan, string emailAdmin)
         {
 
 

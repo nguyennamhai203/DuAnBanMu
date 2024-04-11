@@ -1,0 +1,322 @@
+﻿@model Shop_Models.Dto.ItemDetailViewModel
+@{
+    ViewData["Title"] = "Details";
+
+    int soluong = 0;
+}
+@* <div class="product_image_area" id="productDetail"> *@
+<input hidden name="IdChiTietSp" value="@Model.IdChiTietSp" />
+
+    <div class="container">
+        <div class="row s_product_inner">
+            <div class="col-lg-6">
+                <div class="s_Product_carousel">
+                    <div class="single-prd-item">
+                        <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
+                    </div>
+                    <div class="single-prd-item">
+                        <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
+                    </div>
+                    <div class="single-prd-item">
+                        <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-5 offset-lg-1">
+                <div class="s_product_text">
+                    <h3>[@Model.MaSanPham]@Model.TenSanPham @Model.LoaiMu</h3>
+                    @if (Model.GiaBan == Model.GiaKhuyenMai)
+                    {
+                        <h2>$ @Model.GiaBan</h2>
+                    }
+                    else
+                    {
+                        <h2>$ @Model.GiaKhuyenMai</h2>
+                        <h4 class="l-through">$ @Model.GiaBan</h4>
+                    }
+                    <ul class="list">
+                        <li><a @* class="active" *@ href="#"><span>Loại Mũ</span> : @Model.LoaiMu</a></li>
+                        <li><a href="#"><span>Thương Hiệu</span> : @Model.ThuongHieu</a></li>
+                        <li><a href="#"><span>Xuất Xứ</span> : @Model.XuatXu</a></li>
+                        <li><a href="#"><span>Số Lượng</span> : @Model.SoLuongTon</a></li>
+                    </ul>
+
+                    <span class="pd-detail__label u-s-m-b-8">Màu sắc:</span>
+                    <div class="pd-detail__color">
+                        @foreach (var item in Model.itemShopListColor!)
+                        {
+                            if (Model.MauSac == item)
+                            {
+                                if (item == "white")
+                                {
+                                    <div class="color__radio">
+
+                                        <input type="radio" id="@item" value="@item" name="color" checked>
+
+                                        <label class="color__radio-label" for="@item" style="background-color: #8af0ff"></label>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="color__radio">
+
+                                        <input type="radio" id="@item" value="@item" name="color" checked>
+
+                                        <label class="color__radio-label" for="@item" style="background-color: @item;  color:@item"></label>
+                                    </div>
+                                }
+
+                            }
+                            else
+                            {
+                                if (item == "white")
+                                {
+                                    <div class="color__radio">
+
+                                        <input type="radio" id="@item" value="@item" name="color">
+
+                                        <label class="color__radio-label" for="@item" style="background-color: #8af0ff"></label>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="color__radio">
+
+                                        <input type="radio" id="@item" value="@item" name="color">
+
+                                        <label class="color__radio-label" for="@item" style="background-color: @item; color:@item"></label>
+                                    </div>
+                                }
+
+                            }
+
+                        }
+                    </div>
+
+                    <p>
+                        Chiếc mũ mới nhất của chúng tôi sẽ làm bạn phải trầm trồ! Với thiết kế sáng tạo và chất liệu cao cấp,
+                        chiếc mũ này không chỉ mang lại sự thoải mái mà còn là điểm nhấn hoàn hảo cho phong cách của bạn.
+                        Khám phá ngay để trải nghiệm cảm giác ấm áp và phong cách tinh tế mà chiếc mũ mang lại!
+                    </p>
+                    <div class="product_count">
+                        <label for="qty">Quantity:</label>
+                    <input type="text" name="qty" id="sst" maxlength="12" value="@soluong" title="Quantity:" class="input-text qty" max="@Model.SoLuongTon" onblur="validateQuantity()">
+                        
+                        <button onclick="increaseQuantity()"
+                                class="increase items-count" type="button">
+                            <i class="lnr lnr-chevron-up"></i>
+                        </button>
+                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
+                                class="reduced items-count" type="button">
+                            <i class="lnr lnr-chevron-down"></i>
+                        </button>
+                    </div>
+
+                    <div class="card_area d-flex align-items-center">
+                        @* <a class="primary-btn" href="@Url.Action("AddProductToCart","Cart", new {  codeProductDetail=Model.MaSanPham,soluong=  })">Add to Cart</a> *@
+                  
+                    <button class="primary-btn" id="addToCartBtn" onclick="addToCartBtn()">Add to Cart</button>
+                        <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
+                        <a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+@* </div> *@
+<script>
+    const maxQuantity = parseInt("@Model.SoLuongTon", 10); // Chuyển đổi thành số nguyên
+    console.log("maxQuantity: ", maxQuantity);
+    console.log(typeof maxQuantity)
+    function increaseQuantity() {
+        var input = document.getElementById('sst');
+        var value = parseInt(input.value, 10);
+        console.log("value: ", value);
+        console.log(typeof value)
+        if (!isNaN(value)) {
+            if (value < maxQuantity) {
+                input.value = value + 1;
+            } else {
+                debugger
+                console.log('dừng lại nhanh');
+                input.value = maxQuantity; // Nếu vượt quá số lượng tồn, giữ nguyên giá trị là số lượng tồn
+            }
+        }
+    }
+
+    function validateQuantity() {
+        var input = document.getElementById('sst');
+        var quantity = parseInt(input.value, 10);
+        var maxQuantity = parseInt(input.getAttribute('max'), 10);
+        console.log(maxQuantity);
+
+        if (!isNaN(quantity)) {
+            if (quantity <= 0) {
+                // alert('Số lượng nhập vào phải lớn hơn 0.');
+                showNotification('Số lượng nhập vào phải lớn hơn 0.', "error");
+                input.value = 1; // Đặt giá trị nhập vào thành 1
+            } else if (quantity > maxQuantity) {
+                // alert('Số lượng nhập vào vượt quá số lượng bán.');
+                showNotification('Số lượng nhập vào vượt quá số lượng bán.', "error");
+                input.value = maxQuantity; // Đặt giá trị nhập vào thành số lượng tối đa có thể
+            }
+        } else {
+            // alert('Vui lòng nhập một số hợp lệ.');
+            showNotification('Vui lòng nhập một số hợp lệ.', "error");
+            input.value = 1;
+        }
+    }
+
+
+        function decreaseQuantity() {
+        var input = document.getElementById('sst');
+        var value = parseInt(input.value, 10);
+
+        if (!isNaN(value) && value > 0) {
+            input.value = value - 1;
+        }
+    }
+
+
+    // document.getElementById('addToCartBtn').addEventListener('click', function () {
+    //     var quantity = document.getElementById('sst').value;
+    //     var codeProductDetail = '@Model.MaSanPham';
+    //     var url = '@Url.Action("AddProductToCart", "Cart")';
+    //     url += '?codeProductDetail=' + codeProductDetail + '&soluong=' + quantity;
+    //     window.location.href = url;
+    // });
+    // document.getElementById('addToCartBtn').addEventListener('click', function () {
+    //     var quantity = document.getElementById('sst').value;
+    //     var codeProductDetail = '@Model.MaSanPham';
+    //     var encodedCodeProductDetail = encodeURIComponent(codeProductDetail);
+    //     var url = '@Url.Action("AddProductToCart", "Cart")';
+    //     url += '?codeProductDetail=' + encodedCodeProductDetail + '&soluong=' + quantity;
+    //     window.location.href = url;
+    // });
+
+
+    // function addToCartBtn() {
+    //     var quantity = document.getElementById('sst').value;
+    //    var codeProductDetail = '@Model.MaSanPham';
+    //     console.log('Bạn vừa ấn vào nút');
+    //     debugger
+    //     $.ajax({
+    //         url: '/Cart/AddProductToCart',
+    //         type: 'POST',
+    //         data: { codeProductDetail: codeProductDetail, soluong: quantity },
+    //         success: function (result) {
+    //             // $('#exampleModal').modal('hide');
+    //             // $('#modal-SanPham').empty().html(result).modal("show");
+
+    //             $("#example").html(result);
+    //             // Mở modal
+    //             $("#updateModal").modal("show");
+    //         },
+    //         error: function (xhr, status, error) {
+    //             console.log(xhr.responseText);
+    //             console.log(status);
+    //             console.log(error);
+    //             console.log(xhr);
+    //         }
+    //     });
+    // }
+
+
+    function addToCartBtn() {
+        var quantity = document.getElementById('sst').value;
+           var codeProductDetail = '@Model.MaSanPham';
+        $.ajax({
+            url: '/Cart/AddProductToCart',
+            type: 'POST',
+            data: { codeProductDetail: codeProductDetail, soluong: quantity },
+            // contentType: false,
+            // processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "success"); 
+                    // document.getElementById('editprofile-form').reset();
+                } else {
+                    debugger
+                    console.log(results.message);                  
+                    showNotification(results.message, "error");
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right", // Sửa từ "toast-bot-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+
+</script>
+
+
+<style>
+    .l-through {
+        text-decoration: line-through;
+    }
+</style>
+<style>
+    .pd-detail__color {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .color__radio {
+        margin-right: 10px;
+    }
+
+        .color__radio input[type=radio] {
+            display: none;
+        }
+
+        .color__radio label {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 2px solid transparent; /* Border ban đầu */
+            border-radius: 50%; /* Đảm bảo hình tròn */
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .color__radio input[type=radio]:checked + label {
+            border-color: #333; /* Màu border khi được chọn */
+        }
+</style>

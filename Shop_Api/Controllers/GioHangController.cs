@@ -13,11 +13,13 @@ namespace Shop_Api.Controllers
 	public class GioHangController : ControllerBase
 	{
 		private readonly IGioHangRepository res;
+		private readonly IGioHangChiTietRepository resGHCT;
 		private readonly IGioHangChiTietServices _reposGHCT;
-		public GioHangController(IGioHangRepository repository, IGioHangChiTietServices reposGHCT)
+		public GioHangController(IGioHangRepository repository, IGioHangChiTietServices reposGHCT, IGioHangChiTietRepository gioHangChiTietRepository)
 		{
 			res = repository;
 			_reposGHCT = reposGHCT;
+			resGHCT = gioHangChiTietRepository;
 		}
 		// GET: api/<GioHangController>
 		[HttpGet("get-gio-hang")]
@@ -80,11 +82,11 @@ namespace Shop_Api.Controllers
 
 
 		[HttpGet("add-gio-hang")]
-		public async Task<IActionResult> AddToCart(string userName, string codeProductDetail)
+		public async Task<IActionResult> AddToCart(string userName, string codeProductDetail,int? soluong)
 		{
 			try
 			{
-				var result = await _reposGHCT.AddCart(userName, codeProductDetail);
+				var result = await _reposGHCT.AddCart(userName, codeProductDetail, soluong);
 				if (result.IsSuccess == true)
 				{
 					return Ok(result);
@@ -96,5 +98,98 @@ namespace Shop_Api.Controllers
 			}
 		}
 
-	}
+
+		[HttpGet("CongQuantityCartDetail")]
+		public async Task<IActionResult> CongQuantityCartDetail(Guid idCartDetail)
+		{
+			try
+			{
+				var result = await _reposGHCT.CongQuantityCartDetail(idCartDetail);
+				if (result.IsSuccess == true)
+				{
+					return Ok(result);
+				}
+				return BadRequest(result);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Internal server error: {ex.Message}");
+			}
+		}
+
+
+        [HttpGet("TruQuantityCartDetail")]
+        public async Task<IActionResult> TruQuantityCartDetail(Guid idCartDetail)
+        {
+            try
+            {
+                var result = await _reposGHCT.TruQuantityCartDetail(idCartDetail);
+                if (result.IsSuccess == true)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("CapNhatSoLuongCartDetail")]
+        public async Task<IActionResult> CapNhatSoLuongCartDetail(Guid idCartDetail,int soLuong)
+        {
+            try
+            {
+                var result = await _reposGHCT.CapNhatSoLuongCartDetail(idCartDetail,soLuong);
+                if (result.IsSuccess == true)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("DeleteCartDetail")]
+        public async Task<IActionResult> DeleteCartDetail(Guid idCartDetail)
+        {
+            try
+            {
+                var result = await _reposGHCT.DeleteCartDetail(idCartDetail);
+                if (result.IsSuccess == true)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+        [HttpGet("TimGioHangChiTIet")]
+        public async Task<IActionResult> TimGioHangChiTIet(string userName, string codeProductDetail)
+        {
+            try
+            {
+                var result = await resGHCT.TimGioHangChiTIet(userName,codeProductDetail);
+                if (result!=null)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+    }
 }
