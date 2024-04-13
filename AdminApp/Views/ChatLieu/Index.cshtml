@@ -1,0 +1,411 @@
+﻿@model IEnumerable<Shop_Models.Entities.ChatLieu>
+@using Shop_Models.Entities;
+
+@{
+    ViewData["Title"] = "Index";
+    var chatLieu = (ViewData["ChatLieu"] as List<ChatLieu>);
+}
+
+<div class="pagetitle">
+    <h1>Quản lý Loại chất liệu</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item active">Tổng quan</li>
+            <li class="breadcrumb-item active">Chất liệu</li>
+        </ol>
+    </nav>
+</div>
+<!-- End Page Title -->
+
+<section class="section dashboard">
+    <div class="row">
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+            <div class="row">
+                <!-- Recent Sales -->
+                <div class="col-12">
+                    <div class="card recent-sales overflow-auto">
+
+                        <div id="tableInfo" class="card-body">
+                            
+                            <table id="tableBody" class="table table-hover datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Mã chất liệu</th>
+                                        <th>Tên chất liệu</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in @Model)
+                                    {
+                                        <tr>
+                                            <td>@item.MaChatLieu</td>
+                                            <td>@item.TenChatLieu</td>
+                                            <td>
+                                                <a asp-area="Admin" asp-controller="ChatLieu" asp-action="Detail" asp-route-id="@item.Guid" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">
+                                                    <i class="bx bxs-detail"></i>
+                                                </a>
+                                                <a class="btn btn-danger" onclick="deleteForm('@item.Guid')" title="Xóa">
+                                                    <i class="bx bxs-trash-alt"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- End Recent Sales -->
+            </div>
+
+        </div><!-- End Left side columns -->
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+            <!-- Recent Activity -->
+            <div class="card">
+
+                <div class="card-body">
+                    <h5 class="card-title">Quản lý <span>| xx</span></h5>
+                    <!-- Default Tabs -->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="contact-tab" data-bs-toggle="tab"
+                                    data-bs-target="#contact" type="button" role="tab" aria-controls="contact"
+                                    aria-selected="false">
+                                Chi tiết
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link " id="home-tab" data-bs-toggle="tab"
+                                    data-bs-target="#home" type="button" role="tab" aria-controls="home"
+                                    aria-selected="true">
+                                Cập nhật
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab"
+                                    data-bs-target="#profile" type="button" role="tab" aria-controls="profile"
+                                    aria-selected="false">
+                                Tạo mới
+                            </button>
+                        </li>
+                    </ul>
+
+                    @* Update *@
+                    <div class="tab-content pt-2" id="myTabContent">
+                        <div class="tab-pane fade" id="home" role="tabpanel"
+                             aria-labelledby="home-tab">
+                            @if (chatLieu != null)
+                            {
+                                <form id="updateProfileForm">
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Mã chất liệu</label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="@chatLieu.First().MaChatLieu" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Tên chất liệu</label>
+                                        <div class="col-sm-8">
+                                            <input asp-for="@chatLieu.First().TenChatLieu" type="text" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-warning" onclick="updateForm()">Lưu</button>
+                                </form>
+                            }
+                        </div>
+
+                        @* Create *@
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <form id="createProfileForm">
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label">Mã chất liệu</label>
+                                    <div class="col-sm-8">
+                                        <input name="MaChatLieu" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label">Tên chất liệu</label>
+                                    <div class="col-sm-8">
+                                        <input name="TenChatLieu" type="text" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-success" onclick="saveForm()">Thêm</button>
+                            </form><!-- End Multi Columns Form -->
+                        </div>
+
+                        @* Detail *@
+                        <div class="tab-pane fade show active" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            @if (chatLieu != null)
+                            {
+                                <div class="row">
+                                    <label class="col-sm-4 col-form-label">
+                                        <p>Mã chất liệu</p>
+                                        <p>Tên chất liệu</p>
+                                        <span>Trạng thái</span>
+                                    </label>
+                                    <label class="col-sm-8 col-form-label">
+                                        @foreach (var item in chatLieu)
+                                        {
+                                            <p>@item.MaChatLieu</p>
+                                            <p>@item.TenChatLieu</p>
+                                            @if (item.TrangThai == 0)
+                                            {
+                                                <span>Mới</span>
+                                            }
+                                            else if (item.TrangThai == 1)
+                                            {
+                                                <span>Đã sửa</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Đã xóa</span>
+                                            }
+                                        }
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div><!-- End Default Tabs -->
+
+                </div>
+
+            </div>
+        </div><!-- End Recent Activity -->
+
+    </div><!-- End Right side columns -->
+
+</section>
+
+<script>
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right", // Sửa từ "toast-top-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+
+    function saveForm() {
+        var formData = new FormData(document.getElementById('createProfileForm'));
+
+        Swal.fire({
+            title: 'Xác nhận',
+            text: 'Bạn có chắc chắn muốn thêm bản ghi này ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, perform the request
+                performRequest(formData);
+            } else {
+                // User canceled, do nothing
+                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+            }
+        });
+
+        event.preventDefault(); // Di chuyển lệnh này xuống phía dưới
+
+    }
+
+    function performRequest(formData) {
+        $.ajax({
+            url: '/ChatLieu/Create',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                showNotification("Thêm thành công", "success");
+                document.getElementById('createProfileForm').reset();
+
+                updateTable();
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+    function updateForm() {
+        var formData = new FormData(document.getElementById('updateProfileForm'));
+
+        Swal.fire({
+            title: 'Xác nhận',
+            text: 'Bạn có chắc chắn muốn Cập nhật bản ghi này ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, perform the request
+                performUpdateRequest(formData);
+            } else {
+                // User canceled, do nothing
+                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+            }
+        });
+
+        event.preventDefault(); // Di chuyển lệnh này xuống phía dưới
+
+    }
+
+    function performUpdateRequest(formData) {
+        var guid = "@(chatLieu?.Any() == true ? chatLieu.First().Guid.ToString() : Guid.Empty.ToString())";
+        $.ajax({
+            url: '/ChatLieu/Update?id=' + guid,
+            type: 'PUT',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                showNotification("Cập nhật thành công", "success");
+                document.getElementById('updateProfileForm').reset();
+
+                updateTable();
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+    function deleteForm(id) {
+        Swal.fire({
+            title: 'Xác nhận',
+            text: 'Bạn có chắc chắn muốn Xóa bản ghi này ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, perform the request
+                performDeleteRequest(id);
+            } else {
+                // User canceled, do nothing
+                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+            }
+        });
+
+        return false; // Return false to prevent the default behavior of the anchor tag
+    }
+
+    function performDeleteRequest(id) {
+        $.ajax({
+            url: '/ChatLieu/Delete?id=' + id,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function (results) {
+                if (results.success) {
+                    showNotification("Xóa thành công", "success");
+                    updateTable(); // Update the table after successful deletion
+                } else {
+                    showNotification("Không thể xóa bản ghi", "error");
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+    function showNotification(message, type) {
+        // Implement your notification logic here (e.g., using SweetAlert)
+        Swal.fire({
+            title: message,
+            icon: type
+        });
+    }
+
+    function updateTable() {
+        $.ajax({
+            url: '/ChatLieu/GetAllChatLieu',
+            type: 'GET',
+            success: function (data) {
+                var table = $('#tableBody');
+                table.empty(); // Xóa toàn bộ nội dung của bảng
+
+                // Khởi tạo lại bảng với dữ liệu mới
+                var newTable = '<table id="dataTable" class="table table-hover">' +
+                    '<thead>' +
+                    '<tr>' +
+                    '<th>Mã chất liệu</th>' +
+                    '<th>Tên chất liệu</th>' +
+                    '<th></th>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody>';
+
+                if (data && data.length > 0) {
+                    data.forEach(function (item) {
+                        var newRow = '<tr>' +
+                            '<td>' + item.maChatLieu + '</td>' +
+                            '<td>' + item.tenChatLieu + '</td>' +
+                            '<td>' +
+                            '<a href="/ChatLieu/Index/' + item.guid + '" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">' +
+                            '<i class="bx bxs-detail"></i>' +
+                            '</a>' +
+                            '<a id="deleteProfileForm" class="btn btn-danger" onclick="deleteForm()" title="Xóa">' +
+                            '<i class="bx bxs-trash-alt"></i>' +
+                            '</a>' +
+                            '</td>' +
+                            '</tr>';
+                        newTable += newRow;
+                    });
+                } else {
+                    // Nếu không có dữ liệu, hiển thị thông báo
+                    newTable += '<tr><td colspan="3">No data available</td></tr>';
+                }
+
+                newTable += '</tbody></table>';
+
+                table.append(newTable);
+
+                // Khởi tạo lại DataTables cho bảng mới
+                $('#dataTable').DataTable({
+                    // Các cài đặt DataTables, bao gồm cài đặt phân trang
+                    "paging": true,
+                    // Các cài đặt khác...
+                });
+                $('.datatable-top').remove();
+                $('.datatable-bottom').remove();
+            },
+            error: function (xhr, status, error) {
+                // Xử lý lỗi AJAX
+                console.log(xhr.responseText); // Ghi log phản hồi lỗi
+                showNotification("Lỗi khi tải dữ liệu bảng", "error");
+            }
+        });
+    }
+
+</script>
