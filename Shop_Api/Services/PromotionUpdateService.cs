@@ -17,16 +17,16 @@ namespace Shop_Api.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            //while (!stoppingToken.IsCancellationRequested)
-            //{
-            //    using (var scope = _provider.CreateScope())
-            //    {
-            //        var productService = scope.ServiceProvider.GetRequiredService<ProductService>();
-            //        productService.UpdatePromotionStatusAndProductPrice();
-            //    }
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                using (var scope = _provider.CreateScope())
+                {
+                    var productService = scope.ServiceProvider.GetRequiredService<ProductService>();
+                    productService.UpdatePromotionStatusAndProductPrice();
+                }
 
-            //    await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
-            //}
+                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+            }
         }
     }
 }
