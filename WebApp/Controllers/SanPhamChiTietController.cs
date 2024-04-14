@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using Shop_Models.Dto;
+using Shop_Models.Entities;
 using System.Data.SqlTypes;
+using System.Drawing.Printing;
 using System.Net.Http;
 
 namespace WebApp.Controllers
@@ -155,6 +158,116 @@ namespace WebApp.Controllers
             {
                 return StatusCode((int)lstRelatedProducts.StatusCode, lstRelatedProducts.ReasonPhrase);
             }
+        }
+
+
+        public async Task<IActionResult> GianHangAsync(int? page, int? pageSize, string? sorting, string? nameBrand, string? selectedCategory, string? selectedColor)
+        {
+            try
+            {
+                //ParameterGianHang parameter = new ParameterGianHang();
+                //parameter.Page = 1;
+                //parameter.PageSize = 6;
+                if (page == null || pageSize == null)
+                {
+                    page = 1;
+                    pageSize = 6;
+                }
+                ParameterGianHang parameter = new ParameterGianHang();
+                parameter.Page = page;
+                parameter.PageSize = pageSize;
+                parameter.SortBy = sorting;
+                parameter.TenThuongHieu = nameBrand;
+                parameter.TenLoai = selectedCategory;
+                parameter.TenMauSac = selectedColor;
+
+                var client = _httpClientFactory.CreateClient("BeHat");
+                var response = await client.PostAsJsonAsync("/api/ChiTietSanPham/GetItemShopGianHang", parameter);
+                var responseMauSac = await client.GetStringAsync("/Get-All-MauSac");
+                var responseThuongHieu = await client.GetStringAsync("/api/ThuongHieu");
+                var responseLoai = await client.GetStringAsync("/api/Loai");
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponseMauSac = responseMauSac.ToString();
+                    var mausac = JsonConvert.DeserializeObject<List<MauSac>>(jsonResponseMauSac);
+                  
+                    var jsonResponseThuonghieu = responseThuongHieu.ToString();
+                    var thuonghieu = JsonConvert.DeserializeObject<List<ThuongHieu>>(jsonResponseThuonghieu);
+                    
+                    var jsonResponseLoai = responseLoai.ToString();
+                    var loai = JsonConvert.DeserializeObject<List<Loai>>(jsonResponseLoai);
+
+
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var respone = JsonConvert.DeserializeObject<ResponseDto>(jsonResponse);
+                    var content = JsonConvert.DeserializeObject<List<ItemShopViewModel>>(respone.Content.ToString());
+                    // Lấy số lượng bản ghi từ phản hồi và truyền nó qua ViewBag
+                    ViewBag.ListLoai = loai.ToList();
+                    ViewBag.ListMau = mausac.ToList();
+                    ViewBag.ListTH = thuonghieu.ToList();
+                    ViewBag.TotalRecords = content.Count();
+                    ViewBag.TotalPage = respone.PagingInfo.SoTrang;
+                    ViewBag.CurrentPage = respone.PagingInfo.TrangHienTai;
+                    return View();
+                }
+
+                else
+                {
+                    return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DanhSachTongQuanSanPham(int? page, int? pageSize, string? sorting,string? nameBrand,string? selectedCategory,string? selectedColor)
+        {
+            try
+            {
+                if (page == null || pageSize == null)
+                {
+                    page = 1;
+                    pageSize = 6;
+                }
+                ParameterGianHang parameter = new ParameterGianHang();
+                parameter.Page = page;
+                parameter.PageSize = pageSize;
+                parameter.SortBy = sorting;
+                parameter.TenThuongHieu = nameBrand;
+                parameter.TenLoai = selectedCategory;
+                parameter.TenMauSac = selectedColor;
+               
+                var client = _httpClientFactory.CreateClient("BeHat");
+                var response = await client.PostAsJsonAsync("/api/ChiTietSanPham/GetItemShopGianHang", parameter);
+               
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                   
+                    var respone = JsonConvert.DeserializeObject<ResponseDto>(jsonResponse);
+                    var content = JsonConvert.DeserializeObject<List<ItemShopViewModel>>(respone.Content.ToString());
+                    // Lấy số lượng bản ghi từ phản hồi và truyền nó qua ViewBag
+                   
+                    ViewBag.TotalRecords = content.Count();
+                    ViewBag.TotalPage = respone.PagingInfo.SoTrang;
+                    ViewBag.CurrentPage = respone.PagingInfo.TrangHienTai;
+                    return PartialView("/Views/SanPhamChiTiet/_GianHangPartialView.cshtml", content);
+                }
+
+                else
+                {
+                    return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+            //return PartialView("_");
         }
     }
 }

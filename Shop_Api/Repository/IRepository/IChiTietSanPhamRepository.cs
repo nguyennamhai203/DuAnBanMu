@@ -15,14 +15,14 @@ namespace Shop_Api.Repository.IRepository
 
         public Task<List<SPDanhSachViewModel>> GetFilteredDaTaDSTongQuanAynsc(ParametersTongQuanDanhSach parametersTongQuanDanhSach);
         public Task<List<SPDanhSachViewModel>> GetItemShopViewModelAsync(string sumguid);
-        public Task<List<ItemShopViewModel>> GetItemShopViewModelAsync2(string? sumguid);
+        public Task<List<ItemShopViewModel>> GetItemShopViewModelAsync2(/*string? sumguid*/);
         public  Task<ItemDetailViewModel?> GetItemDetailViewModelAynsc(string id);
         public  Task<ItemDetailViewModel?> GetItemDetailViewModelWhenSelectColorAynsc(string id,string color);
         //public Task<(List<SPDanhSachViewModel>, int)> GetFilteredDataDSTongQuanAsync(ParametersTongQuanDanhSach parametersTongQuanDanhSach);
         public List<SanPhamChiTietDto> GetRelatedProducts(string sumGuid);
         public Task<SanPhamChiTietDto> DetailSanPhamChiTietDto(Guid Id);
 
-
+        public List<ItemShopViewModel> ParameterGianHang(ParameterGianHang parameter);
 
     }
 }

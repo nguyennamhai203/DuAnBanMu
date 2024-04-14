@@ -14,6 +14,8 @@ namespace Shop_Models.Dto
         public string? ThuongHieu { get; set; }
         public string? MauSac { get; set; }
         public string? TheLoai { get; set; }
+        public string? XuatXu { get; set; }
+        public string? ChatLieu { get; set; }
         public string? TenSanPham { get; set; }
         public double? GiaMin { get; set; }
         public double? GiaBan { get; set; }

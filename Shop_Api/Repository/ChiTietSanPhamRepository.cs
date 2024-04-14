@@ -597,7 +597,7 @@ namespace Shop_Api.Repository
             }
         }
 
-        public async Task<List<ItemShopViewModel>> GetItemShopViewModelAsync2(string? sumguid)
+        public async Task<List<ItemShopViewModel>> GetItemShopViewModelAsync2(/*string? sumguid*/)
         {
             try
             {
@@ -610,7 +610,7 @@ namespace Shop_Api.Repository
                .Include(sp => sp.Loai)
                .Include(sp => sp.XuatXu)
                .Include(sp => sp.MauSac)
-               .Include(sp => sp.ChatLieu);
+               .Include(sp => sp.ChatLieu).Where(x => x.TrangThai == (int)TrangThaiCoBan.HoatDong);
 
                 var viewModelResult = result
                     .GroupBy(gr => new
@@ -704,7 +704,7 @@ namespace Shop_Api.Repository
                 MoTaSanPham = sanPhamChiTiet.Mota,
                 itemShopListColor = distinctColors,
                 LstMauSac = distinctColors2,
-                
+
             };
             return itemDetailViewModel;
         }
@@ -891,12 +891,12 @@ namespace Shop_Api.Repository
                     sp.SanPhamId == sanPhamGet.SanPhamId &&
                     sp.MauSacId == idMauSac
                 ).FirstOrDefault();
-                //.Include(x => x.MauSac)
-                //.Include(x => x.ChatLieu)
-                //.Include(x => x.ThuongHieu)
-                //.Include(x => x.Loai)
-                //.Include(x => x.XuatXu)
-                //.Include(x => x.Anhs);
+            //.Include(x => x.MauSac)
+            //.Include(x => x.ChatLieu)
+            //.Include(x => x.ThuongHieu)
+            //.Include(x => x.Loai)
+            //.Include(x => x.XuatXu)
+            //.Include(x => x.Anhs);
 
             //var lstBienThe = await query.ToListAsync();
 
@@ -940,5 +940,143 @@ namespace Shop_Api.Repository
 
         }
 
+
+        public List<ItemShopViewModel> ParameterGianHang(ParameterGianHang parameter)
+        {
+            //parameter.Page ??= 1;
+            //parameter.PageSize ??= 2;
+            var query = _dbContext.ChiTietSanPhams.AsQueryable();
+            var result = query
+           .Include(sp => sp.SanPham)
+           .Include(sp => sp.ThuongHieu)
+
+           .Include(sp => sp.Loai)
+           .Include(sp => sp.XuatXu)
+           .Include(sp => sp.MauSac)
+           .Include(sp => sp.ChatLieu).Where(x => x.TrangThai == (int)TrangThaiCoBan.HoatDong);
+
+            var viewModelResult = result
+                .GroupBy(gr => new
+                {
+                    gr.ChatLieuId,
+                    gr.SanPhamId,
+                    gr.ThuongHieuId,
+                    gr.XuatXuId,
+                    gr.LoaiId,
+                }).Select(gr => new ItemShopViewModel
+                {
+                    IdChiTietSp = gr.First().Id.ToString(),
+                    MaSanPham = gr.First().MaSanPham,
+                    ThuongHieu = gr.First().ThuongHieu.TenThuongHieu,
+                    MauSac = gr.First().MauSac.TenMauSac,
+                    TheLoai = gr.First().Loai.TenLoai,
+                    TenSanPham = gr.First().SanPham.TenSanPham,
+                    GiaMin = gr.Min(sp => sp.GiaBan),
+                    GiaBan = gr.First().GiaThucTe.GetValueOrDefault(),
+                    SoLuongTon = gr.Sum(sp => sp.SoLuongTon),
+                    GiaGoc = gr.First().GiaThucTe,
+                    GiaMax = gr.Max(sp => sp.GiaBan),
+                    MoTaSanPham = gr.First().Mota,
+                    GiaKhuyenMai = gr.First().GiaBan,
+                    LstMauSac = gr.Select(it => new SelectListItem { Value = it.MauSacId.ToString(), Text = it.MauSac.TenMauSac }).ToList(),
+                    IsKhuyenMai = gr.First().TrangThaiKhuyenMai,
+                    //Anh = gr.First().Anhs.
+                }).ToList();
+
+            foreach (var item in viewModelResult)
+            {
+                var anh = _dbContext.Anhs.FirstOrDefault(image =>
+                    image.ChiTietSanPhamId.ToString() == item.IdChiTietSp && image.MaAnh == "Anh1");
+
+                if (anh != null)
+                {
+                    item.Anh = anh.URL;
+                }
+            }
+
+
+            //if (getNumber > 0)
+            //{
+            //    query = query.Take(Convert.ToInt32(getNumber));
+            //}
+            if (!string.IsNullOrEmpty(parameter.TenSanPham))
+            {
+                viewModelResult = (List<ItemShopViewModel>)viewModelResult.Where(x => x.TenSanPham.Contains(parameter.TenSanPham)).ToList();
+            }
+            if (parameter.Min.HasValue)
+            {
+                viewModelResult = (List<ItemShopViewModel>)viewModelResult.Where(x => x.GiaBan >= parameter.Min).ToList();
+
+            }
+            if (parameter.Max.HasValue)
+            {
+                viewModelResult = (List<ItemShopViewModel>)viewModelResult.Where(x => x.GiaBan <= parameter.Max).ToList();
+            }
+            if (!string.IsNullOrEmpty(parameter.TenLoai))
+            {
+                viewModelResult = (List<ItemShopViewModel>)viewModelResult.Where(x => x.TheLoai.Contains(parameter.TenLoai)).ToList();
+            };
+
+            if (!string.IsNullOrEmpty(parameter.TenThuongHieu))
+            {
+                viewModelResult = (List<ItemShopViewModel>)viewModelResult.Where(x => x.ThuongHieu.Contains(parameter.TenThuongHieu)).ToList();
+            };
+
+            if (!string.IsNullOrEmpty(parameter.TenMauSac))
+            {
+                viewModelResult = (List<ItemShopViewModel>)viewModelResult.Where(x => x.MauSac.Contains(parameter.TenMauSac)).ToList();
+            };
+
+            if (!string.IsNullOrEmpty(parameter.TenXuatXu))
+            {
+                viewModelResult = (List<ItemShopViewModel>)viewModelResult.Where(x => x.XuatXu.Contains(parameter.TenXuatXu)).ToList();
+            };
+
+            if (!string.IsNullOrEmpty(parameter.TenChatLieu))
+            {
+                viewModelResult = (List<ItemShopViewModel>)viewModelResult.Where(x => x.ChatLieu.Contains(parameter.TenChatLieu)).ToList();
+            };
+            //if (!string.IsNullOrEmpty(codeProductDetail))
+            //{
+            //    query = query.Where(x => x.MaSanPhamChiTiet.Contains(codeProductDetail));
+            //};
+
+
+
+            if (!string.IsNullOrEmpty(parameter.SortBy))
+            {
+                switch (parameter.SortBy)
+                {
+                    case "nameproduct_desc":
+                        viewModelResult = (List<ItemShopViewModel>)viewModelResult.OrderByDescending(x => x.TenSanPham).ToList();
+                        break;
+                    case "price_asc":
+                        viewModelResult = (List<ItemShopViewModel>)viewModelResult.OrderBy(x => x.GiaBan).ToList();
+                        break;
+                    case "price_desc":
+                        viewModelResult = (List<ItemShopViewModel>)viewModelResult.OrderByDescending(x => x.GiaBan).ToList();
+                        break;
+                }
+            }
+
+
+
+            //var pageSize = PAGE_SIZE;
+            //var totalItems =  viewModelResult.Count();
+            //var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            //parameter.Page = Math.Clamp((int)parameter.Page, 1, totalPages);
+
+            //viewModelResult = (List<ItemShopViewModel>)viewModelResult.Skip((int)((parameter.Page - 1) * pageSize)).Take(pageSize).ToList();
+
+
+
+            var resultS = (List<ItemShopViewModel>)viewModelResult.ToList();
+
+
+            return (List<ItemShopViewModel>)viewModelResult.ToList();
+        }
+
+
+       
     }
 }
