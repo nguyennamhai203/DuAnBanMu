@@ -5,6 +5,7 @@ using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
 using Shop_Models.Heplers;
+using System.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Shop_Api.Controllers
@@ -111,10 +112,10 @@ namespace Shop_Api.Controllers
             return new ObjectResult(result);
         }
         [HttpGet("GetItemShopViewModelAsync2")]
-        public async Task<IActionResult> GetItemShopViewModelAsync2(string? Id, int pageNumber = 1)
+        public async Task<IActionResult> GetItemShopViewModelAsync2(/*string? Id,*/ int pageNumber = 1)
         {
             int itemsPerPage = 12;
-            var viewModelResult = await _repository.GetItemShopViewModelAsync2(Id);
+            var viewModelResult = await _repository.GetItemShopViewModelAsync2(/*Id*/);
             var pagedViewModelResult = viewModelResult.Skip((pageNumber - 1) * itemsPerPage).Take(itemsPerPage).ToList();
 
             var result = new ResponseDto()
@@ -131,7 +132,36 @@ namespace Shop_Api.Controllers
             return new ObjectResult(result);
         }
 
+        [HttpPost("GetItemShopGianHang")]
+        public async Task<IActionResult> GetItemShopGianHang(ParameterGianHang parameter)
+        {
+            parameter.Page ??= 1;
+            parameter.PageSize ??= 6;
+            var viewModelResult = _repository.ParameterGianHang(parameter);
+            var pagedViewModelResult = viewModelResult.Skip((int)((parameter.Page - 1) * parameter.PageSize)).Take((int)parameter.PageSize).ToList();
 
+            var result = new ResponseDto()
+            {
+                Content = pagedViewModelResult,
+                PagingInfo = new PagingInfo()
+                {
+                    TongSoItem = viewModelResult.Count(),
+                    SoItemTrenMotTrang = (int)parameter.PageSize,
+                    SoItemTrenTrangHienTai = pagedViewModelResult.Count(),
+                    TrangHienTai = (int)parameter.Page,
+                }
+            };
+
+            if (result.PagingInfo.TrangHienTai > result.PagingInfo.SoTrang)
+            {
+                result.Content = "Khong co ban ghi nao hop le";
+            }
+            else if (result.Content==null)
+            {
+                result.Content = "Khong co ban ghi nao hop le";
+            }
+            return new ObjectResult(result);
+        }
 
         [HttpGet("GetItemDetailViewModelAynsc")]
         public async Task<IActionResult> GetItemDetailViewModelAynsc(string Id)

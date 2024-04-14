@@ -71,7 +71,7 @@ namespace WebApp.Controllers
                 var client = _httpClientFactory.CreateClient("BeHat");
                 //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var response = await client.GetAsync("/api/ChiTietSanPham/GetItemShopViewModelAsync2?Id=123");
+                var response = await client.GetAsync("/api/ChiTietSanPham/GetItemShopViewModelAsync2");
 
                 if (response.IsSuccessStatusCode)
                 {
