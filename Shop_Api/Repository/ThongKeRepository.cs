@@ -157,5 +157,11 @@ namespace Shop_Api.Repository
             });
             return result.ToList();
         }
+
+        public async Task<List<ThongKe>> GetAll()
+        {
+            var list = await _dbContext.ThongKes.ToListAsync();
+            return list;
+        }
     }
 }

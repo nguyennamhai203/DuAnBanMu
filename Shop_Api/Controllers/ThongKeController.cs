@@ -13,11 +13,19 @@ namespace Shop_Api.Controllers
     public class ThongKeController : ControllerBase
     {
         private readonly IThongKeRepository _repository;
+        private readonly IChiTietSanPhamRepository chiTietSanPhamRepository;
         private readonly ApplicationDbContext _context;
         public ThongKeController(IThongKeRepository repository,ApplicationDbContext context)
         {
             _repository = repository;
             _context = context;
+        }
+
+        [HttpGet("Get-all")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _repository.GetAll();
+            return Ok(result);
         }
 
         [HttpGet("Get")]
@@ -63,32 +71,14 @@ namespace Shop_Api.Controllers
             else return BadRequest(respon);
         }
 
-        [Authorize(Roles = AppRole.Admin)]
+        /*[Authorize(Roles = AppRole.Admin)]
         [HttpGet("Thong-ke-san-pham-theo-ngay")]
-        public IActionResult ThongKeSanPhamTheoNgay(DateTime ngay)
+        public async Task<IActionResult> ThongKeSanPhamTheoNgay(DateTime ngay, int? status, int page)
         {
-            var ngaybatdau = ngay.Date;
-            var ngayketthuc = ngaybatdau.AddMonths(1).AddDays(-1);
-            var thongketheongay = _context.HoaDons
-                .Where(b => b.NgayThanhToan >= ngaybatdau && b.NgayThanhToan <= ngayketthuc)
-                .Join(
-                    _context.HoaDonChiTiets,
-                    hd => hd.Id,
-                    hdct => hdct.HoaDonId,
-                    (hd, hdct) => new
-                    {
-                        Daily = hd.NgayThanhToan.Day,
-                        Amount = hdct.GiaBan * hdct.SoLuong
-                    }
-                )
-                .GroupBy(result => result.Daily)
-                .Select(group => new
-                {
-                    Day = group.Key,
-                    Amount = group.Sum(result => result.Amount),
-                    TotalOrders = group.Count(),
-                }).ToList();
-            return Ok(thongketheongay);
-        }
+            var thongke = from x in _repository.GetAll()
+                          from y in chiTietSanPhamRepository.GetAllAsync()
+
+            return Ok();
+        }*/
     }
 }
