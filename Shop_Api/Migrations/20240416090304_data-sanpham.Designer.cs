@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop_Api.AppDbContext;
 
@@ -11,9 +12,10 @@ using Shop_Api.AppDbContext;
 namespace Shop_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240416090304_data-sanpham")]
+    partial class datasanpham
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -424,9 +426,6 @@ namespace Shop_Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DiaChiGiaoHang")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("LiDoHuy")
                         .HasColumnType("nvarchar(max)");
 
@@ -439,26 +438,20 @@ namespace Shop_Api.Migrations
                     b.Property<DateTime>("NgayGiaoDuKien")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("NgayNhan")
+                    b.Property<DateTime>("NgayNhan")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("NgayShip")
+                    b.Property<DateTime>("NgayShip")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("NgayThanhToan")
+                    b.Property<DateTime>("NgayThanhToan")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("NguoiDungId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SoDienThoai")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TenKhachHang")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("TienGiam")
                         .HasColumnType("float");

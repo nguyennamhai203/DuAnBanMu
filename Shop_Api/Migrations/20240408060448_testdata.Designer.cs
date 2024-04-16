@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shop_Api.AppDbContext;
 
@@ -11,13 +12,14 @@ using Shop_Api.AppDbContext;
 namespace Shop_Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240408060448_testdata")]
+    partial class testdata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.27")
+                .HasAnnotation("ProductVersion", "6.0.28")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -260,73 +262,6 @@ namespace Shop_Api.Migrations
                     b.HasIndex("XuatXuId");
 
                     b.ToTable("ChiTietSanPham");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("ad769cd2-bcf1-497b-871e-0ae05b38f1c8"),
-                            GiaBan = 487571.0,
-                            GiaNhap = 539205.0,
-                            GiaThucTe = 870573.0,
-                            MaSanPham = "SP5",
-                            Mota = "mo ta4",
-                            SoLuongDaBan = 5,
-                            SoLuongTon = 1,
-                            TrangThai = 1,
-                            TrangThaiKhuyenMai = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("4eadea45-ee6e-4fe9-924e-06baae44da51"),
-                            GiaBan = 696117.0,
-                            GiaNhap = 851534.0,
-                            GiaThucTe = 116929.0,
-                            MaSanPham = "SP4",
-                            Mota = "mo ta4",
-                            SoLuongDaBan = 4,
-                            SoLuongTon = 3,
-                            TrangThai = 1,
-                            TrangThaiKhuyenMai = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("7a439e74-92ca-433a-b184-58a906755da3"),
-                            GiaBan = 680127.0,
-                            GiaNhap = 304275.0,
-                            GiaThucTe = 338206.0,
-                            MaSanPham = "SP2",
-                            Mota = "mo ta2",
-                            SoLuongDaBan = 6,
-                            SoLuongTon = 7,
-                            TrangThai = 0,
-                            TrangThaiKhuyenMai = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("27179460-4307-4b24-a74c-c9cfb8e31bc8"),
-                            GiaBan = 533729.0,
-                            GiaNhap = 253913.0,
-                            GiaThucTe = 689934.0,
-                            MaSanPham = "SP3",
-                            Mota = "mo ta3",
-                            SoLuongDaBan = 8,
-                            SoLuongTon = 7,
-                            TrangThai = 1,
-                            TrangThaiKhuyenMai = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("026abea6-ee8a-49bf-8412-ef50a65fc782"),
-                            GiaBan = 970655.0,
-                            GiaNhap = 304109.0,
-                            GiaThucTe = 645530.0,
-                            MaSanPham = "SP2",
-                            Mota = "mo ta3",
-                            SoLuongDaBan = 9,
-                            SoLuongTon = 9,
-                            TrangThai = 0,
-                            TrangThaiKhuyenMai = 1
-                        });
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ChucVu", b =>
@@ -424,9 +359,6 @@ namespace Shop_Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DiaChiGiaoHang")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("LiDoHuy")
                         .HasColumnType("nvarchar(max)");
 
@@ -439,26 +371,20 @@ namespace Shop_Api.Migrations
                     b.Property<DateTime>("NgayGiaoDuKien")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("NgayNhan")
+                    b.Property<DateTime>("NgayNhan")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("NgayShip")
+                    b.Property<DateTime>("NgayShip")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("NgayThanhToan")
+                    b.Property<DateTime>("NgayThanhToan")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("NguoiDungId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SoDienThoai")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TenKhachHang")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("TienGiam")
                         .HasColumnType("float");
@@ -489,25 +415,42 @@ namespace Shop_Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("00259551-d185-4011-a340-43a4facd8188"),
-                            LiDoHuy = "ly do huy5",
-                            MaHoaDon = "HD4",
-                            MoTa = "mo ta4",
+                            Id = new Guid("84e846c5-d270-43eb-889e-68d30608501c"),
+                            LiDoHuy = "ly do huy3",
+                            MaHoaDon = "HD5",
+                            MoTa = "mo ta3",
                             NgayGiaoDuKien = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NgayNhan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NgayShip = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NgayTao = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NgayThanhToan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TienGiam = 77415.0,
-                            TienShip = 46304.0,
-                            TongTien = 49889.0,
+                            TienGiam = 27712.0,
+                            TienShip = 32877.0,
+                            TongTien = 88232.0,
                             TrangThaiGiaoHang = 0,
-                            TrangThaiThanhToan = 0
+                            TrangThaiThanhToan = 1
                         },
                         new
                         {
-                            Id = new Guid("199be224-1b8e-4cb1-85c7-74767fe97838"),
+                            Id = new Guid("1440dde6-fb8e-4ee2-9ee6-ce59090333f7"),
                             LiDoHuy = "ly do huy5",
+                            MaHoaDon = "HD5",
+                            MoTa = "mo ta3",
+                            NgayGiaoDuKien = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayNhan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayShip = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayTao = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayThanhToan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiam = 55204.0,
+                            TienShip = 32114.0,
+                            TongTien = 49706.0,
+                            TrangThaiGiaoHang = 1,
+                            TrangThaiThanhToan = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("63dd89e9-8780-449a-b488-12f7fcbfe05c"),
+                            LiDoHuy = "ly do huy4",
                             MaHoaDon = "HD3",
                             MoTa = "mo ta3",
                             NgayGiaoDuKien = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -515,49 +458,15 @@ namespace Shop_Api.Migrations
                             NgayShip = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NgayTao = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NgayThanhToan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TienGiam = 57933.0,
-                            TienShip = 37534.0,
-                            TongTien = 41117.0,
-                            TrangThaiGiaoHang = 1,
-                            TrangThaiThanhToan = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("96543049-7a1c-47e8-8bb6-e39ba6e149a9"),
-                            LiDoHuy = "ly do huy1",
-                            MaHoaDon = "HD3",
-                            MoTa = "mo ta1",
-                            NgayGiaoDuKien = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayNhan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayShip = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayThanhToan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TienGiam = 19116.0,
-                            TienShip = 14378.0,
-                            TongTien = 118072.0,
+                            TienGiam = 68617.0,
+                            TienShip = 18188.0,
+                            TongTien = 107657.0,
                             TrangThaiGiaoHang = 0,
                             TrangThaiThanhToan = 0
                         },
                         new
                         {
-                            Id = new Guid("ead64f2f-e36e-483c-9bca-0dd14e12459b"),
-                            LiDoHuy = "ly do huy1",
-                            MaHoaDon = "HD2",
-                            MoTa = "mo ta5",
-                            NgayGiaoDuKien = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayNhan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayShip = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayThanhToan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TienGiam = 90274.0,
-                            TienShip = 11515.0,
-                            TongTien = 112057.0,
-                            TrangThaiGiaoHang = 0,
-                            TrangThaiThanhToan = 1
-                        },
-                        new
-                        {
-                            Id = new Guid("c95ae31c-47fb-4782-aa91-65a563053f3b"),
+                            Id = new Guid("f4ed5bee-9b96-49a4-8649-42794de12aee"),
                             LiDoHuy = "ly do huy5",
                             MaHoaDon = "HD2",
                             MoTa = "mo ta1",
@@ -566,11 +475,28 @@ namespace Shop_Api.Migrations
                             NgayShip = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NgayTao = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NgayThanhToan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TienGiam = 40906.0,
-                            TienShip = 14426.0,
-                            TongTien = 145392.0,
+                            TienGiam = 81497.0,
+                            TienShip = 38628.0,
+                            TongTien = 61273.0,
                             TrangThaiGiaoHang = 1,
                             TrangThaiThanhToan = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("b252ae5c-ee4c-4612-a352-dda52bb152d4"),
+                            LiDoHuy = "ly do huy1",
+                            MaHoaDon = "HD3",
+                            MoTa = "mo ta5",
+                            NgayGiaoDuKien = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayNhan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayShip = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayTao = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayThanhToan = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiam = 44834.0,
+                            TienShip = 21200.0,
+                            TongTien = 65525.0,
+                            TrangThaiGiaoHang = 0,
+                            TrangThaiThanhToan = 1
                         });
                 });
 
@@ -834,43 +760,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("IdSanPham");
 
                     b.ToTable("SanPham");
-
-                    b.HasData(
-                        new
-                        {
-                            IdSanPham = new Guid("1cac3f0e-d55f-4e78-8bcb-e989e4b2bac3"),
-                            MaSanPham = "SP4",
-                            TenSanPham = "TSP4",
-                            TrangThai = 1
-                        },
-                        new
-                        {
-                            IdSanPham = new Guid("ebf40002-0f1e-484e-a97e-ae8ec3988b0c"),
-                            MaSanPham = "SP5",
-                            TenSanPham = "TSP1",
-                            TrangThai = 1
-                        },
-                        new
-                        {
-                            IdSanPham = new Guid("d4e8083d-3175-4436-be2a-84017d10a051"),
-                            MaSanPham = "SP1",
-                            TenSanPham = "TSP2",
-                            TrangThai = 1
-                        },
-                        new
-                        {
-                            IdSanPham = new Guid("bb2b2e47-07fb-4e65-ad6d-734bec89a806"),
-                            MaSanPham = "SP5",
-                            TenSanPham = "TSP5",
-                            TrangThai = 1
-                        },
-                        new
-                        {
-                            IdSanPham = new Guid("58ca5696-c8c1-457b-842f-96f5f456f97d"),
-                            MaSanPham = "SP2",
-                            TenSanPham = "TSP5",
-                            TrangThai = 0
-                        });
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.SanPhamYeuThich", b =>
@@ -928,6 +817,53 @@ namespace Shop_Api.Migrations
                     b.HasIndex("HoaDonId");
 
                     b.ToTable("ThongKe");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("9238fe90-69ef-4157-9623-4e6561091472"),
+                            HoaDonId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Nam = 2004,
+                            Ngay = 29,
+                            SanPhamChiTietId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Thang = 8
+                        },
+                        new
+                        {
+                            Id = new Guid("82fb2ac6-266d-4fae-94cf-fa2d475857d1"),
+                            HoaDonId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Nam = 2017,
+                            Ngay = 14,
+                            SanPhamChiTietId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Thang = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("791041b8-f1e9-43b3-abe9-e38d4c821890"),
+                            HoaDonId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Nam = 2002,
+                            Ngay = 23,
+                            SanPhamChiTietId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Thang = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("aab8495e-2730-42c4-9838-c6b7d5fca568"),
+                            HoaDonId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Nam = 2014,
+                            Ngay = 22,
+                            SanPhamChiTietId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Thang = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("d00f3e2f-8b69-41f3-b75e-266ec9dcb738"),
+                            HoaDonId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Nam = 2001,
+                            Ngay = 27,
+                            SanPhamChiTietId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Thang = 1
+                        });
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ThuongHieu", b =>

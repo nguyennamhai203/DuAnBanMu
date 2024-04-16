@@ -1,0 +1,140 @@
+﻿@model IEnumerable<Shop_Models.Entities.ChiTietSanPham>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 style="text-align: center">Thống kê doanh thu</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Mã sản phẩm
+            </th>
+            <th>
+                Giá Nhập
+            </th>
+            <th>
+                Giá bán
+            </th>
+            <th>
+                Giá thực tế
+            </th>
+            <th>
+                Số lượng tồn
+            </th>
+            <th>
+                Số lượng đã bán
+            </th>
+            <th>
+                Tổng doanh thu
+            </th>
+            <th>
+                Lãi
+            </th>
+            <th>
+                Lỗ
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    @{
+        decimal totalRevenue = 0;
+        decimal totalProfit = 0;
+        decimal totalLoss = 0;
+        decimal totalGiaNhap = Convert.ToDecimal(Model.Sum(x => x.GiaNhap));
+        decimal totalGiaBan = Convert.ToDecimal(Model.Sum(x => x.GiaBan));
+        decimal totalGiaThucTe = Convert.ToDecimal(Model.Sum(x => x.GiaThucTe));
+        var totalSLT = Model.Sum(x => x.SoLuongTon);
+        var totalSLDB = Model.Sum(x => x.SoLuongDaBan);
+    }   
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MaSanPham)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GiaNhap)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GiaBan)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GiaThucTe)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SoLuongTon)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SoLuongDaBan)
+                </td>
+                <td>
+                    @{
+                        decimal revenue = Convert.ToDecimal(item.GiaBan * item.SoLuongDaBan);
+                        totalRevenue += revenue;
+                        @Html.DisplayFor(modelItem => revenue)
+                    }
+                </td>
+                <td>
+                    @{
+                        decimal profit = Convert.ToDecimal((item.GiaBan - item.GiaNhap) * item.SoLuongDaBan);
+                        if (profit >= 0)
+                        {
+                            @Html.DisplayFor(modelItem => profit)
+                        }
+                        else
+                        {
+                            @:0
+                        }
+                    }
+                </td>
+                <td>
+                    @{
+                        if (profit < 0)
+                        {
+                            @Html.DisplayFor(modelItem => profit)
+                        }
+                        else
+                        {
+                            @:0
+                        }
+                    }
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>Tổng: </td>
+            <td>@totalGiaNhap</td>
+            <td>@totalGiaBan</td>
+            <td>@totalGiaThucTe</td>
+            <td>@totalSLT</td>
+            <td>@totalSLDB</td>
+            <td>@totalRevenue</td>
+            <td>
+                @{
+                    var averageProfitPercentage = Model.Average(item => (Convert.ToDecimal(item.GiaBan - item.GiaNhap)) * item.SoLuongDaBan / Convert.ToDecimal(totalRevenue) * 100);
+                    @Math.Round(Convert.ToDecimal(averageProfitPercentage), 2) @:%
+
+                }
+            </td>
+            <td>
+                @* @{
+                    var averageLossPercentage = Model.Average(item => (Convert.ToDecimal(item.GiaNhap - item.GiaBan)) * item.SoLuongDaBan / Convert.ToDecimal(totalRevenue) * 100);
+                    @Math.Round(Convert.ToDecimal(averageLossPercentage), 2) @:%
+                } *@
+                @{
+                    var averageLossPercentage = 0;
+                    @Html.DisplayFor(modelItem => averageLossPercentage)
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+<form asp-controller="ThongKe" asp-action="ExportToExcel" method="post">
+    <button type="submit" class="btn btn-primary">Export to Excel</button>
+</form>
