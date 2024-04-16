@@ -6,4 +6,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="Views\Login\SignUp.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shop_Models\Shop_Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Shared\SignUp.cshtml" />
+  </ItemGroup>
+
 </Project>

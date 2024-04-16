@@ -1,0 +1,340 @@
+﻿@using Shop_Models.Dto;
+@using Shop_Models.Entities;
+@model IEnumerable<GioHangChiTietViewModel>
+@{
+    int stt = 0;
+    double thanhTien = 0;
+    double tongTien = 0;
+    int soluongsanpham = 0;
+    string username = ViewContext.HttpContext.Session.GetString("username");
+}
+
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Shopping Cart</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="category.html">Cart</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- End Banner Area -->
+<div class="carts">
+    @await Html.PartialAsync("_CartPartialViewAsync")
+</div>
+
+
+
+<style>
+    .empty-cart-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+        .empty-cart-message span {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+    .shop-now-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+        .shop-now-button:hover {
+            background-color: #0056b3;
+        }
+
+</style>
+
+<script>
+    // function incrementQuantity(button) {
+    //     var input = $(button).siblings('.qty')[0];
+    //     var value = parseInt(input.value, 10);
+    //     if (!isNaN(value)) {
+    //         input.value = value + 1;
+    //     }
+    // }
+
+    // function decrementQuantity(button) {
+    //     var input = $(button).siblings('.qty')[0];
+    //     var value = parseInt(input.value, 10);
+    //     if (!isNaN(value) && value > 0) {
+    //         input.value = value - 1;
+    //     }
+    // }
+
+
+    // const maxQuantity = parseInt("@soluongsanpham", 10); // Chuyển đổi thành số nguyên
+    // const maxQuantity2 = parseInt("@soluongsanpham", 10); // Chuyển đổi thành số nguyên
+    // console.log("maxQuantity: ", maxQuantity);
+    // console.log(typeof maxQuantity)
+
+    function increaseQuantity(button) {
+        var input = $(button).siblings('.qty')[0];
+        var codeProduct = $(input).data('product-detail');
+        var value = parseInt(input.value, 10);
+
+        var inputsoLuongSPTon = $(button).siblings('#soLuongSPTon')[0]; // Sử dụng #soLuongSPTon để chọn phần tử có id là soLuongSPTon
+        var maxQuantity3 = parseInt($(inputsoLuongSPTon).data('product-sl'), 10); // Lấy giá trị số lượng sản phẩm tồn từ thuộc tính data-product-sl
+
+        console.log(codeProduct);
+        console.log(maxQuantity3);
+        var inputIdCartDetail = $(button).closest('.product_count').find('#increase')[0];
+        var idCartDetail = $(inputIdCartDetail).data('cartdetail-id');
+        console.log(idCartDetail);
+
+        console.log(idCartDetail);
+
+        if (!isNaN(value)) {
+            if (value < maxQuantity3) {
+                input.value = value + 1;
+                var codeProductDetail = codeProduct;
+                $.ajax({
+                    url: '/Cart/IncreaseQuantity',
+                    type: 'GET',
+                    data: { codeProductDetail2: codeProductDetail, idCartDetail: idCartDetail },
+                    success: function (response) {
+                        $("#container").load(location.href + " #container");
+                        updateCart();
+                        console.log('Quantity increased successfully');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error increasing quantity:', error);
+                    }
+                });
+            } else {
+                debugger;
+                console.log('dừng lại nhanh');
+                input.value = maxQuantity3;
+            }
+        }
+    }
+
+
+    function validateQuantity(input) {
+        var codeProduct = $(input).data('product-detail');
+        var value = parseInt(input.value, 10);
+
+        var inputsoLuongSPTon = $(input).siblings('#soLuongSPTon')[0];
+        var maxQuantity3 = parseInt($(inputsoLuongSPTon).data('product-sl'), 10);
+
+        // var inputIdCartDetail = $(input).siblings('.qty')[0];
+        var idCartDetail = $(input).data('cartdetail-id');
+
+        var maxQuantity = parseInt(input.getAttribute('max'), 10);
+        var quantity = parseInt(input.value, 10);
+        debugger
+        if (!isNaN(quantity)) {
+            if (quantity > maxQuantity) {
+                alert('Số lượng nhập vào vượt quá số lượng bán.');
+                input.value = 1;
+                updateCart();
+            } else if (quantity <= 0) {
+                alert('Số lượng nhập vào phải lớn hơn 0.');
+                input.value = 1;
+                updateCart();
+            }
+            else if (quantity <= maxQuantity && quantity > 0) {
+                $.ajax({
+                    url: '/Cart/updateSoLuong',
+                    type: 'GET',
+                    data: { codeProductDetail2: codeProduct, idCartDetail: idCartDetail, soLuong: quantity },
+                    success: function (response) {
+                        updateCart();
+                        console.log('Quantity increased successfully');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error increasing quantity:', error);
+                    }
+                });
+            }
+        } else {
+            alert('Vui lòng nhập một số hợp lệ.');
+            input.value = 1;
+            updateCart();
+        }
+    }
+
+
+
+    // function decreaseQuantity(button) {
+
+    //     var input = $(button).siblings('.qty')[0];
+    //     var codeProduct = $(input).data('product-detail');
+    //     var value = parseInt(input.value, 10);
+
+
+
+    //     if (!isNaN(value) && value > 0) {
+    //         input.value = value - 1;
+    //     }
+    // }
+
+
+
+    function decreaseQuantity(button) {
+        var input = $(button).siblings('.qty')[0];
+        var codeProduct = $(input).data('product-detail');
+        var value = parseInt(input.value, 10);
+
+        var inputsoLuongSPTon = $(button).siblings('#soLuongSPTon')[0]; // Sử dụng #soLuongSPTon để chọn phần tử có id là soLuongSPTon
+        var maxQuantity3 = parseInt($(inputsoLuongSPTon).data('product-sl'), 10); // Lấy giá trị số lượng sản phẩm tồn từ thuộc tính data-product-sl
+
+        console.log(maxQuantity3);
+        var inputIdCartDetail = $(button).closest('.product_count').find('#increase')[0];
+        var idCartDetail = $(inputIdCartDetail).data('cartdetail-id');
+
+        console.log(codeProduct); // Kiểm tra xem codeProduct có được lấy chính xác không
+        console.log(maxQuantity3); // Kiểm tra xem maxQuantity3 có được lấy chính xác không
+
+        if (!isNaN(value)) {
+            if (value > 0) {
+                input.value = value - 1;
+                var codeProductDetail = codeProduct;
+                $.ajax({
+                    url: '/Cart/decreaseQuantity',
+                    type: 'GET',
+                    data: { codeProductDetail2: codeProductDetail, idCartDetail: idCartDetail },
+                    success: function (response) {
+                        // Sau khi giảm số lượng, cập nhật lại nội dung của div.carts
+                        updateCart();
+                        console.log('Quantity decrease successfully');
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error decrease quantity:', error);
+                    }
+                });
+            } else {
+                debugger;
+                console.log('dừng lại nhanh');
+                input.value = 0;
+
+                $.ajax({
+                    url: '/Cart/delete',
+                    type: 'GET',
+                    data: { idCartDetail: idCartDetail },
+                    success: function (response) {
+                        // Sau khi giảm số lượng, cập nhật lại nội dung của div.carts
+                        updateCart();
+                        console.log('Quantity decrease successfully');
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error decrease quantity:', error);
+                    }
+                });
+
+
+            }
+        }
+    }
+
+    // Hàm cập nhật lại nội dung của div.carts
+    function updateCart() {
+        $.ajax({
+            url: '/Cart/CartPartialView', // Đường dẫn đến action trong Controller để trả về PartialView
+            type: 'GET',
+            success: function (response) {
+
+                $('.carts').html(response); // Cập nhật nội dung của div.carts với nội dung nhận được từ máy chủ
+            },
+            error: function (xhr, status, error) {
+                console.error('Error updating cart:', error);
+            }
+        });
+    }
+
+
+    function DeleteCart(button) {
+        debugger
+        var idCartDetail_buuton = $(button).siblings('.delete')[0];
+        var idCartDetail = $(button).data('cartdetail-id');
+
+        $.ajax({
+            url: '/Cart/delete',
+            type: 'GET',
+            data: { idCartDetail: idCartDetail },
+            success: function (response) {
+                // Sau khi giảm số lượng, cập nhật lại nội dung của div.carts
+                updateCart();
+                console.log('Quantity decrease successfully');
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error decrease quantity:', error);
+            }
+        });
+    }
+
+
+    $(document).ready(function () {
+        // Gắn sự kiện click cho phần tử cha của .update-cart-link (tức là .carts)
+        $('.carts').on('click', '.update-cart-link', function (event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của thẻ a
+            updateCart(); // Gọi hàm cập nhật lại nội dung của div.carts
+        });
+    });
+
+
+    // Sự kiện click cho nút có id là "checkz"
+    document.getElementById("checkz").addEventListener("click", function () {
+        // Thực hiện hành động khi nút được ấn
+        alert("Nút đã được ấn!");
+    });
+
+    function validateForm(event) {
+
+        // Lấy ra các radio button
+        var option1 = document.getElementById("option1");
+        var option2 = document.getElementById("option2");
+        var option3 = document.getElementById("option3");
+
+        // Lấy ra div kết quả
+        var resultDiv = document.getElementById("result");
+
+        // Kiểm tra radio button nào đã được chọn
+        if (option1.checked) {
+            resultDiv.innerHTML = text;
+        } else if (option2.checked) {
+            resultDiv.innerHTML = text;
+        } else if (option3.checked) {
+            resultDiv.innerHTML = text;
+        } else {
+            resultDiv.innerHTML = "Vui lòng chọn một phương thức thanh toán."; event.preventDefault();
+            return false; // Ensure the form is not submitted
+
+        }
+    };
+
+
+    function displayText(text) {
+        document.getElementById("result").innerHTML = "Bạn đã chọn: " + text;
+    }
+
+    function setPaymentMethod(method) {
+        document.getElementById("paymentMethod").value = method;
+        document.getElementById("MaPTTT").value = method;
+    }
+
+
+
+</script>

@@ -1,0 +1,789 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using Shop_Models.Entities;
+@{
+    var tongsobanghi = ViewBag.TotalRecords;
+    var tongtrang = ViewBag.TotalPage;
+    var tranghientai = ViewBag.CurrentPage;
+    var mausac = ViewBag.ListMau;
+    var ListTH = ViewBag.ListTH;
+    var ListLoai = ViewBag.ListLoai;
+
+}
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Shop Category page</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="#">Shop<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="category.html">Fashon Category</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Banner Area -->
+<div class="container">
+    <div class="row">
+        <div class="col-xl-3 col-lg-4 col-md-5">
+
+            <button type="button" id="refreshFilters" style="background-color: orange; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Làm mới bộ lọc</button>
+
+            <div class="sidebar-filter mt-50">
+                <div class="top-filter-head">Product Filters</div>
+                <div class="common-filter">
+                    <div class="head">Thương Hiệu</div>
+                    <form action="#">
+                        <ul>
+                            @foreach (var item in ListTH)
+                            {
+                                <li class="filter-list"><input class="pixel-radio" type="radio" id="apple" name="brand" value="@item.TenThuongHieu"><label for="apple">@item.TenThuongHieu<span>(29)</span></label></li>
+                            }
+
+                        </ul>
+                    </form>
+                </div>
+                <div class="common-filter">
+                    <div class="head">Loại Mũ</div>
+                    <form action="#">
+                        <ul>
+                            @foreach (var item in ListLoai)
+                            {
+                                <li class="filter-list"><input class="pixel-radio" type="radio" id="apple" name="category" value="@item.TenLoai"><label for="apple">@item.TenLoai<span>(29)</span></label></li>
+                            }
+
+                        </ul>
+                    </form>
+                </div>
+                <div class="common-filter">
+                    <div class="head">Màu Sắc</div>
+                    <form action="#">
+                        <ul>
+                            @foreach (var item in mausac)
+                            {
+                                <li class="filter-list"><input class="pixel-radio" type="radio" id="black" name="color" value="@item.TenMauSac"><label for="black">@item.TenMauSac</label></li>
+                            }
+                        </ul>
+                    </form>
+                </div>
+                <div class="common-filter">
+                    <div class="head">Price</div>
+                    <div class="price-range-area">
+                        <div id="price-range"></div>
+                        <div class="value-wrapper d-flex">
+                            <div class="price">Price:</div>
+                            <span>$</span>
+                            <div id="lower-value"></div>
+                            <div class="to">to</div>
+                            <span>$</span>
+                            <div id="upper-value"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-9 col-lg-8 col-md-7">
+            <!-- Start Filter Bar -->
+            <div class="filter-bar d-flex flex-wrap align-items-center">
+                <div class="sorting">
+
+                    <select id="sorting-select">
+                        <option value="">Tùy Chọn Sắp Xếp</option>
+                        <option value="nameproduct_desc">Sắp Xếp Theo Tên</option>
+                        <option value="price_asc">Giá Tăng Dần</option>
+                        <option value="price_desc">Giá Giảm Dần</option>
+                    </select>
+                </div>
+
+                <div class="pagination">
+                    <a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
+                    <a href="#" class="active">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#" class="dot-dot"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
+                    <a href="#">6</a>
+                    <a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <!-- End Filter Bar -->
+            <!-- Start Best Seller   san pham-->
+            <section class="lattest-product-area pb-40 category-list">
+                <div class="row" id="productList">
+                    <!-- single product -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-product">
+                            <img class="img-fluid" src="img/product/p1.jpg" alt="">
+                            <div class="product-details">
+                                <h6>
+                                    addidas New Hammer sole
+                                    for Sports person
+                                </h6>
+                                <div class="price">
+                                    <h6>$150.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                                <div class="prd-bottom">
+
+                                    <a href="" class="social-info">
+                                        <span class="ti-bag"></span>
+                                        <p class="hover-text">add to bag</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-heart"></span>
+                                        <p class="hover-text">Wishlist</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-sync"></span>
+                                        <p class="hover-text">compare</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-move"></span>
+                                        <p class="hover-text">view more</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single product -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-product">
+                            <img class="img-fluid" src="img/product/p2.jpg" alt="">
+                            <div class="product-details">
+                                <h6>
+                                    addidas New Hammer sole
+                                    for Sports person
+                                </h6>
+                                <div class="price">
+                                    <h6>$150.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                                <div class="prd-bottom">
+
+                                    <a href="" class="social-info">
+                                        <span class="ti-bag"></span>
+                                        <p class="hover-text">add to bag</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-heart"></span>
+                                        <p class="hover-text">Wishlist</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-sync"></span>
+                                        <p class="hover-text">compare</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-move"></span>
+                                        <p class="hover-text">view more</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single product -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-product">
+                            <img class="img-fluid" src="img/product/p3.jpg" alt="">
+                            <div class="product-details">
+                                <h6>
+                                    addidas New Hammer sole
+                                    for Sports person
+                                </h6>
+                                <div class="price">
+                                    <h6>$150.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                                <div class="prd-bottom">
+
+                                    <a href="" class="social-info">
+                                        <span class="ti-bag"></span>
+                                        <p class="hover-text">add to bag</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-heart"></span>
+                                        <p class="hover-text">Wishlist</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-sync"></span>
+                                        <p class="hover-text">compare</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-move"></span>
+                                        <p class="hover-text">view more</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single product -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-product">
+                            <img class="img-fluid" src="img/product/p4.jpg" alt="">
+                            <div class="product-details">
+                                <h6>
+                                    addidas New Hammer sole
+                                    for Sports person
+                                </h6>
+                                <div class="price">
+                                    <h6>$150.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                                <div class="prd-bottom">
+
+                                    <a href="" class="social-info">
+                                        <span class="ti-bag"></span>
+                                        <p class="hover-text">add to bag</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-heart"></span>
+                                        <p class="hover-text">Wishlist</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-sync"></span>
+                                        <p class="hover-text">compare</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-move"></span>
+                                        <p class="hover-text">view more</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single product -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-product">
+                            <img class="img-fluid" src="img/product/p5.jpg" alt="">
+                            <div class="product-details">
+                                <h6>
+                                    addidas New Hammer sole
+                                    for Sports person
+                                </h6>
+                                <div class="price">
+                                    <h6>$150.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                                <div class="prd-bottom">
+
+                                    <a href="" class="social-info">
+                                        <span class="ti-bag"></span>
+                                        <p class="hover-text">add to bag</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-heart"></span>
+                                        <p class="hover-text">Wishlist</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-sync"></span>
+                                        <p class="hover-text">compare</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-move"></span>
+                                        <p class="hover-text">view more</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single product -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-product">
+                            <img class="img-fluid" src="img/product/p6.jpg" alt="">
+                            <div class="product-details">
+                                <h6>
+                                    addidas New Hammer sole
+                                    for Sports person
+                                </h6>
+                                <div class="price">
+                                    <h6>$150.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                                <div class="prd-bottom">
+
+                                    <a href="" class="social-info">
+                                        <span class="ti-bag"></span>
+                                        <p class="hover-text">add to bag</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-heart"></span>
+                                        <p class="hover-text">Wishlist</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-sync"></span>
+                                        <p class="hover-text">compare</p>
+                                    </a>
+                                    <a href="" class="social-info">
+                                        <span class="lnr lnr-move"></span>
+                                        <p class="hover-text">view more</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-bar d-flex flex-wrap align-items-center">
+                    @*                     <div class="sorting mr-auto">
+                    <select id="show-per-page">
+                    <option value="6">Show 6</option>
+                    <option value="12">Show 12</option>
+                    <option value="18">Show 18</option>
+                    </select>
+                    </div> *@
+                    <div class="pagination">
+                        <a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>
+                        <a href="#" class="active">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#" class="dot-dot"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
+                        <a href="#">6</a>
+                        <a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </section>
+            <!-- End Best Seller sanpham-->
+            <!-- Start Filter Bar -->
+            <!-- End Filter Bar -->
+        </div>
+    </div>
+</div>
+
+<!-- Start related-product Area -->
+<section class="related-product-area section_gap">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="section-title">
+                    <h1>Deals of the Week</h1>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
+                        <div class="single-related-product d-flex">
+                            <a href="#"><img src="img/r1.jpg" alt=""></a>
+                            <div class="desc">
+                                <a href="#" class="title">Black lace Heels</a>
+                                <div class="price">
+                                    <h6>$189.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
+                        <div class="single-related-product d-flex">
+                            <a href="#"><img src="img/r2.jpg" alt=""></a>
+                            <div class="desc">
+                                <a href="#" class="title">Black lace Heels</a>
+                                <div class="price">
+                                    <h6>$189.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
+                        <div class="single-related-product d-flex">
+                            <a href="#"><img src="img/r3.jpg" alt=""></a>
+                            <div class="desc">
+                                <a href="#" class="title">Black lace Heels</a>
+                                <div class="price">
+                                    <h6>$189.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
+                        <div class="single-related-product d-flex">
+                            <a href="#"><img src="img/r5.jpg" alt=""></a>
+                            <div class="desc">
+                                <a href="#" class="title">Black lace Heels</a>
+                                <div class="price">
+                                    <h6>$189.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
+                        <div class="single-related-product d-flex">
+                            <a href="#"><img src="img/r6.jpg" alt=""></a>
+                            <div class="desc">
+                                <a href="#" class="title">Black lace Heels</a>
+                                <div class="price">
+                                    <h6>$189.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 mb-20">
+                        <div class="single-related-product d-flex">
+                            <a href="#"><img src="img/r7.jpg" alt=""></a>
+                            <div class="desc">
+                                <a href="#" class="title">Black lace Heels</a>
+                                <div class="price">
+                                    <h6>$189.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="single-related-product d-flex">
+                            <a href="#"><img src="img/r9.jpg" alt=""></a>
+                            <div class="desc">
+                                <a href="#" class="title">Black lace Heels</a>
+                                <div class="price">
+                                    <h6>$189.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="single-related-product d-flex">
+                            <a href="#"><img src="img/r10.jpg" alt=""></a>
+                            <div class="desc">
+                                <a href="#" class="title">Black lace Heels</a>
+                                <div class="price">
+                                    <h6>$189.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="single-related-product d-flex">
+                            <a href="#"><img src="img/r11.jpg" alt=""></a>
+                            <div class="desc">
+                                <a href="#" class="title">Black lace Heels</a>
+                                <div class="price">
+                                    <h6>$189.00</h6>
+                                    <h6 class="l-through">$210.00</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="ctg-right">
+                    <a href="#" target="_blank">
+                        <img class="img-fluid d-block mx-auto" src="img/category/c5.jpg" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End related-product Area -->
+
+
+<script>
+    // $(document).ready(function () {
+    //     // Khởi tạo dữ liệu ban đầu
+    //     fetchData(1); // Gọi hàm fetchData với trang đầu tiên khi trang tải
+    //     var isFirstLoad = true; // Cờ để kiểm tra xem trang đã được tải lần đầu hay chưa
+
+    //     // Hàm fetchData để gửi yêu cầu AJAX và cập nhật dữ liệu
+    //     function fetchData(page, pageSize) {
+    //         pageSize = pageSize || 6; // Kích thước trang mặc định là 6 nếu không được cung cấp
+
+    //         var data = {
+    //             page: page,
+    //             pageSize: pageSize
+    //         };
+
+    //         // Gửi yêu cầu AJAX để gọi controller và nhận dữ liệu từ máy chủ
+    //         $.ajax({
+    //             url: '/SanPhamChiTiet/DanhSachTongQuanSanPham',
+    //             type: 'GET',
+    //             contentType: 'application/json',
+    //             data: data,
+    //             success: function (result) {
+    //                 $('#productList').empty(); // Xóa nội dung hiện tại của danh sách sản phẩm
+    //                 $(result).appendTo('#productList'); // Thêm dữ liệu mới vào danh sách sản phẩm
+    //                 updatePageInfo(page); // Cập nhật thông tin về trang hiện tại và tổng số bản ghi trên trang
+    //                 updatePaginationUI(page); // Cập nhật giao diện phân trang sau khi nhận dữ liệu
+
+    //             },
+    //             error: function (xhr, status, error) {
+    //                 console.log(xhr.responseText);
+    //                 console.log(status);
+    //                 console.log(error);
+    //                 console.log(xhr);
+    //             }
+    //         });
+    //     }
+
+    //     // Lắng nghe sự kiện thay đổi giá trị của thẻ <select> có id "show-per-page"
+    //     $('#show-per-page').change(function () {
+    //         debugger
+    //         var pageSize = $(this).val(); // Lấy giá trị dòng được chọn
+    //         console.log("pageSize:", pageSize); // Ghi log giá trị pageSize
+    //         fetchData(1, pageSize); // Gọi hàm fetchData với trang đầu tiên và kích thước trang mới
+    //     });
+    // });
+
+
+    $(document).ready(function () {
+
+        var tongSoBanghi = @Html.Raw(Json.Serialize(tongsobanghi));
+        var tongTrang = @Html.Raw(Json.Serialize(tongtrang));
+        var trangHienTai = @Html.Raw(Json.Serialize(tranghientai));
+        // Khởi tạo dữ liệu ban đầu
+        var currentPage = trangHienTai; // Lưu trữ trang hiện tại
+        var pageSize = 6; // Lưu trữ kích thước trang hiện tại
+
+        fetchData(currentPage, pageSize); // Gọi hàm fetchData với trang đầu tiên khi trang tải
+
+        // Hàm fetchData để gửi yêu cầu AJAX và cập nhật dữ liệu
+        function fetchData(page, pageSize) {
+            var data = {
+                page: page,
+                pageSize: pageSize
+            };
+            debugger
+            // Gửi yêu cầu AJAX để gọi controller và nhận dữ liệu từ máy chủ
+            $.ajax({
+                url: '/SanPhamChiTiet/DanhSachTongQuanSanPham',
+                type: 'GET',
+                contentType: 'application/json',
+                data: data,
+                success: function (result) {
+                    $('#productList').empty(); // Xóa nội dung hiện tại của danh sách sản phẩm
+                    $(result).appendTo('#productList'); // Thêm dữ liệu mới vào danh sách sản phẩm
+                    // updatePageInfo(page); // Cập nhật thông tin về trang hiện tại và tổng số bản ghi trên trang
+                    updatePaginationUI(page); // Cập nhật giao diện phân trang sau khi nhận dữ liệu
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+        // Hàm cập nhật giao diện phân trang sau khi nhận dữ liệu
+        function updatePaginationUI(currentPage) {
+            var pagination = $('.pagination');
+            var pageButtons = pagination.find('a.page');
+
+            // Xóa tất cả các class 'active' khỏi các nút phân trang
+            pageButtons.removeClass('active');
+
+            // Thêm lớp 'active' cho nút có số bằng targetPage
+            pageButtons.each(function () {
+                var pageText = $(this).text();
+                if (!isNaN(parseInt(pageText)) && parseInt(pageText) === currentPage) {
+                    $(this).addClass('active');
+                }
+            });
+        }
+
+
+
+        // Hàm tạo phân trang
+        function taoPhanTrang() {
+            var pagination = $('.pagination');
+            pagination.empty(); // Xóa các nút phân trang hiện có
+
+            // Thêm nút 'Prev'
+            pagination.append('<a href="#" class="prev-arrow"><i class="fa fa-long-arrow-left" aria-hidden="true"></i></a>');
+
+            // Thêm các số trang
+            for (var i = 1; i <= tongTrang; i++) {
+                if (i === trangHienTai) {
+                    pagination.append('<a href="#" class="active">' + i + '</a>');
+                } else {
+                    pagination.append('<a href="#">' + i + '</a>');
+                }
+            }
+
+            // Thêm nút 'Next'
+            pagination.append('<a href="#" class="next-arrow"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>');
+        }
+
+        // Gọi hàm tạo phân trang khi trang web được tải
+        taoPhanTrang();
+
+        $('.pagination').on('click', 'a', function (e) {
+            e.preventDefault();
+            var targetPage;
+
+            if ($(this).hasClass('prev-arrow')) {
+                targetPage = currentPage - 1;
+            } else if ($(this).hasClass('next-arrow')) {
+                targetPage = currentPage + 1;
+            } else {
+                var pageText = $(this).text();
+                targetPage = parseInt(pageText);
+            }
+
+            targetPage = Math.max(1, Math.min(targetPage, tongTrang));
+
+            if (targetPage !== currentPage) {
+                // Xóa lớp 'active' khỏi nút hiện tại
+                $('.pagination a.active').removeClass('active');
+
+                $('.pagination').find('a').each(function () { // Lặp qua tất cả các nút trong phân trang
+                    var pageText = $(this).text().trim(); // Lấy số trang từ nút
+                    if (!isNaN(parseInt(pageText)) && parseInt(pageText) === targetPage) { // Kiểm tra nút có số trang bằng targetPage
+                        $(this).addClass('active'); // Thêm lớp 'active' vào nút có số trang bằng targetPage
+                    }
+                });
+
+
+                // fetchData(targetPage, pageSize);
+                debugger
+                var sorting = $('#sorting-select').val();
+
+                SortBy(sorting, targetPage, pageSize);
+
+                currentPage = targetPage;
+            }
+        });
+
+
+
+        // Lắng nghe sự kiện thay đổi giá trị của thẻ <select> có id "show-per-page"
+        $('#show-per-page').change(function () {
+            var pageSize = $(this).val(); // Lấy giá trị dòng được chọn
+            fetchData(1, pageSize); // Gọi hàm fetchData với trang đầu tiên và kích thước trang mới
+        });
+
+        // Lắng nghe sự kiện thay đổi giá trị của thẻ <select> có class "sorting"
+        $('#sorting-select').change(function () {
+            var sorting = $(this).val(); // Lấy giá trị dòng được chọn
+            var selectedColor = $('input[name="color"]:checked').val();
+            var sorting = $('#sorting-select').val();
+            var currentPage = 1;
+            var pageSize = 6;
+            var nameBrand = $('input[name="brand"]:checked').val();
+            var selectedCategory = $('input[name="category"]:checked').val();
+
+            SortBy(sorting, currentPage, pageSize, nameBrand, selectedCategory, selectedColor);
+
+        });
+
+
+        // Lắng nghe sự kiện thay đổi giá trị của các phần tử radio trong bộ lọc thương hiệu
+        $('input[name="brand"]').change(function () {
+            debugger
+            var selectedBrand = $('input[name="brand"]:checked').val(); // Lấy giá trị của phần tử radio được chọn
+            var selectedColor = $('input[name="color"]:checked').val();
+            var sorting = $('#sorting-select').val();
+            var currentPage = 1;
+            var pageSize = 6;
+            var nameBrand = $('input[name="brand"]:checked').val();
+            var selectedCategory = $('input[name="category"]:checked').val();
+
+            SortBy(sorting, currentPage, pageSize, selectedBrand, selectedCategory, selectedColor);
+        });
+
+
+        // Lắng nghe sự kiện thay đổi giá trị của các phần tử radio trong bộ lọc thương hiệu
+        $('input[name="category"]').change(function () {
+            debugger
+            var selectedCategory = $('input[name="category"]:checked').val(); // Lấy giá trị của phần tử radio được chọn
+            
+
+            var selectedColor = $('input[name="color"]:checked').val();
+            var sorting = $('#sorting-select').val();
+            var currentPage = 1;
+            var pageSize = 6;
+            var nameBrand = $('input[name="brand"]:checked').val();
+            var selectedCategory = $('input[name="category"]:checked').val();
+
+            SortBy(sorting, currentPage, pageSize, nameBrand, selectedCategory, selectedColor);
+        });
+
+
+        // Lắng nghe sự kiện thay đổi giá trị của các phần tử radio trong bộ lọc thương hiệu
+        $('input[name="color"]').change(function () {
+            debugger
+            var selectedColor = $('input[name="color"]:checked').val();
+            var sorting = $('#sorting-select').val();
+            var currentPage = 1;
+            var pageSize = 6;
+            var nameBrand = $('input[name="brand"]:checked').val();
+            var selectedCategory = $('input[name="category"]:checked').val();
+
+            SortBy(sorting, currentPage, pageSize, nameBrand, selectedCategory, selectedColor);
+        });
+
+        // Lắng nghe sự kiện click trên nút làm mới bộ lọc
+        $('#refreshFilters').click(function () {
+            // Đặt tất cả các input trong bộ lọc về trạng thái không chọn
+            $('input[type="radio"]').prop('checked', false);
+
+
+            // Đặt giá trị của dropdown "Tùy Chọn Sắp Xếp" thành giá trị mặc định (giá trị rỗng)
+            $('#sorting-select').val('');
+            // Kích hoạt sự kiện change trên dropdown để cập nhật dữ liệu tương ứng
+            $('#sorting-select').trigger('change');
+
+            // Gọi hàm SortBy để cập nhật dữ liệu sau khi làm mới bộ lọc
+            var sorting = $('#sorting-select').val();
+            var selectedColor = $('input[name="color"]:checked').val();
+            var sorting = $('#sorting-select').val();
+            var currentPage = 1;
+            var pageSize = 6;
+            var nameBrand = $('input[name="brand"]:checked').val();
+            var selectedCategory = $('input[name="category"]:checked').val();
+
+            SortBy(sorting, currentPage, pageSize, nameBrand, selectedCategory, selectedColor);
+
+        });
+
+        // Hàm SortBy để gửi yêu cầu AJAX và cập nhật dữ liệu
+        function SortBy(sorting, currentPage, pageSize, nameBrand, selectedCategory, selectedColor) {
+            var data = {
+                sorting: sorting,
+                nameBrand: nameBrand,
+                selectedCategory: selectedCategory,
+                selectedColor: selectedColor,
+                page: currentPage, // Truyền số trang hiện tại
+                pageSize: pageSize // Truyền kích thước trang
+            };
+
+            // Gửi yêu cầu AJAX để gọi controller và nhận dữ liệu từ máy chủ
+            $.ajax({
+                url: '/SanPhamChiTiet/DanhSachTongQuanSanPham',
+                type: 'GET',
+                contentType: 'application/json',
+                data: data,
+                success: function (result) {
+                    $('#productList').empty(); // Xóa nội dung hiện tại của danh sách sản phẩm
+                    $(result).appendTo('#productList'); // Thêm dữ liệu mới vào danh sách sản phẩm
+                    // updatePageInfo(page); // Cập nhật thông tin về trang hiện tại và tổng số bản ghi trên trang
+                    updatePaginationUI(currentPage); // Cập nhật giao diện phân trang sau khi nhận dữ liệu
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+
+    });
+
+
+
+
+</script>

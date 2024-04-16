@@ -79,13 +79,40 @@ namespace AdminApp.Controllers
                 HttpContext.Session.SetString("TokenCheck", info.Token);
                 HttpContext.Session.SetString("Result", info.Role);
 
-                HttpContext.Session.SetString("TenNguoiDung", profileUserJson.TenNguoiDung);
-                HttpContext.Session.SetString("UserName", profileUserJson.TenTaiKhoan);
-                HttpContext.Session.SetString("soDienThoai", profileUserJson.soDienThoai);
-                HttpContext.Session.SetString("DiaChi", profileUserJson.DiaChi);
-                HttpContext.Session.SetString("Email", profileUserJson.Email);
-                HttpContext.Session.SetString("GioiTinh", profileUserJson.GioiTinh.ToString());
-               
+                if (profileUserJson != null)
+                {
+                    if (profileUserJson.TenNguoiDung != null)
+                    {
+                        HttpContext.Session.SetString("TenNguoiDung", profileUserJson.TenNguoiDung);
+                    }
+
+                    if (profileUserJson.TenTaiKhoan != null)
+                    {
+                        HttpContext.Session.SetString("UserName", profileUserJson.TenTaiKhoan);
+                    }
+
+                    if (profileUserJson.soDienThoai != null)
+                    {
+                        HttpContext.Session.SetString("soDienThoai", profileUserJson.soDienThoai);
+                    }
+
+                    if (profileUserJson.DiaChi != null)
+                    {
+                        HttpContext.Session.SetString("DiaChi", profileUserJson.DiaChi);
+                    }
+
+                    if (profileUserJson.Email != null)
+                    {
+                        HttpContext.Session.SetString("Email", profileUserJson.Email);
+                    }
+
+                    if (profileUserJson.GioiTinh != null)
+                    {
+                        HttpContext.Session.SetString("GioiTinh", profileUserJson.GioiTinh.ToString());
+                    }
+                }
+
+
                 return RedirectToAction("Index", "Home");
             }
             else {

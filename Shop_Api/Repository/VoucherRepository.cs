@@ -59,28 +59,9 @@ namespace Shop_Api.Repository
             }
         }
 
-        public async Task<ResponseDto> GetByIdVoucher(Guid id)
+        public async Task<Voucher> GetByIdVoucher(Guid id)
         {
-            var getid = await contextVC.Vouchers.FindAsync(id);
-            try
-            {
-                return new ResponseDto
-                {
-                    IsSuccess = true,
-                    Content = getid,
-                    Code = 200,
-                    Message = "Da tim thay du lieu"
-                };
-            }
-            catch (Exception)
-            {
-                return new ResponseDto
-                {
-                    IsSuccess = false,
-                    Code = 500,
-                    Message = "Khong thay du lieu"
-                };
-            }
+            return await contextVC.Vouchers.FindAsync(id);
         }
 
         public async Task<List<Voucher>> GetListVoucher(int? status, int page = 1)
@@ -103,25 +84,42 @@ namespace Shop_Api.Repository
             });
             return result.ToList();
         }
+        public async Task<List<Voucher>> GetAll()
+        {
+            var list = contextVC.Vouchers.AsQueryable();        
+            var result = list.Select(x => new Voucher
+            {
+                Guid = x.Guid,
+                MaVoucher = x.MaVoucher,
+                TenVoucher = x.TenVoucher,
+                PhanTramGiam = x.PhanTramGiam,
+                SoLuong = x.SoLuong,
+                NgayBatDau = x.NgayBatDau,
+                NgayHetHan = x.NgayHetHan,
+                TrangThai = x.TrangThai
+            });
+            return result.ToList();
+        }
 
         public async Task<List<Voucher>> GetVoucher()
         {
-            return await contextVC.Vouchers.ToListAsync();
+            var list = contextVC.Vouchers.AsQueryable();
+            return list.ToList();
         }
 
-        public async Task<ResponseDto> UpdateVoucher(Voucher update)
+        public async Task<ResponseDto> UpdateVoucher(Voucher update, Guid id)
         {
-            var idupdate = await contextVC.Vouchers.FindAsync(update.Guid);
+            var idupdate = await contextVC.Vouchers.FindAsync(id);
             try
             {
                 idupdate.MaVoucher = update.MaVoucher;
                 idupdate.TenVoucher = update.TenVoucher;
                 idupdate.PhanTramGiam = update.PhanTramGiam;
-                idupdate.SoLuong = update.SoLuong;
+                idupdate.SoLuong = update.SoLuong;  
                 idupdate.NgayBatDau = update.NgayBatDau;
                 idupdate.NgayHetHan = update.NgayHetHan;
-                idupdate.TrangThai = update.TrangThai;
-                contextVC.Vouchers.Update(update);
+                /*idupdate.TrangThai = update.TrangThai;*/
+                contextVC.Vouchers.Update(idupdate);
                 await contextVC.SaveChangesAsync();
                 return new ResponseDto
                 {
