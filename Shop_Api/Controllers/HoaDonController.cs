@@ -8,6 +8,8 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Shop_Api.Services.IServices;
 using Shop_Api.Services;
+using Microsoft.AspNetCore.Authorization;
+using Serilog;
 
 namespace Shop_Api.Controllers
 {
@@ -26,42 +28,42 @@ namespace Shop_Api.Controllers
         [HttpGet("Get-All-HoaDon")]
         public IEnumerable<HoaDon> GetAllHD()
         {
-            
-                return  _db.GetAll();
-            
+
+            return _db.GetAll();
+
         }
         [HttpPost("Create-HoaDon")]
-        public async Task<IActionResult> CreateHD( HoaDon a)
+        public async Task<IActionResult> CreateHD(HoaDon a)
         {
             var obj = new HoaDon();
             obj.Id = new Guid();
-            obj.MaHoaDon=a.MaHoaDon;
-            obj.NgayTao=a.NgayTao;
-            obj.NgayThanhToan=a.NgayThanhToan;
-            obj.NgayShip=a.NgayShip;
-            obj.NgayNhan=a.NgayNhan;
-            obj.MoTa=a.MoTa;
-            obj.TienGiam=a.TienGiam;
-            obj.TienShip=a.TienShip;
-            obj.TongTien=a.TongTien;
-            obj.TrangThaiGiaoHang=a.TrangThaiGiaoHang;
-            obj.TrangThaiThanhToan=a.TrangThaiThanhToan;
-            obj.NgayGiaoDuKien=a.NgayGiaoDuKien;
-            obj.LiDoHuy=a.LiDoHuy;
-            
+            obj.MaHoaDon = a.MaHoaDon;
+            obj.NgayTao = a.NgayTao;
+            obj.NgayThanhToan = a.NgayThanhToan;
+            obj.NgayShip = a.NgayShip;
+            obj.NgayNhan = a.NgayNhan;
+            obj.MoTa = a.MoTa;
+            obj.TienGiam = a.TienGiam;
+            obj.TienShip = a.TienShip;
+            obj.TongTien = a.TongTien;
+            obj.TrangThaiGiaoHang = a.TrangThaiGiaoHang;
+            obj.TrangThaiThanhToan = a.TrangThaiThanhToan;
+            obj.NgayGiaoDuKien = a.NgayGiaoDuKien;
+            obj.LiDoHuy = a.LiDoHuy;
 
 
-             
-            
-            if ( a.MaHoaDon == null || a.NgayTao == null || a.NgayThanhToan==null || a.NgayShip==null || a.NgayNhan==null
-                || a.MoTa==null || a.TienGiam==null || a.TienShip==null || a.TongTien==null || a.TrangThaiGiaoHang==null
-                    || a.TrangThaiThanhToan==null || a.NgayGiaoDuKien==null || a.LiDoHuy==null )
+
+
+
+            if (a.MaHoaDon == null || a.NgayTao == null || a.NgayThanhToan == null || a.NgayShip == null || a.NgayNhan == null
+                || a.MoTa == null || a.TienGiam == null || a.TienShip == null || a.TongTien == null || a.TrangThaiGiaoHang == null
+                    || a.TrangThaiThanhToan == null || a.NgayGiaoDuKien == null || a.LiDoHuy == null)
             {
                 return BadRequest("Du lieu them bi trong");
             }
             try
             {
-               await _db.CreateHD(obj);
+                await _db.CreateHD(obj);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -90,7 +92,7 @@ namespace Shop_Api.Controllers
 
             try
             {
-                await _db.UpdateHD(id,obj);
+                await _db.UpdateHD(id, obj);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -105,10 +107,22 @@ namespace Shop_Api.Controllers
             var reponse = await _hoaDonServices.CreateBill(request);
             if (reponse.IsSuccess)
             {
-                return Ok(reponse.Message);
+                return Ok(reponse);
             }
             return BadRequest("");
         }
+
+        [AllowAnonymous]
+        [HttpGet("PGetBillByInvoiceCode")]
+        public async Task<IActionResult> PGetBillByInvoiceCode(string invoiceCode)
+        {
+            var result = await _hoaDonServices.PGetBillByInvoiceCode(invoiceCode);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+        }
     }
 }
-    

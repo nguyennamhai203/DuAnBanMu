@@ -452,11 +452,13 @@ namespace WebApp.Controllers
                     if (response.IsSuccessStatusCode)
                     {
 
-                        var codeBill = await response.Content.ReadAsStringAsync();
+                        var result = await response.Content.ReadAsStringAsync();
+                        var deserResponseDto = JsonConvert.DeserializeObject<ResponseDto>(result);
+                        var deserHoaDon = JsonConvert.DeserializeObject<HoaDon>(deserResponseDto.Content.ToString());
                         //await client.PutAsJsonAsync($"/api/Voucher/UpdateSL?codeVoucher={request.CodeVoucher}", String.Empty);
                         await client.DeleteAsync($"api/Cart/Delete?username={request.Usename}");
                         HttpContext.Session.Remove("Cart");
-                        return RedirectToAction("ShowBill", new { invoiceCode = $"{codeBill}" });
+                        return RedirectToAction("ShowBill","HoaDon", new { invoiceCode = $"{deserHoaDon.MaHoaDon}" });
                     }
                     return View();
                 }
