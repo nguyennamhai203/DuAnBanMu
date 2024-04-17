@@ -77,7 +77,7 @@ namespace Shop_Api.Services
 
 						if (await _reposGioHangChiTiet.CreateAsync(newCartDetail))
 						{
-							return SuccessResponse(newCartDetail, 201, "Thêm sản phẩm vào giỏ hàng thành công");
+							return SuccessResponse(newCartDetail, 200, "Thêm sản phẩm vào giỏ hàng thành công");
 						}
 
 						return ErrorResponse("Không thể thêm sản phẩm vào trong giỏ hàng", 404);
@@ -104,7 +104,7 @@ namespace Shop_Api.Services
 
 						if (await _reposGioHangChiTiet.CreateAsync(newCartDetail))
 						{
-							return SuccessResponse(newCartDetail, 201, "Thêm sản phẩm vào giỏ hàng thành công");
+							return SuccessResponse(newCartDetail, 200, "Thêm sản phẩm vào giỏ hàng thành công");
 						}
 					}
 
