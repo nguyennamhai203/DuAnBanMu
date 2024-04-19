@@ -41,13 +41,13 @@ namespace Shop_Api.AppDbContext
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder.UseSqlServer("Server =.\\SQLEXPRESS; Database =DATN_Website_SellLHat3; Trusted_Connection = True;TrustServerCertificate=True"));
-        }*/
+        }
 
-        /*protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             Random random = new Random();
-            *//*for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++)
             {
                 builder.Entity<SanPham>().HasData(
                     new SanPham
@@ -58,8 +58,23 @@ namespace Shop_Api.AppDbContext
                         TrangThai = random.Next(0, 2)
                     }
                 );
-            }*/
-            /*for (int i = 0; i < 5; i++)
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                builder.Entity<ThongKe>().HasData(
+                    new ThongKe
+                    {
+                        Id = Guid.NewGuid(),
+                        Ngay = random.Next(1, 32),
+                        Thang = random.Next(1, 13),
+                        Nam = random.Next(2000, 2024),
+                        TrangThai = random.Next(0,2),
+                        HoaDonId = Guid.NewGuid(),
+                        SanPhamChiTietId = Guid.NewGuid()
+                    }
+                );
+            }
+            for (int i = 0; i < 5; i++)
             {
                 builder.Entity<HoaDon>().HasData(
                     new HoaDon
@@ -80,8 +95,8 @@ namespace Shop_Api.AppDbContext
                         LiDoHuy = "ly do huy" + random.Next(1, 6)
                     }
                 );
-            }*/
-            /*for (int i = 0; i < 5; i++)
+            }
+            for (int i = 0; i < 5; i++)
             {
                 builder.Entity<ChiTietSanPham>().HasData(
                     new ChiTietSanPham()
@@ -104,7 +119,7 @@ namespace Shop_Api.AppDbContext
                         ChatLieuId = null
                     }
                 );
-            }*//*
+            }
         }*/
     }
 }

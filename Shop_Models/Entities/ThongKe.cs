@@ -18,6 +18,7 @@ namespace Shop_Models.Entities
         public int Ngay { get; set; }
         public int Thang { get; set; }
         public int Nam { get; set; }
+        public int TrangThai { get; set; }
         public virtual ChiTietSanPham? ChiTietSanPham { get; set; }
         public virtual HoaDon? HoaDon { get; set; }
 
