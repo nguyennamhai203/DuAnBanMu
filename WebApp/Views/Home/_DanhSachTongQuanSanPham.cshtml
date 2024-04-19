@@ -1,0 +1,184 @@
+﻿@using Shop_Models.Dto
+@model List<ItemShopViewModel>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    var tongsobanghi = ViewBag.TotalRecords;
+    var tongtrang = ViewBag.TotalPage;
+}
+
+@foreach (var item in Model)
+{
+    
+
+    <div class="col-lg-3 col-md-6">
+        <div class="single-product" >
+            @if (item.Anh != null && !string.IsNullOrEmpty(item.Anh))
+            {
+@*                 <img style="max-height: 255px; max-width: 275px;" class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.LinkAnh)" alt="">
+ *@                <div class="product-m__thumb" data-id="@item.IdChiTietSp" >
+
+                    <a class="aspect aspect--bg-grey aspect--square u-d-block" onclick="fetchData2('@item.IdChiTietSp')">
+
+                        <img class="aspect__img" style="height: 255.02px; width: 271.5px;" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.Anh)" alt="">
+                    </a>
+                </div>
+
+            }else{@* <img class="img-fluid" src="~/behat-master/img/product/p1.jpg" alt=""> *@
+
+                <div class="product-m__thumb" data-id="@item.IdChiTietSp" onclick="fetchData2('@item.IdChiTietSp')">
+
+                    <a class="aspect aspect--bg-grey aspect--square u-d-block" >
+
+                        <img class="aspect__img" style="height: 255.02px; width: 271.5px;" src="~/behat-master/img/product/p1.jpg" alt="">
+                    </a>
+                </div>
+            }
+
+            <div class="product-details" id="postAPI" data-sumGuid="@item.IdChiTietSp" data-url="@Url.Action("GetRelatedProducts", "SanPhamChiTiet", new { sumGuid = item.IdChiTietSp })" @item.IdChiTietSp>
+                <h6 onclick="fetchData2('@item.IdChiTietSp')" >
+                  [@item.MaSanPham] @item.TenSanPham @item.TheLoai
+                </h6>
+                <div class="price">
+                    @* <h6>$150.00</h6>
+                    <h6 class="l-through">$210.00</h6> *@
+                    @if (item.GiaMin == item.GiaMax)
+                    {
+                        <div class="product-m__price" style="color: red">Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMin)</div>
+
+                    }
+                    else
+                    {
+                        <div class="product-m__price" style="color: red">Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMin)  -  @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMax)</div>
+                    }
+                    <a href="@Url.Action("Details","SanPhamChiTiet", new {  sumguid=item.IdChiTietSp })" class="dropdown-item" style="color: orange;">Xem Mũ</a>
+
+                </div>
+                <div class="prd-bottom">
+                    @* <a href="@Url.Action("AddProductToCart","Cart", new { codeProductDetail=item.MaSanPham })" class="social-info"> *@
+                        <a href="#" class="social-info" onclick="addToCartBtn('@item.MaSanPham')">
+
+                        <span class="ti-bag"></span>
+                        <p class="hover-text" >add to bag</p>
+                    </a>
+                    <a href="" class="social-info">
+                        <span class="lnr lnr-heart"></span>
+                        <p class="hover-text">Wishlist</p>
+                    </a>
+                    <a href="" class="social-info">
+                        <span class="lnr lnr-sync"></span>
+                        <p class="hover-text">compare</p>
+                    </a>
+                    <a href="" class="social-info">
+                        <span class="lnr lnr-move" id="btnFetchData2"></span>
+                        <p class="hover-text">view more</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*
+@section Scripts{
+    <script>
+        function loadProductDetails(sumGuild) {
+            console.log('Đang tải sản phẩm...');
+            // Gửi yêu cầu AJAX để lấy dữ liệu sản phẩm
+            $.ajax({
+                url: '/SanPhamChiTiet/GetRelatedProducts',
+                type: 'POST',
+                data: { sumGuild: sumGuild },
+                success: function (result) {
+                    $('#productDetails').empty().html(result); // Cập nhật dữ liệu sản phẩm trong phần mới
+                    $('#productDetailsModal').modal('show'); // Hiển thị modal với chi tiết sản phẩm
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    console.log(status);
+                    console.log(error);
+                    console.log(xhr);
+                }
+            });
+        }
+
+        // // Khởi tạo DataTables cho bảng sản phẩm (nếu chưa được khởi tạo)
+        // var table = $('#tables').DataTable();
+        // if (!table || !$.fn.DataTable.isDataTable('#tables')) {
+        //     $('#tables').DataTable({
+        //         "paging": true,
+        //         "lengthChange": true,
+        //         "lengthMenu": [10, 25, 50, 75, 100],
+        //         "searching": true
+        //     });
+        // }
+    </script> *@
+
+
+
+    <script>
+    function addToCartBtn(codeProductDetail) {
+        // var quantity = document.getElementById('sst').value;
+        event.preventDefault(); // Chặn hành vi mặc định của form
+        $.ajax({
+            url: '/Cart/AddProductToCart',
+            type: 'POST',
+            data: { codeProductDetail: codeProductDetail},
+            // contentType: false,
+            // processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "success");
+                   
+                } else {
+                    debugger
+                    console.log(results.message);                 
+                    showNotification(results.message, "error");
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right", // Sửa từ "toast-bot-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+    </script>
+}
+
+
+
+
+
+

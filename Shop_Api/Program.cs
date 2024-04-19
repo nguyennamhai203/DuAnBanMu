@@ -16,6 +16,7 @@ using Shop_Api.Repository.IRepository;
 using Shop_Api.Repository;
 using Shop_Api.Services.IServices;
 using Shop_Api.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,8 +59,7 @@ builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 builder.Services.AddScoped<IMauSacRepository, MauSacRepository>();
 builder.Services.AddScoped<IPhuongThucThanhToanChiTietRepository, PhuongThucThanhToanChiTietRepository>();
 builder.Services.AddScoped<IGioHangChiTietServices, GioHangChiTietServices>();
-
-
+builder.Services.AddScoped<IHoaDonServices, HoaDonServices>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddHostedService<PromotionUpdateService>();
 
@@ -80,6 +80,11 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
     };
+});
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
 
 

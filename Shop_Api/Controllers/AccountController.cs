@@ -25,7 +25,19 @@ namespace Shop_Api.Controllers
             }
             else return Unauthorized();
 
-        }
+        } 
+        
+        [HttpPost("SignUpKhacHangAsync")]
+        public async Task<IActionResult> SignUpKhacHangAsync(SignUpDto signUpModel)
+        {
+            var result = await _accountRepository.SignUpKhacHangAsync(signUpModel);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+			else return BadRequest(result);
+
+		}
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto loginDto)

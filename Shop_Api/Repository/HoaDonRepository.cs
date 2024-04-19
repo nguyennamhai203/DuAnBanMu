@@ -33,6 +33,7 @@ namespace Shop_Api.Repository
             {
                 return new ResponseDto
                 {
+                    IsSuccess = false,
                     Code = 500,
                     Message = "Thêm thất bại"
                 };

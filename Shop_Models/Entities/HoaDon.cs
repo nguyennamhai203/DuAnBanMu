@@ -14,12 +14,16 @@ namespace Shop_Models.Entities
         [Key]
         public Guid Id { get; set; }
         public Guid? VoucherId { get; set; }
+        public Guid? NguoiDungId { get; set; }
         public string? MaHoaDon { get; set; }
         public DateTime NgayTao { get; set; }
-        public DateTime NgayThanhToan { get; set; }
-        public DateTime NgayShip { get; set; }
-        public DateTime NgayNhan { get; set; }
+        public DateTime? NgayThanhToan { get; set; }
+        public DateTime? NgayShip { get; set; }
+        public DateTime? NgayNhan { get; set; }
         public string? MoTa { get; set; }
+        public string? TenKhachHang { get; set; }
+        public string? SoDienThoai { get; set; }
+        public string? DiaChiGiaoHang { get; set; }
         public double TienGiam { get; set; }
         public double TienShip { get; set; }
         public double TongTien { get; set; }

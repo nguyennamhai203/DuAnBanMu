@@ -1,0 +1,383 @@
+﻿@{
+    var httpContext = ViewContext.HttpContext;
+    string thongbao = httpContext.Session.GetString("ThongBao");
+}
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Đăng nhập/Đăng ký</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="/Home">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="/Login">Đăng nhập/Đăng ký</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<link href="~/behat-master/css/linearicons.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/behat-master/css/owl.carousel.css">
+<link rel="stylesheet" href="~/behat-master/css/themify-icons.css">
+<link rel="stylesheet" href="~/behat-master/css/font-awesome.min.css">
+<link rel="stylesheet" href="~/behat-master/css/nice-select.css">
+<link rel="stylesheet" href="~/behat-master/css/nouislider.min.css">
+<link rel="stylesheet" href="~/behat-master/css/bootstrap.css">
+<link rel="stylesheet" href="~/behat-master/css/main.css">
+<!-- End Banner Area -->
+<!--================Login Box Area =================-->
+<section class="login_box_area section_gap">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="login_box_img">
+                    <img class="img-fluid" src="~/behat-master/img/login.jpg" alt="">
+                    <div class="hover">
+                        <h4>Bạn đã có tài khoản?</h4>
+                        <a class="primary-btn" href="/Login">Đăng Nhập Tài Khoản</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="login_form_inner">
+                    <h3>ĐĂNG KÝ ĐỂ THAM GIA</h3>
+
+                    <form  method="post" name="signup" class="row login_form" id="contactForm" novalidate="novalidate">
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="tennguoidung" name="tennguoidung" placeholder="Họ và Tên" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Họ và Tên'">
+                            <span id="tennguoidung-error" class="error-message"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Tên Đăng Nhập" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
+                            <span id="username-error" class="error-message"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Mật Khẩu" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+                            <span id="password-error" class="error-message"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" placeholder="Nhập Lại Mật Khẩu" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+                            <span id="repeatPassword-error" class="error-message"></span>
+                        </div>
+
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="SDT" name="SDT" placeholder="Số Điện Thoại" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Số Điện Thoại'">
+                            <span id="SDT-error" class="error-message"></span>
+                        </div>
+
+                      @*   <input type="text" name="PhoneNumber" id="phoneNumberInput" class="form-control" pattern="(0|\+84)?(3|5|7|8|9)[0-9]{8}" title="Số điện thoại phải là số và theo định dạng của Việt Nam" required>
+                        <div id="phoneNumberHint" style="color: #6c757d; font-size: 0.8em;">Ví dụ: 0912345678 hoặc +84912345678</div>
+                        <div id="phoneNumberError" style="color: red; display: none;">Số điện thoại không hợp lệ. Vui lòng nhập lại.</div>
+
+                        <input type="email" name="email" id="emailInput" class="form-control" required>
+                        <div id="emailError" style="color: red; display: none;">Email không hợp lệ. Vui lòng nhập lại.</div> *@
+
+                        <div class="col-md-12 form-group">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
+                            <span id="email-error" class="error-message"></span>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <button  class="primary-btn" onclick="register()">Đăng Ký</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Login Box Area =================-->
+
+
+<script>
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right", // Sửa từ "toast-bot-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+
+    function validateForm() {
+        var tennguoidung = document.forms["signup"]["tennguoidung"].value;
+        var username = document.forms["signup"]["username"].value;
+        var password = document.forms["signup"]["password"].value;
+        var repeatPassword = document.forms["signup"]["repeatPassword"].value;
+        var sdt = document.forms["signup"]["SDT"].value;
+        var email = document.forms["signup"]["email"].value;
+        var isValid = true; // Flag to track overall form validity
+        // Kiểm tra validation cho từng trường
+        if (tennguoidung == "") {
+            document.getElementById("tennguoidung-error").innerHTML = "Vui lòng nhập Họ và Tên."; isValid = false;
+
+        }
+        if (username == "") {
+            document.getElementById("username-error").innerHTML = "Vui lòng nhập Tên Đăng Nhập."; isValid = false;
+
+        }
+
+
+        if (password == "") {
+            document.getElementById("password-error").innerHTML = "Vui lòng nhập Mật Khẩu."; isValid = false;
+
+        }
+        if (password !== "") {
+
+            if (!/\d/.test(password)) {
+
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải chứa ít nhất 1 kí tự số."; isValid = false;
+
+            }
+            if (!/[A-Z]/.test(password)) {
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải chứa ít nhất 1 kí tự hoa."; isValid = false;
+            }
+            if (!/[!@@#$%^&*]/.test(password)) {
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải chứa ít nhất 1 kí tự đặc biệt."; isValid = false;
+            }
+            if (password.length < 6 || password.length > 16) {
+
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải có độ dài từ 6 đến 16 kí tự."; isValid = false;
+
+            }
+        }
+
+        if (repeatPassword == "") {
+            document.getElementById("repeatPassword-error").innerHTML = "Vui lòng nhắc lại Mật Khẩu."; isValid = false;
+
+        }
+        if (password !== repeatPassword) {
+            document.getElementById("repeatPassword-error").innerHTML = "Mật khẩu không khớp."; isValid = false;
+
+        }
+
+
+        if (sdt == "") {
+            document.getElementById("SDT-error").innerHTML = "Vui lòng nhập Số Điện Thoại."; isValid = false;
+        }
+        if (!/^\d{10}$/.test(sdt)) {
+            document.getElementById("SDT-error").innerHTML = "Số Điện Thoại không hợp lệ. Vui lòng nhập đúng định dạng."; isValid = false;
+        }
+        if (email == "") {
+            document.getElementById("email-error").innerHTML = "Vui lòng nhập Email."; isValid = false;
+        }
+        if (!/\S+@@\S+\.\S+/.test(email)) {
+            document.getElementById("email-error").innerHTML = "Email không hợp lệ. Vui lòng nhập đúng định dạng.";
+            isValid = false;
+        }
+
+        return isValid; // Trả về true nếu tất cả các trường hợp validation đều hợp lệ
+    }
+
+    function register() {
+        event.preventDefault(); // Ngăn chặn form gửi đi nếu không hợp lệ
+       
+        if (!validateForm()) {
+            event.preventDefault(); // Ngăn chặn form gửi đi nếu không hợp lệ
+            return;
+        }
+
+        // Lấy dữ liệu từ form
+        debugger
+        // var tennguoidung = document.getElementById("tennguoidung").value;
+        // var username = document.getElementById("username").value;
+        // var password = document.getElementById("password").value;
+        // var repeatPassword = document.getElementById("repeatPassword").value;
+        // var sdt = document.getElementById("SDT").value;
+        // var email = document.getElementById("email").value;
+
+        var tennguoidung = document.forms["signup"]["tennguoidung"].value;
+        var username = document.forms["signup"]["username"].value;
+        var password = document.forms["signup"]["password"].value;
+        var repeatPassword = document.forms["signup"]["repeatPassword"].value;
+        var sdt = document.forms["signup"]["SDT"].value;
+        var email = document.forms["signup"]["email"].value;
+        // Tạo đối tượng dữ liệu để gửi đến controller
+        var data = {
+            tennguoidung: tennguoidung,
+            username: username,
+            password: password,
+            repeatPassword: repeatPassword,
+            sdt: sdt,
+            email: email
+        };
+        debugger
+        // Gọi API sử dụng AJAX
+        $.ajax({
+            url: '/Login/SignUpWithJWT',
+            type: 'POST',
+            // contentType: 'application/json',
+            data: data,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "success");
+                    document.getElementById('contactForm').reset();
+                } else {
+                    debugger
+                    console.log(results.message);                 
+                    showNotification(results.message, "error");
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+</script>
+
+
+
+
+
+
+
+@* 
+<script>
+    document.getElementById("contactForm").addEventListener("submit", function (event) {
+        // Kiểm tra validation trước khi gửi form
+        if (!validateForm()) {
+            event.preventDefault(); // Ngăn chặn form gửi đi nếu không hợp lệ
+        }
+    });
+    document.getElementById("tennguoidung-error").innerHTML = "";
+    document.getElementById("username-error").innerHTML = "";
+    document.getElementById("password-error").innerHTML = "";
+    document.getElementById("repeatPassword-error").innerHTML = "";
+    document.getElementById("SDT-error").innerHTML = "";
+    document.getElementById("email-error").innerHTML = "";
+
+    function validateForm() {
+        var tennguoidung = document.forms["signup"]["tennguoidung"].value;
+        var username = document.forms["signup"]["username"].value;
+        var password = document.forms["signup"]["password"].value;
+        var repeatPassword = document.forms["signup"]["repeatPassword"].value;
+        var sdt = document.forms["signup"]["SDT"].value;
+        var email = document.forms["signup"]["email"].value;
+        var isValid = true; // Flag to track overall form validity
+        // Kiểm tra validation cho từng trường
+        if (tennguoidung == "") {
+            document.getElementById("tennguoidung-error").innerHTML = "Vui lòng nhập Họ và Tên."; isValid = false;
+
+        }
+        if (username == "") {
+            document.getElementById("username-error").innerHTML = "Vui lòng nhập Tên Đăng Nhập."; isValid = false;
+
+        }
+
+
+        if (password == "") {
+            document.getElementById("password-error").innerHTML = "Vui lòng nhập Mật Khẩu."; isValid = false;
+
+        }
+        if (password !== "") {
+          
+            if (!/\d/.test(password)) {
+
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải chứa ít nhất 1 kí tự số."; isValid = false;
+
+            }
+            if (!/[A-Z]/.test(password)) {
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải chứa ít nhất 1 kí tự hoa."; isValid = false;
+            }
+            if (!/[!@@#$%^&*]/.test(password)) {
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải chứa ít nhất 1 kí tự đặc biệt."; isValid = false;
+            }
+              if (password.length < 6 || password.length > 16) {
+
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải có độ dài từ 6 đến 16 kí tự."; isValid = false;
+
+            }
+        }
+       
+        if (repeatPassword == "") {
+            document.getElementById("repeatPassword-error").innerHTML = "Vui lòng nhắc lại Mật Khẩu."; isValid = false;
+
+        }
+        if (password !== repeatPassword) {
+            document.getElementById("repeatPassword-error").innerHTML = "Mật khẩu không khớp."; isValid = false;
+
+        }
+       
+       
+        if (sdt == "") {
+            document.getElementById("SDT-error").innerHTML = "Vui lòng nhập Số Điện Thoại."; isValid = false;
+        }
+        if (!/^\d{10}$/.test(sdt)) {
+            document.getElementById("SDT-error").innerHTML = "Số Điện Thoại không hợp lệ. Vui lòng nhập đúng định dạng."; isValid = false;
+        }
+        if (email == "") {
+            document.getElementById("email-error").innerHTML = "Vui lòng nhập Email."; isValid = false;
+        }
+        if (!/\S+@@\S+\.\S+/.test(email)) {
+            document.getElementById("email-error").innerHTML = "Email không hợp lệ. Vui lòng nhập đúng định dạng.";
+            isValid = false;
+        }
+
+        return isValid; // Trả về true nếu tất cả các trường hợp validation đều hợp lệ
+    }
+</script> *@
+
+@* 
+<script>
+    var emailInput = document.getElementById('emailInput');
+    var emailError = document.getElementById('emailError');
+
+    emailInput.addEventListener('blur', function () {
+        if (!validateEmail(emailInput.value)) {
+            emailError.style.display = 'block';
+        } else {
+            emailError.style.display = 'none';
+        }
+    });
+
+    function validateEmail(email) {
+        // Sử dụng biểu thức chính quy để kiểm tra định dạng email
+        var emailPattern = /\S+@@\S+\.\S+/;
+        return emailPattern.test(email);
+    }
+
+    var phoneNumberInput = document.getElementById('phoneNumberInput');
+    var phoneNumberError = document.getElementById('phoneNumberError');
+
+    phoneNumberInput.addEventListener('blur', function () {
+        if (!phoneNumberInput.checkValidity()) {
+            phoneNumberError.style.display = 'block';
+        } else {
+            phoneNumberError.style.display = 'none';
+        }
+    });
+
+</script> *@
+
+<style>
+    .error-message {
+        color: red;
+        font-size: 12px;
+    }
+</style>

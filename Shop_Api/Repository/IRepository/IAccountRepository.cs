@@ -11,8 +11,9 @@ namespace Shop_Api.Repository.IRepository
         public Task<ResponseDto> CapNhatMatKhau(DoiMatKhauDto obj);
         public Task<ResponseDto> CapNhatSDTDiaChi(userSDTDiaChi obj);
         public Task<ResponseDto> SignUpNhanVienAsync(SignUpDto model);
+        public Task<ResponseDto> SignUpKhacHangAsync(SignUpDto model);
 
-        public Task<LoginResponseDto> LoginAsync(LoginDto model);
+		public Task<LoginResponseDto> LoginAsync(LoginDto model);
 
         Task<bool> SendEmailAsync(string email, string subject, string message);
 

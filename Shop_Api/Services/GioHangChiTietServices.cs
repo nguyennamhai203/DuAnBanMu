@@ -22,12 +22,20 @@ namespace Shop_Api.Services
 
 
 		}
-		public async Task<ResponseDto> AddCart(string userName, string codeProductDetail)
+		public async Task<ResponseDto> AddCart(string userName, string codeProductDetail,int? soluong)
 		{
 			try
-			{
-				var sanPhamChiTietDTO = _reposSanPhamChiTiet.PGetProductDetail(null, codeProductDetail, null, null, null, null, null, null, null, null, null, null, null,null).Result.FirstOrDefault();
-				var sanPhamChiTiet = await _reposSanPhamChiTiet.GetAsync();
+            {
+                if (soluong == null || soluong == 0)
+                {
+                    soluong = 1;
+                }
+                else soluong = soluong.Value;
+
+                var sanPhamChiTietDTO1 = _reposSanPhamChiTiet.PGetProductDetail(null, codeProductDetail, null, null, null, null, null, null, null, null, null, null, null,null).Result.FirstOrDefault();
+				var sanPhamChiTietDTO = _reposSanPhamChiTiet.GetAllAsync(1).Result.Where(x=>x.MaSanPhamChiTiet==codeProductDetail).FirstOrDefault();
+
+                var sanPhamChiTiet = await _reposSanPhamChiTiet.GetAsync();
 				var user = await _userManager.FindByNameAsync(userName);
 
 				if (user == null)
@@ -48,7 +56,7 @@ namespace Shop_Api.Services
 					var userCartDetail = checkProductInCart.FirstOrDefault(a => a.GioHangId == user.Id && a.ChiTietSanPhamId == sanPhamChiTietDTO.Id);
 					if (userCartDetail != null)
 					{
-						userCartDetail.SoLuong += 1;
+						userCartDetail.SoLuong += (int)soluong;
 						if (await _reposGioHangChiTiet.Updatesync(userCartDetail))
 						{
 							return SuccessResponse(userCartDetail, 200, "Thêm sản phẩm vào giỏ hàng thành công");
@@ -132,10 +140,10 @@ namespace Shop_Api.Services
 			};
 		}
 
-		public Task<ResponseDto> CongQuantityCartDetail(Guid idCartDetail)
+		public async Task<ResponseDto> CongQuantityCartDetail(Guid idCartDetail)
 		{
-			throw new NotImplementedException();
-		}
+            return await CongOrTruQuantityCartDetail(idCartDetail, 1);
+        }
 
 		public Task<ResponseDto> GetAllCarts()
 		{
@@ -152,9 +160,120 @@ namespace Shop_Api.Services
 			throw new NotImplementedException();
 		}
 
-		public Task<ResponseDto> TruQuantityCartDetail(Guid idCartDetail)
+		public async Task<ResponseDto> TruQuantityCartDetail(Guid idCartDetail)
 		{
-			throw new NotImplementedException();
-		}
-	}
+            return await CongOrTruQuantityCartDetail(idCartDetail, -1);
+        }
+		public async Task<ResponseDto> CapNhatSoLuongCartDetail(Guid idCartDetail,int soLuong)
+		{
+            try
+            {
+                var cartDetailX = await _reposGioHangChiTiet.GetById(idCartDetail);
+
+                if (cartDetailX == null)
+                {
+                    return ErrorResponse("Không tìm thấy giỏ hàng chi tiết", 404);
+                }
+
+                var checkProductDetailInCart = cartDetailX.SoLuong;
+                GioHangChiTiet cartDetail = new GioHangChiTiet
+                {
+                    Id = idCartDetail,
+                    SoLuong =  soLuong
+                };
+
+                //if (cartDetail.SoLuong < 0)
+                //{
+                //    return await HandleNegativeQuantity(cartDetail);
+                //}
+
+                if (await _reposGioHangChiTiet.Updatesync(cartDetail))
+                {
+                    return SuccessResponse(cartDetail, 200, $"{(soLuong > 0 ? "Tăng" : "Giảm")} số lượng sản phẩm thành công");
+                }
+                else
+                {
+                    return ErrorResponse("Thất bại", 404);
+                }
+            }
+            catch (Exception e)
+            {
+                return ErrorResponse(e.Message, 404);
+            }
+        }
+		public async Task<ResponseDto> DeleteCartDetail(Guid idCartDetail)
+		{
+            try
+            {
+                var cartDetailX = await _reposGioHangChiTiet.GetById(idCartDetail);
+
+                if (cartDetailX == null)
+                {
+                    return ErrorResponse("Không tìm thấy giỏ hàng chi tiết", 404);
+                }
+
+                var checkProductDetailInCart = cartDetailX.SoLuong;
+                GioHangChiTiet cartDetail = new GioHangChiTiet
+                {
+                    Id = idCartDetail,
+                };
+
+                //if (cartDetail.SoLuong < 0)
+                //{
+                //    return await HandleNegativeQuantity(cartDetail);
+                //}
+
+                if (await _reposGioHangChiTiet.Deletesync(idCartDetail))
+                {
+                    return SuccessResponse(cartDetail, 200, $"Xóa sản phẩm thành công ra khỏi giỏ hàng");
+                }
+                else
+                {
+                    return ErrorResponse("Thất bại", 404);
+                }
+            }
+            catch (Exception e)
+            {
+                return ErrorResponse(e.Message, 404);
+            }
+        }
+
+        public async Task<ResponseDto> CongOrTruQuantityCartDetail(Guid idCartDetail, int changeAmount)
+        {
+            try
+            {
+                var cartDetailX = await _reposGioHangChiTiet.GetById(idCartDetail);
+
+                if (cartDetailX == null)
+                {
+                    return ErrorResponse("Không tìm thấy giỏ hàng chi tiết", 404);
+                }
+
+                var checkProductDetailInCart = cartDetailX.SoLuong;
+                GioHangChiTiet cartDetail = new GioHangChiTiet
+                {
+                    Id = idCartDetail,
+                    SoLuong = checkProductDetailInCart + changeAmount
+                };
+
+                //if (cartDetail.SoLuong < 0)
+                //{
+                //    return await HandleNegativeQuantity(cartDetail);
+                //}
+
+                if (await _reposGioHangChiTiet.Updatesync(cartDetail))
+                {
+                    return SuccessResponse(cartDetail, 200, $"{(changeAmount > 0 ? "Tăng" : "Giảm")} số lượng sản phẩm thành công");
+                }
+                else
+                {
+                    return ErrorResponse("Thất bại", 404);
+                }
+            }
+            catch (Exception e)
+            {
+                return ErrorResponse(e.Message, 404);
+            }
+        }
+    }
 }

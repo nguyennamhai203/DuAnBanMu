@@ -72,5 +72,14 @@ namespace Shop_Api.Controllers
             else return BadRequest(respon);
         }
 
+        /*[Authorize(Roles = AppRole.Admin)]
+        [HttpGet("Thong-ke-san-pham-theo-ngay")]
+        public async Task<IActionResult> ThongKeSanPhamTheoNgay(DateTime ngay, int? status, int page)
+        {
+            var thongke = from x in _repository.GetAll()
+                          from y in chiTietSanPhamRepository.GetAllAsync()
+
+            return Ok();
+        }*/
     }
 }
