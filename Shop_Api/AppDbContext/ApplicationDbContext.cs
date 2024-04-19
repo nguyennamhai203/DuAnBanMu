@@ -37,6 +37,7 @@ namespace Shop_Api.AppDbContext
         public virtual DbSet<ThuongHieu> ThuongHieus { get; set; }
         public virtual DbSet<Voucher> Vouchers { get; set; }
         public virtual DbSet<XuatXu> XuatXus { get; set; }
+        public virtual DbSet<ThongKeViewModel> ThongKeViewModels { get; set;}
 
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
