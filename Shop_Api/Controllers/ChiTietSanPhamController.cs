@@ -22,12 +22,12 @@ namespace Shop_Api.Controllers
         }
 
         [HttpGet("GetAllDto")]
-        public async Task<IActionResult> GetAll(int? status/*, int page = 1*/)
+        public async Task<IActionResult> GetAll(int? status, int page = 1)
         {
             var result = await _repository.GetAllAsync(status);
             return Ok(result);
         }
-
+        
         [HttpGet("Get")]
         public async Task<IActionResult> Get()
         {

@@ -37,7 +37,7 @@ namespace Shop_Api.AppDbContext
         public virtual DbSet<ThuongHieu> ThuongHieus { get; set; }
         public virtual DbSet<Voucher> Vouchers { get; set; }
         public virtual DbSet<XuatXu> XuatXus { get; set; }
-
+        public virtual DbSet<ThongKeViewModel> ThongKeViewModels { get; set; }
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder.UseSqlServer("Server =.\\SQLEXPRESS; Database =DATN_Website_SellLHat3; Trusted_Connection = True;TrustServerCertificate=True"));
@@ -47,19 +47,34 @@ namespace Shop_Api.AppDbContext
         {
             base.OnModelCreating(builder);
             Random random = new Random();
-            *//*for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++)
+            {
+                builder.Entity<ThongKe>().HasData(
+                    new ThongKe
+                    {
+                        Id = Guid.NewGuid(),
+                        Ngay = random.Next(1, 32),
+                        Thang = random.Next(1, 13),
+                        Nam = random.Next(2000, 2024),
+                        SanPhamChiTietId = Guid.NewGuid(),
+                        HoaDonId = Guid.NewGuid(),
+                        TrangThaiThongKe = random.Next(0,2)
+                    }
+                );
+            }
+            for (int i = 0; i < 5; i++)
             {
                 builder.Entity<SanPham>().HasData(
                     new SanPham
                     {
                         IdSanPham = Guid.NewGuid(),
-                        MaSanPham = "SP" + random.Next(1, 6),
-                        TenSanPham = "TSP" + random.Next(1, 6),
-                        TrangThai = random.Next(0, 2)
+                        MaSanPham = "SP" + random.Next(1,6),
+                        TenSanPham = "TSP" + random.Next(1,6),
+                        TrangThai = random.Next(0,2)
                     }
                 );
-            }*/
-            /*for (int i = 0; i < 5; i++)
+            }
+            for (int i = 0; i < 5; i++)
             {
                 builder.Entity<HoaDon>().HasData(
                     new HoaDon
@@ -80,8 +95,8 @@ namespace Shop_Api.AppDbContext
                         LiDoHuy = "ly do huy" + random.Next(1, 6)
                     }
                 );
-            }*/
-            /*for (int i = 0; i < 5; i++)
+            }
+            for (int i = 0; i < 5; i++)
             {
                 builder.Entity<ChiTietSanPham>().HasData(
                     new ChiTietSanPham()
@@ -104,7 +119,7 @@ namespace Shop_Api.AppDbContext
                         ChatLieuId = null
                     }
                 );
-            }*//*
+            }
         }*/
     }
 }

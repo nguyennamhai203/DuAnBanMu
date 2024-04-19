@@ -295,6 +295,34 @@ namespace Shop_Api.Repository
 
 
         }
+        public async Task<List<ChiTietSanPham>> GetAllAsync2(int? status, int page)
+        {
+            var list = _dbContext.ChiTietSanPhams.AsQueryable();
+            var result = list.Select(sp => new ChiTietSanPham
+            {
+                Id = sp.Id,
+                GiaBan = sp.GiaBan,
+                GiaNhap = sp.GiaNhap,
+                GiaThucTe = sp.GiaThucTe,
+                SoLuongTon = sp.SoLuongTon,
+                SoLuongDaBan = sp.SoLuongDaBan,
+                MaSanPham = sp.MaSanPham,
+                TrangThai = sp.TrangThai,
+                TrangThaiKhuyenMai = sp.TrangThaiKhuyenMai,
+                SanPhamId = sp.SanPhamId,
+                LoaiId = sp.LoaiId,
+                ThuongHieuId = sp.ThuongHieuId,
+                XuatXuId = sp.XuatXuId,
+                MauSacId = sp.MauSacId,
+                ChatLieuId = sp.ChatLieuId,
+            });
+            if (status != null)
+            {
+
+                return result.Where(x => x.TrangThai == status).ToList();
+            }
+            return result.ToList();
+        }
 
         public async Task<List<SanPhamChiTietDto>> PGetProductDetail(int? getNumber, string? codeProductDetail, int? status, string? tenSanPham, double? from, double? to, string? sortBy, int? page, string? tenLoai, string? tenThuongHieu, string? tenMauSac, string? tenXuatXu, string? chatLieu, int? PageSize)
         {

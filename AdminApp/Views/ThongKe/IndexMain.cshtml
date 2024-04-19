@@ -1,6 +1,8 @@
 ﻿@using Newtonsoft.Json
 @using Shop_Models.Entities
+@using AdminApp.Models
 @model IEnumerable<Shop_Models.Entities.ChiTietSanPham>
+@* @model IEnumerable<Shop_Models.Dto.ThongKeViewModel> *@
 
 @{
     ViewData["Title"] = "IndexMain";
@@ -10,6 +12,112 @@
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Tổng doanh thu
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @{
+                                decimal totalAllRevenue = Model.Sum(item => Convert.ToDecimal(item.GiaBan * item.SoLuongDaBan));
+                                string formattedTotal = string.Format("{0:#,##0}", totalAllRevenue);
+                                @formattedTotal
+                            }
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Lãi
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @{
+                                decimal totalAllProfit = Model.Sum(item => Convert.ToDecimal((item.GiaBan - item.GiaNhap) * item.SoLuongDaBan));
+                                @if(totalAllProfit < 0)
+                                {
+                                    @:0
+                                }
+                                else
+                                {
+                                    string formattedTotal2 = string.Format("{0:#,##0}", totalAllProfit);
+                                    @:+@formattedTotal2
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-arrow-alt-circle-up fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Lỗ
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @{
+                                decimal totalAllLoss = Model.Sum(item => item.GiaNhap > item.GiaBan ? Convert.ToDecimal((item.GiaNhap - item.GiaBan) * item.SoLuongDaBan) : 0);
+                                string formattedTotal3 = string.Format("{0:#,##0}", totalAllLoss);
+                                @:-@formattedTotal3
+                            }
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-arrow-alt-circle-down fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Số hóa đơn
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                    @{
+                                        // tôi không có bảng hóa đơn ở đây
+                                        // vì mỗi view chỉ cho dùng 1 bảng
+                                        // còn cách nào không
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-receipt fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <figure class="highcharts-figure">
     <div id="container"></div>
@@ -61,10 +169,7 @@
 </style>
 
 @{
-    var sldaban = Model.Sum(x => x.SoLuongDaBan);
-    var slton = Model.Sum(x => x.SoLuongTon);
-    var sott = Model.Sum(x => x.TrangThai);
-    var sottkm = Model.Sum(x => x.TrangThaiKhuyenMai);
+    
 }
 
 <script>
@@ -100,9 +205,9 @@
             data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 17.6, 16.5, 12.0, 6.5,
                 2.0, -0.9]
         }, {
-            name: 'Noname',
-            data: [@sldaban,@slton,@sott,@sottkm,@slton,@sott,@sldaban,@sottkm,@sottkm,@sott,
-                @slton,@sldaban]
+            name: 'Test',
+            data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 39.8, 38.4, 35.5, 29.2,
+                22.0, 17.8]
         }]
     });
 </script>

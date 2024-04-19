@@ -25,9 +25,12 @@ namespace Shop_Api.Controllers
             _hoaDonServices = hoaDonServices;
 
         }
-        [HttpGet("Get-All-HoaDon")]
-        public IEnumerable<HoaDon> GetAllHD()
+        [HttpGet("Get-all")]
+        public async Task<IActionResult> GetHD(int? status,int page)
         {
+
+            var result = await _db.GetAsync(status,page);
+            return Ok(result);
 
             return _db.GetAll();
 

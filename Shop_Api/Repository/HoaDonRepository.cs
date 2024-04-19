@@ -18,6 +18,7 @@ namespace Shop_Api.Repository
 
 
 
+
         List<HoaDon> IHoaDonRepository.GetAll()
         {
             return _db.HoaDons.ToList();
@@ -77,7 +78,7 @@ namespace Shop_Api.Repository
             return await _db.HoaDons.FindAsync(id);
         }
 
-        public async Task<List<HoaDon>> GetAsync(int? status, int page = 1)
+        public async Task<List<HoaDon>> GetAsync(int? status,int page)
         {
             var list = _db.HoaDons.AsQueryable();
             if (status.HasValue)
@@ -102,6 +103,11 @@ namespace Shop_Api.Repository
                 LiDoHuy = x.LiDoHuy
             });
             return result.ToList();
+        }
+
+        public List<HoaDon> GetAll()
+        {
+            throw new NotImplementedException();
         }
         public async Task<HoaDonDto> GetBillByInvoiceCode(string invoiceCode)
         {
