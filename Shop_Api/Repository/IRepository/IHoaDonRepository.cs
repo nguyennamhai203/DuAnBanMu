@@ -12,6 +12,9 @@ namespace Shop_Api.Repository.IRepository
         public Task<ResponseDto> UpdateHD(Guid id, HoaDon a);
         public Task<HoaDon> GetById(Guid id);
         public Task<List<HoaDon>> GetAsync(int? status,int page);
+        public Task<List<HoaDon>> GetAsync(int? status, int page = 1);
+        public Task<HoaDonDto> GetBillByInvoiceCode(string invoiceCode);
+        Task<IEnumerable<HoaDonChiTietDto>> GetBillDetailByInvoiceCode(string invoiceCode);
 
     }
 }

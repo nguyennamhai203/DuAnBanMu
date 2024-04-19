@@ -302,9 +302,9 @@
     });
 
     function validateForm(event) {
-
+        debugger
         // Lấy ra các radio button
-        var option1 = document.getElementById("option1");
+        // var option1 = document.getElementById("option1");
         var option2 = document.getElementById("option2");
         var option3 = document.getElementById("option3");
 
@@ -312,9 +312,7 @@
         var resultDiv = document.getElementById("result");
 
         // Kiểm tra radio button nào đã được chọn
-        if (option1.checked) {
-            resultDiv.innerHTML = text;
-        } else if (option2.checked) {
+        if (option2.checked) {
             resultDiv.innerHTML = text;
         } else if (option3.checked) {
             resultDiv.innerHTML = text;
@@ -323,6 +321,19 @@
             return false; // Ensure the form is not submitted
 
         }
+
+        // // Kiểm tra radio button nào đã được chọn
+        // if (option1.checked) {
+        //     resultDiv.innerHTML = text;
+        // } else if (option2.checked) {
+        //     resultDiv.innerHTML = text;
+        // } else if (option3.checked) {
+        //     resultDiv.innerHTML = text;
+        // } else {
+        //     resultDiv.innerHTML = "Vui lòng chọn một phương thức thanh toán."; event.preventDefault();
+        //     return false; // Ensure the form is not submitted
+
+        // }
     };
 
 

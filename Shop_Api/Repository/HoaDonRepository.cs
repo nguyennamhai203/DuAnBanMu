@@ -1,8 +1,9 @@
 ﻿using Shop_Models.Entities;
-using System.Data.Entity;
+//using System.Data.Entity;
 using Shop_Api.Repository.IRepository;
 using Shop_Api.AppDbContext;
 using Shop_Models.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace Shop_Api.Repository
 {
@@ -10,9 +11,17 @@ namespace Shop_Api.Repository
     {
 
         public ApplicationDbContext _db;
-        public HoaDonRepository(ApplicationDbContext db )
+        public HoaDonRepository(ApplicationDbContext db)
         {
             _db = db;
+        }
+
+
+
+
+        List<HoaDon> IHoaDonRepository.GetAll()
+        {
+            return _db.HoaDons.ToList();
         }
 
         public async Task<ResponseDto> CreateHD(HoaDon a)
@@ -100,5 +109,59 @@ namespace Shop_Api.Repository
         {
             throw new NotImplementedException();
         }
+        public async Task<HoaDonDto> GetBillByInvoiceCode(string invoiceCode)
+        {
+            var query = from bill in _db.HoaDons
+                        where bill.MaHoaDon == invoiceCode
+                        join v in _db.Vouchers on bill.VoucherId equals v.Guid into voucherGroup
+                        from voucher in voucherGroup.DefaultIfEmpty()
+                        select new HoaDonDto
+                        {
+                            InvoiceCode = bill.MaHoaDon,
+                            PhoneNumber = bill.SoDienThoai,
+                            FullName = bill.TenKhachHang,
+                            Address = bill.DiaChiGiaoHang,
+                            TienShip = (int)bill.TienShip,
+                            TrangThaiGiaoHang = bill.TrangThaiGiaoHang,
+                            TrangThaiThanhToan = bill.TrangThaiThanhToan,
+                            TenKhachHang = bill.TenKhachHang,
+                            CreateDate = bill.NgayTao,
+                            TienGiam = (int)bill.TienGiam,
+                            GiamGia = voucher != null ? voucher.PhanTramGiam : 0,
+                            CodeVoucher = voucher != null ? voucher.MaVoucher : null,
+                            UserId = bill.NguoiDungId,
+                            ThanhTien = (int)bill.TongTien,
+
+                        };
+
+            return await query/*.AsNoTracking()*/.FirstOrDefaultAsync();
+
+        }
+
+
+
+        public async Task<IEnumerable<HoaDonChiTietDto>> GetBillDetailByInvoiceCode(string invoiceCode)
+        {
+            try
+            {
+                var billDetails = (
+                    from x in _db.HoaDons.AsQueryable().AsNoTracking().Where(a => a.MaHoaDon == invoiceCode)
+                    join y in _db.HoaDonChiTiets.AsQueryable().AsNoTracking() on x.Id equals y.HoaDonId
+                    join z in _db.ChiTietSanPhams.AsQueryable().AsNoTracking() on y.ChiTietSanPhamId equals z.Id
+                    select new HoaDonChiTietDto
+                    {
+                        SanPhamChiTietId = y.ChiTietSanPhamId,
+                        CodeProductDetail = z.MaSanPham,
+                        Quantity = y.SoLuong,
+                        Price = (float)y.GiaBan
+                    }).AsEnumerable();
+                return billDetails;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
     }
 }

@@ -1,0 +1,184 @@
+﻿@{
+    float thanhTien = 0;
+    float total = 0;
+    float phaiTra = 0;
+}
+
+
+
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Tra Cứu Đơn Hàng</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="/Home">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="/HoaDon/ShowBill">Tra Cứu Đơn Hàng</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Banner Area -->
+<!--================Order Details Area =================-->
+<section class="order_details section_gap">
+    <div class="container">
+
+        <form asp-controller="HoaDon" asp-action="ShowBill" class="d-flex">
+            <input class="form-control find-bill" name="invoiceCode" type="search" placeholder="Nhập mã hóa đơn để tìm kiếm" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </button>
+        </form>
+    </div>
+    @if (ViewBag.Bill != null)
+    {
+        <div class="container">
+            <h3 class="title_confirmation">
+                Cảm ơn bạn. @if (ViewBag.Bill.TrangThaiGiaoHang == 0)
+                {
+                    <span> Đơn Hàng Của Bạn Đang Chờ xác nhận</span>
+                }
+                else if (ViewBag.Bill.TrangThaiGiaoHang == 1)
+                {
+                    <span> Đơn Hàng Của Bạn Đã Được Xác Nhận</span>
+                }
+                else if (ViewBag.Bill.TrangThaiGiaoHang == 2)
+                {
+                    <span> Đơn Hàng Của Bạn Đang Được Vận Chuyển</span>
+                }
+                else if (ViewBag.Bill.TrangThaiGiaoHang == 3)
+                {
+                    <span>  Đơn Hàng Của Bạn Đã Được Giao </span>
+                }
+                else if (ViewBag.Bill.TrangThaiGiaoHang == 4)
+                {
+                    <span> Đơn hàng đã bị hủy</span>
+                }
+
+                @*   @if (ViewBag.Bill.TrangThaiThanhToan == 3)
+            {
+            <span>Trạng thái thanh toán: Đã hoàn thành</span>
+            }
+            else if (ViewBag.Bill.TrangThaiThanhToan == 1)
+            {
+            <span>Trạng thái thanh toán: Chưa thanh toán</span>
+            } *@
+            </h3>
+            <h4 class="title_confirmation">Thông tin đặt hàng</h4>
+
+            <div class="row order_d_inner">
+                <div class="col-lg-4">
+                    <div class="details_item">
+                       
+                        <ul class="list">
+                            <li><a href="#"><span>Mã Hóa Đơn:</span> : @ViewBag.Bill.InvoiceCode</a></li>
+                            <li><a href="#"><span>Tên Khách Hàng:</span> : @ViewBag.Bill.TenKhachHang</a></li>
+                            <li><a href="#"><span>Số Điện Thoại:</span> : @ViewBag.Bill.PhoneNumber</a></li>
+                            <li><a href="#"><span>Ngày Tạo:</span> : @ViewBag.Bill.CreateDate</a></li>
+                            @* <li><a href="#"><span>Địa Chỉ Giao Hàng:</span> : @ViewBag.Bill.Address</a></li> *@
+                           
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="details_item">
+                        <ul class="list">
+                            <li><a href="#"><span>Địa Chỉ Giao Hàng:</span> : @ViewBag.Bill.Address</a></li>
+                            <li><a href="#"><span>Địa Chỉ Nhận Hàng</span> : @ViewBag.Bill.Address</a></li>
+                            <li>
+                                <a href="#">
+                                    <span>Trạng thái thanh toán:</span> : @if (ViewBag.Bill.TrangThaiThanhToan == 1 && ViewBag.Bill.TrangThaiGiaoHang == 3)
+                                    {
+                                        <span> Đã hoàn thành</span>
+                                    }
+                                    else if (ViewBag.Bill.TrangThaiThanhToan == 1)
+                                    {
+                                        <span> Đã thanh toán</span>
+                                    }
+                                    else if (ViewBag.Bill.TrangThaiThanhToan == 0)
+                                    {
+                                        <span> Chưa thanh toán</span>
+                                    }
+                                </a>
+                            </li>
+                            @* <li><a href="#"><span>Total</span> : @ViewBag.Bill.ThanhTien</a></li> *@
+                            <li>
+                                <a href="#">
+                                    <span>Trạng Thái Giao Hàng </span> :  @if (ViewBag.Bill.TrangThaiGiaoHang == 0)
+                                    {
+                                        <span> Chờ xác nhận</span>
+                                    }
+                                    else if (ViewBag.Bill.TrangThaiGiaoHang == 1)
+                                    {
+                                        <span> Đã xác nhận</span>
+                                    }
+                                    else if (ViewBag.Bill.TrangThaiGiaoHang == 2)
+                                    {
+                                        <span> Đang vận chuyển</span>
+                                    }
+                                    else if (ViewBag.Bill.TrangThaiGiaoHang == 3)
+                                    {
+                                        <span> Đã giao</span>
+                                    }
+                                    else if (ViewBag.Bill.TrangThaiGiaoHang == 4)
+                                    {
+                                        <span> Đơn hàng đã bị hủy</span>
+                                    }
+
+
+                                </a>
+
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="order_details_table">
+                <h2>Chi tiết đơn hàng</h2>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Sản Phẩm</th>
+                                <th scope="col">Số Lượng</th>
+                                <th scope="col">Giá</th>
+                                <th scope="col">Tổng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var i in ViewBag.ListBillItem)
+                            {
+                                thanhTien = i.price * i.quantity;
+                                total += thanhTien;
+                               
+                                <tr>
+                                    <td>
+                                        <p>@i.codeProductDetail</p>
+                                    </td>
+                                    <td>
+                                        <h5>@i.quantity</h5>
+                                    </td>
+                                    <td>
+                                        <h5>@i.price</h5>
+                                    </td>
+                                    <td>
+                                        <p>@thanhTien</p>
+                                    </td>
+                                </tr>
+                            }
+
+                            <tr><td></td><td></td><td></td><td>Tổng thành tiền: @total</td></tr>
+                            <tr><td></td><td></td><td>Giảm Giá VouCher: @ViewBag.Bill.GiamGia %</td><td>Quy Đổi Sang Tiền: @ViewBag.Bill.TienGiam</td></tr>
+                            <tr><td></td><td></td><td>Phí Ship (Mặc Định): @ViewBag.Bill.TienShip</td><td>Tổng tiền phải thanh toán: @(total - ViewBag.Bill.TienGiam + ViewBag.Bill.TienShip)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+   
+   
+</section>

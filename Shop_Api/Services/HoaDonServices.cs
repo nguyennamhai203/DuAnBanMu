@@ -17,6 +17,8 @@ namespace Shop_Api.Services
         private readonly IHoaDonChiTietRepository _hoaDonCTRepository;
         private readonly IGioHangChiTietRepository _gioHangCtRepository;
         private readonly IVoucherRepository _voucherRepository;
+        private readonly HoaDonDto _reponseBill;
+        private readonly ResponseDto _reponse;
         ApplicationDbContext _context;
         public HoaDonServices(UserManager<NguoiDung> userManager, IHoaDonRepository hoaDonRepository, IGioHangChiTietRepository gioHangCtRepository, IVoucherRepository voucherRepository,
             IHoaDonChiTietRepository hoaDonCTRepository, ApplicationDbContext applicationDbContext)
@@ -27,6 +29,8 @@ namespace Shop_Api.Services
             _voucherRepository = voucherRepository;
             _hoaDonCTRepository = hoaDonCTRepository;
             _context = applicationDbContext;
+            _reponseBill = new HoaDonDto();
+            _reponse = new ResponseDto();
         }
 
         public async Task<ResponseDto> CreateBill(RequestBillDto requestBill)
@@ -48,7 +52,7 @@ namespace Shop_Api.Services
                 var tienGiam = 0;
                 if (voucherX != null)
                 {
-                    tienGiam = requestBill.Payment - voucherX.PhanTramGiam.Value;
+                    tienGiam = (requestBill.Payment / 100) * voucherX.PhanTramGiam.Value;
                 }
                 else tienGiam = 0;
                 var bill = new HoaDon
@@ -56,19 +60,19 @@ namespace Shop_Api.Services
                     Id = Guid.NewGuid(),
                     MaHoaDon = "Bill" + GenerateRandomString(10),
                     NgayTao = DateTime.Now,
-                    NgayShip = DateTime.Now,
-                    NgayNhan = DateTime.Now,
-                    NgayThanhToan = DateTime.Now,
-                    NgayGiaoDuKien = DateTime.Now,
+                    //NgayShip = DateTime.Now,
+                    //NgayNhan = DateTime.Now,
+                    //NgayThanhToan = DateTime.Now,
+                    //NgayGiaoDuKien = DateTime.Now,
                     TrangThaiGiaoHang = 0, // chờ xác nhận
                     TrangThaiThanhToan = 0, // chờ thanh toán
                     TenKhachHang = user != null ? user.TenNguoiDung : requestBill.FullName,
                     SoDienThoai = requestBill.PhoneNumber,
                     DiaChiGiaoHang = requestBill.Address,
                     NguoiDungId = user != null ? user.Id : null,
-                    TongTien = requestBill.Payment,
+                    TongTien = requestBill.Payment - tienGiam + 40000,
                     TienGiam = tienGiam,
-                    TienShip = 0,
+                    TienShip = 40000, // mặc định ship
                     VoucherId = voucherX != null ? voucherX.Guid : (Guid?)null
                 };
                 var createHoaDon = await _hoaDonRepository.CreateHD(bill);
@@ -160,6 +164,40 @@ namespace Shop_Api.Services
             }
 
             return randomString.ToString();
+        }
+
+        public async Task<ResponseDto> PGetBillByInvoiceCode(string invoiceCode)
+        {
+            var billT = await _hoaDonRepository.GetBillByInvoiceCode(invoiceCode);
+            if (billT != null)
+            {
+                var listBillDetail = await _hoaDonRepository.GetBillDetailByInvoiceCode(invoiceCode);
+                _reponseBill.InvoiceCode = billT.InvoiceCode;
+                _reponseBill.PhoneNumber = billT.PhoneNumber;
+                _reponseBill.TenKhachHang = billT.TenKhachHang;
+                _reponseBill.FullName = billT.FullName;
+                _reponseBill.Address = billT.Address;
+                _reponseBill.TienShip = billT.TienShip;
+                _reponseBill.TrangThaiGiaoHang = billT.TrangThaiGiaoHang;
+                _reponseBill.TrangThaiThanhToan = billT.TrangThaiThanhToan;
+                _reponseBill.CreateDate = billT.CreateDate;
+                _reponseBill.CodeVoucher = billT.CodeVoucher;
+                _reponseBill.GiamGia = billT.GiamGia;
+                _reponseBill.Payment = billT.Payment;
+                _reponseBill.TienGiam = billT.TienGiam;
+                _reponseBill.ThanhTien = billT.ThanhTien;
+                _reponseBill.IsPayment = billT.IsPayment;
+                _reponseBill.UserId = billT.UserId;
+                _reponseBill.BillDetail = listBillDetail;
+                _reponseBill.Count = listBillDetail.Count();
+                _reponse.Message = $"Lấy hóa đơn {invoiceCode} thành công.";
+                _reponse.Content = _reponseBill;
+                return _reponse;
+            }
+            _reponse.Code = 404;
+            _reponse.IsSuccess = false;
+            _reponse.Message = $"Không tìm thấy hóa đơn {invoiceCode}.";
+            return _reponse;
         }
     }
 }
