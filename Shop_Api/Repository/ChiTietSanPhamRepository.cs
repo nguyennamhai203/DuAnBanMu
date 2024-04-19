@@ -23,6 +23,28 @@ namespace Shop_Api.Repository
         public async Task<ResponseDto> CreateAsync(ChiTietSanPham model)
         {
             var checkMa = await _dbContext.ChiTietSanPhams.AnyAsync(x => x.MaSanPham == model.MaSanPham);
+            var existingProduct = await _dbContext.ChiTietSanPhams
+       .FirstOrDefaultAsync(x =>
+           x.SanPhamId == model.SanPhamId &&
+           x.ChatLieuId == model.ChatLieuId &&
+           x.ThuongHieuId == model.ThuongHieuId &&
+           x.XuatXuId == model.XuatXuId &&
+           x.LoaiId == model.LoaiId &&
+           x.MauSacId == model.MauSacId);
+
+            if (existingProduct != null)
+            {
+                return new ResponseDto
+                {
+                    Content = null,
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Sản phẩm đã tồn tại.",
+                };
+            }
+
+
+
             if (model == null || checkMa == true)
             {
                 return new ResponseDto
@@ -1077,6 +1099,6 @@ namespace Shop_Api.Repository
         }
 
 
-       
+
     }
 }

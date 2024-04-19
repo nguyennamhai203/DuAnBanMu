@@ -96,7 +96,7 @@ namespace AdminApp.Controllers
             }
             else
             {
-                return RedirectToAction("Login","Home");
+                return RedirectToAction("Login", "Home");
             }
         }
         public async Task<IActionResult> DanhSachSanPhamNgungKinhDoanh(int status = 0)
@@ -210,8 +210,14 @@ namespace AdminApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Createaa(SanPhamChiTietDto productRequest, string editor, [FromForm] List<IFormFile> formFiles)
+        public async Task<IActionResult> Createaa(SanPhamChiTietDto productRequest, string editor, bool hiddenField, [FromForm] List<IFormFile> formFiles)
         {
+            var khuyenmai = 0;
+            if (hiddenField == true)
+            {
+                khuyenmai = 1;
+            }
+            else khuyenmai = 0;
             ChiTietSanPham productDetail = new ChiTietSanPham()
             {
                 Id = Guid.NewGuid(),
@@ -220,7 +226,7 @@ namespace AdminApp.Controllers
                 GiaBan = (float)productRequest.GiaBan,
                 GiaThucTe = (float)productRequest.GiaBan,
                 SoLuongTon = productRequest.SoLuongTon,
-                TrangThaiKhuyenMai = productRequest.TrangThaiKhuyenMai,
+                TrangThaiKhuyenMai = khuyenmai,
                 Mota = editor,
                 TrangThai = 1,
                 SanPhamId = productRequest.SanPhamId,
@@ -237,31 +243,33 @@ namespace AdminApp.Controllers
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var response = await client.PostAsJsonAsync($"/api/ChiTietSanPham/CreateAsync", productDetail);
 
-            //string message = await response.Content.ReadAsStringAsync(); // Lấy thông báo từ nội dung
-            using (var formData = new MultipartFormDataContent())
-            {
-                foreach (var file in formFiles)
-                {
-                    formData.Add(new StreamContent(file.OpenReadStream())
-                    {
-                        Headers =
-            {
-                ContentLength = file.Length,
-                ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType)
-            }
-                    }, "files", file.FileName);
-                }
-
-                // Add other data if needed
-                formData.Add(new StringContent(productDetail.Id.ToString()), "ProductId");
-
-                // Send the request
-                var resultImage = await client.PostAsync("/uploadManyProductDetailImages", formData);
-            }
+            
+           
 
 
             if (response.IsSuccessStatusCode)
             {
+                using (var formData = new MultipartFormDataContent())
+                {
+                    foreach (var file in formFiles)
+                    {
+                        formData.Add(new StreamContent(file.OpenReadStream())
+                        {
+                            Headers =
+            {
+                ContentLength = file.Length,
+                ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType)
+            }
+                        }, "files", file.FileName);
+                    }
+
+                    // Add other data if needed
+                    formData.Add(new StringContent(productDetail.Id.ToString()), "ProductId");
+
+                    // Send the request
+                    var resultImage = await client.PostAsync("/uploadManyProductDetailImages", formData);
+                }
+
                 var result = await response.Content.ReadAsStringAsync();
 
                 return Content(result, "application/json");
@@ -434,8 +442,8 @@ namespace AdminApp.Controllers
                 Console.WriteLine(ex.Message);
                 throw new Exception("Not IsSuccessStatusCode");
             }
-        } 
-        
+        }
+
         public async Task<IActionResult> KhoiPhuc(Guid id)
         {
             try

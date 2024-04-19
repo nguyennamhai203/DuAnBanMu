@@ -18,7 +18,12 @@
         <img src="~/assets/img/logo.png" alt="">
         <span class="d-none d-lg-block">BeHatAdmin</span>
     </a>
-    <i class="bi bi-list toggle-sidebar-btn"></i>
+    @if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+    {
+  <i class="bi bi-list toggle-sidebar-btn"></i>
+
+    }
+  
 </div><!-- End Logo -->
 
 <div class="search-bar">

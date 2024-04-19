@@ -11,8 +11,8 @@
 
     <!-- Favicons -->
     <link href="~/assets/img/favicon.png" rel="icon">
-     <img src="~/assets/img/favicon.png" /> 
-     <link href="~/assets/img/apple-touch-icon.png" rel="apple-touch-icon"> 
+    <img src="~/assets/img/favicon.png" />
+    <link href="~/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -59,37 +59,21 @@
 
 </head>
 <body>
-    @*   <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-    <div class="container-fluid">
-    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AdminApp</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-    aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-    <ul class="navbar-nav flex-grow-1">
-    <li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-    </li>
-    <li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </li>
-    </ul>
-    </div>
-    </div>
-    </nav>
-    </header> *@
-    @* <div class="container"> *@
+    @{
+        var httpContext = ViewContext.HttpContext;
+        var accessRole = httpContext.Session.GetString("Result");
+        var accessToken = httpContext.Session.GetString("AccessToken");
+    }
 
     <header id="header" class="header fixed-top d-flex align-items-center">
         @await Html.PartialAsync("_Header")
     </header><!-- End Header -->
-
-    <aside id="sidebar" class="sidebar">
-        @await Html.PartialAsync("_Slidebar")
-    </aside>
-
+    @if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+    {
+        <aside id="sidebar" class="sidebar">
+            @await Html.PartialAsync("_Slidebar")
+        </aside>
+    }
 
     <main id="main" class="main">
         @RenderBody()
@@ -98,12 +82,12 @@
 
     @* </div> *@
 
-        
-            @await Html.PartialAsync("_Footer")
-            @* &copy; 2024 - AdminApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
-       
-  
-@*     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    @await Html.PartialAsync("_Footer")
+    @* &copy; 2024 - AdminApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
+
+
+    @*     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script> *@
 

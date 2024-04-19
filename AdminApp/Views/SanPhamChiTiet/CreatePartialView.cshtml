@@ -39,142 +39,152 @@
         <div class="col-lg-4 text-right">
         </div>
     </div>
-    
-    <form asp-controller="SanPhamChiTiet" asp-action="Createaa" method="post" enctype="multipart/form-data">
+    <br>
+    <div class="container">
+        <div class="row justify-content-center">
 
-        @*  <div id="grid1"></div> *@
+            <div class="card">
+                <div class="card-body">
+                    <form  id="form-create" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="maSanPhamChiTietInput" class="form-label">Mã Sản Phẩm Chi Tiết</label>
+                            <input type="text" id="maSanPhamChiTiet" class="form-control" asp-for="MaSanPhamChiTiet" placeholder="Mã Sản Phẩm Chi Tiết">
+                            <div id="maSanPhamChiTietError" class="text-danger d-none">Vui lòng nhập giá trị cho trường này.</div>
+                        </div>
 
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Mã Sản Phẩm Chi Tiết</label>
-            <input type="text" class="form-control" asp-for="MaSanPhamChiTiet" placeholder="Mã Sản Phẩm Chi Tiết">
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Tên Sản Phẩm</label>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="sanPhamSelect" class="form-label">Tên Sản Phẩm</label>
+                                <select class="form-select" id="sanPhamSelect" asp-for="SanPhamId">
+                                    <option value="">Chọn Sản Phẩm</option>
+                                    @foreach (var t in (List<SanPham>)ViewBag.GetSanPham)
+                                    {
+                                        <option value="@t.IdSanPham">@t.TenSanPham</option>
+                                    }
+                                </select>
+                                <div id="sanPhamError" class="text-danger" style="display: none;">Vui lòng chọn trường này .</div>
+                            </div>
 
-            <select class="form-select" asp-for="SanPhamId">
-                <option>Chọn Sản Phẩm</option>
-                @foreach (var t in (List<SanPham>)ViewBag.GetSanPham)
-                {
-                    <option value="@t.IdSanPham">@t.TenSanPham</option>
-                }
+                            <div class="col-md-6">
+                                <label for="mauSacSelect" class="form-label">Màu Sắc</label>
+                                <select class="form-select" id="mauSacSelect" asp-for="MauSacId">
+                                    <option value="">Chọn Màu Sắc</option>
+                                    @foreach (var t in (List<MauSac>)ViewBag.GetColor)
+                                    {
+                                        <option value="@t.Guid">@t.TenMauSac</option>
+                                    }
+                                </select>
+                                <div id="mauSacError" class="text-danger" style="display: none;">Vui lòng chọn trường này .</div>
+                            </div>
+                        </div>
 
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label"> Màu Sắc</label>
-            <div class="form-group col-md-6">
-                <select class="form-select" asp-for="MauSacId">
-                    <option>Chọn Màu Sắc</option>
-                    @foreach (var t in (List<MauSac>)ViewBag.GetColor)
-                    {
-                        <option value="@t.Guid">@t.TenMauSac</option>
-                    }
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="chatLieuSelect" class="form-label">Chất Liệu</label>
+                                <select class="form-select" id="chatLieuSelect" asp-for="ChatLieuId">
+                                    <option value="">Chọn Chất Liệu</option>
+                                    @foreach (var t in (List<ChatLieu>)ViewBag.GetChatLieu)
+                                    {
+                                        <option value="@t.Guid">@t.TenChatLieu</option>
+                                    }
+                                </select>
+                                <div id="chatLieuError" class="text-danger" style="display: none;">Vui lòng chọn trường này .</div>
+                            </div>
 
-                </select>
-            </div>
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Chất Liệu</label>
-            <select class="form-select" asp-for="ChatLieuId">
-                <option>Chọn Chất Liệu</option>
-                @foreach (var t in (List<ChatLieu>)ViewBag.GetChatLieu)
-                {
-                    <option value="@t.Guid">@t.TenChatLieu</option>
-                }
+                            <div class="col-md-6">
+                                <label for="thuongHieuSelect" class="form-label">Thương Hiệu</label>
+                                <select class="form-select" id="thuongHieuSelect" asp-for="ThuongHieuId">
+                                    <option value="">Chọn Thương Hiệu</option>
+                                    @foreach (var t in (List<ThuongHieu>)ViewBag.GetThuongHieu)
+                                    {
+                                        <option value="@t.Guid">@t.TenThuongHieu</option>
+                                    }
+                                </select>
+                                <div id="thuongHieuError" class="text-danger" style="display: none;">Vui lòng chọn trường này .</div>
+                            </div>
+                        </div>
 
-            </select>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="xuatXuSelect" class="form-label">Xuất Xứ</label>
+                                <select class="form-select" id="xuatXuSelect" asp-for="XuatXuId">
+                                    <option value="">Chọn Xuất Xứ</option>
+                                    @foreach (var t in (List<XuatXu>)ViewBag.GetXuatXu)
+                                    {
+                                        <option value="@t.Guid">@t.TenXuatXu</option>
+                                    }
+                                </select>
+                                <div id="xuatXuError" class="text-danger" style="display: none;">Vui lòng chọn trường này .</div>
+                            </div>
 
-        </div>
+                            <div class="col-md-6">
+                                <label for="loaiSelect" class="form-label">Loại Mũ</label>
+                                <select class="form-select" id="loaiSelect" asp-for="LoaiId">
+                                    <option value="">Chọn Loại Mũ</option>
+                                    @foreach (var t in (List<Loai>)ViewBag.GetLoai)
+                                    {
+                                        <option value="@t.Id">@t.TenLoai</option>
+                                    }
+                                </select>
+                                <div id="loaiError" class="text-danger" style="display: none;">Vui lòng chọn trường này .</div>
+                            </div>
+                        </div>
 
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Thương Hiệu</label>
-            <select class="form-select" asp-for="ThuongHieuId">
-                <option>Chọn Thương Hiệu</option>
-                @foreach (var t in (List<ThuongHieu>)ViewBag.GetThuongHieu)
-                {
-                    <option value="@t.Guid">@t.TenThuongHieu</option>
-                }
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="giaNhapInput" class="form-label">Giá Nhập</label>
+                                <input type="number" class="form-control" id="giaNhapInput" asp-for="GiaNhap" placeholder="Nhập Giá Nhập">
+                                <div id="giaNhapError" class="text-danger" style="display: none;">Vui lòng nhập giá trị cho trường này nếu nó chưa được nhập.</div>
+                            </div>
 
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Xuất Xứ</label>
-            <select class="form-select" asp-for="XuatXuId">
-                <option>Chọn Xuất Xứ</option>
-                @foreach (var t in (List<XuatXu>)ViewBag.GetXuatXu)
-                {
-                    <option value="@t.Guid">@t.TenXuatXu</option>
-                }
+                            <div class="col-md-6">
+                                <label for="giaBanInput" class="form-label">Giá Bán</label>
+                                <input type="number" class="form-control" id="giaBanInput" asp-for="GiaBan" placeholder="Nhập Giá Bán">
+                                <div id="giaBanError" class="text-danger" style="display: none;">Vui lòng nhập giá trị cho trường này nếu nó chưa được nhập.</div>
+                            </div>
+                        </div>
 
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Loại Mũ</label>
-            <select class="form-select" asp-for="LoaiId">
-                <option>Chọn Loại Mũ</option>
-                @foreach (var t in (List<Loai>)ViewBag.GetLoai)
-                {
-                    <option value="@t.Id">@t.TenLoai</option>
-                }
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="soLuongInput" class="form-label">Số Lượng Sản Phẩm</label>
+                                <input type="number" class="form-control" id="soLuongInput" asp-for="SoLuongTon" placeholder="Nhập Số Lượng">
+                                <div id="soLuongError" class="text-danger" style="display: none;">Vui lòng nhập giá trị cho trường này nếu nó chưa được nhập.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input type="checkbox" id="trangthaikhuyenmai" name="trangthaikhuyenmai" onchange="updateHiddenFieldValue('trangthaikhuyenmai', 'hiddenFieldId')" />
+                                    <input type="hidden" id="hiddenFieldId" name="hiddenField" value="false" />
+                                    <label class="form-check-label" for="trangthaikhuyenmai">Cho phép áp dụng khuyến mại</label>
+                                </div>
+                            </div>
 
-            </select>
-        </div>
-        @*  <div class="mb-3">
-        <label for="exampleFormControlInput1" class="form-label">CardVGA</label>
-        <select class="form-select" asp-for="IdCardVGA">
-        <option>Chọn CardVGA</option>
-        @foreach (var t in (List<CardVGA>)ViewBag.GetlistCardVGA)
-        {
-        <option value="@t.Id">@t.Ma</option>
-        }
 
-        </select>
-        </div> *@
 
-        @*  <div class="form-group col-md-6">
-        <label for="">Sản phẩm</label>
-        <select class="form-select" >
-        @foreach (var t in (List<ProductType>)ViewBag.GetProductType)
-        {
-        <option>@t.Name</option>
-        }
+                        </div>
 
-        </select>
-        </div> *@
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Giá Nhập</label>
-            <input type="number" class="form-control" id="exampleFormControlInput1" asp-for="GiaNhap" placeholder="Nhập Giá Nhập">
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Giá Bán</label>
-            <input type="number" class="form-control" id="exampleFormControlInput1" asp-for="GiaBan" placeholder="Nhập Giá Bán">
-        </div> <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Số Lượng Sản Phẩm</label>
-            <input type="number" class="form-control" id="exampleFormControlInput1" asp-for="SoLuongTon" placeholder="Nhập Số Lượng">
-        </div>
-        <div class="form-group d-flex align-items-center col-4">
-            <div class="switch m-r-10">
-                <input type="checkbox" id="switch-${index}-2" class="switch-2-trangthaikhuyenmai" name="TrangThaiKhuyenMai" checked>
-                <label class="font-weight-semibold" for="switch-${index}-2"></label>
-            </div>
-            <label class="font-weight-semibold">Cho phép áp dụng khuyến mại</label>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <label for="exampleFormControlInput1" class="form-label">Hình Ảnh</label>
-                <div id="imageInputsContainer">
-                    <input type="file" name="formFiles" class="form-control" accept="image/*" multiple />
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="formFiles" class="form-label">Hình Ảnh</label>
+                                <div id="imageInputsContainer">
+                                    <input type="file" name="formFiles" class="form-control" accept="image/*" onchange="previewImages(this)" />
+                                </div>
+                                <button type="button" class="btn btn-secondary mt-2" onclick="addImageInput()">Thêm 1 ảnh</button>
+                                <div id="imagePreview"></div> <!-- Thẻ div để hiển thị hình ảnh -->
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Mô Tả</label>
+                            <textarea name="editor" id="description" rows="10" class="form-control" aria-label="Mô Tả"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" >Lưu</button>
+                    </form>
                 </div>
-                <button type="button" class="btn btn-secondary mt-2" onclick="addImageInput()">Thêm 1 ảnh</button>
             </div>
         </div>
-        <div class="demo-section wide">
-            <textarea name="editor" id="description" rows="10" cols="30" style="width:100%; height:840px" aria-label="editor"></textarea>
-        </div>
-
-
-        <button type="submit" class="btn btn-primary">Save</button>
-    </form>
+    </div>
     <script>
         var editor = $("#description").kendoEditor({
             stylesheets: [
@@ -231,6 +241,44 @@
 
 
     <script>
+        function previewImages(input) {
+            var imageContainer = document.createElement('div');
+            imageContainer.className = 'imagePreviewContainer';
+
+            var previewContainer = document.getElementById('imagePreview');
+            previewContainer.appendChild(imageContainer);
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var image = document.createElement('img');
+                    image.src = e.target.result;
+                    image.style.width = '200px';
+                    image.style.marginRight = '20px';
+                    imageContainer.appendChild(image);
+
+                    // Thêm sự kiện click vào hình ảnh để đổi ảnh khác
+                    image.onclick = function () {
+                        input.click(); // Kích hoạt sự kiện click trên input để chọn ảnh mới
+                    };
+
+                    // Thêm biểu tượng "X" dưới mỗi ảnh để xóa ảnh
+                    var removeIcon = document.createElement('span');
+                    removeIcon.className = 'removeIcon';
+                    removeIcon.innerHTML = '&times;';
+                    removeIcon.onclick = function () {
+                        previewContainer.removeChild(imageContainer); // Xóa container chứa ảnh
+                        input.value = ''; // Xóa tập tin hình ảnh
+                    };
+                    imageContainer.appendChild(removeIcon);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+    
+
+    <script>
         function addImageInput() {
             var container = document.getElementById('imageInputsContainer');
             var inputCount = container.getElementsByTagName('input').length;
@@ -241,11 +289,260 @@
                 newInput.name = 'formFiles';
                 newInput.className = 'form-control';
                 newInput.accept = 'image/*';
-                newInput.multiple = true;  // Allow multiple file selection
+                newInput.multiple = false;  // Chỉ cho phép chọn một tập tin
+                newInput.onchange = function () {
+                    previewImages(this);
+                    this.disabled = false; // Vô hiệu hóa input sau khi đã chọn ảnh
+                };
+
                 container.appendChild(newInput);
             }
         }
-
     </script>
 
+
+    <style>
+        .imagePreviewContainer {
+            display: inline-block;
+            margin-right: 20px;
+            position: relative; /* Để căn chỉnh vị trí của biểu tượng "X" */
+        }
+
+        .removeIcon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            color: red;
+        }
+    </style>
+
+
 }
+
+
+<script>
+
+    function updateHiddenFieldValue(checkboxId, hiddenFieldId) {
+        var checkbox = document.getElementById(checkboxId);
+        var hiddenField = document.getElementById(hiddenFieldId);
+
+        if (checkbox.checked) {
+            hiddenField.value = "true"; // Nếu checkbox được chọn, thiết lập giá trị của trường ẩn là "true"
+            console.log(hiddenField.value);
+        } else {
+            hiddenField.value = "false"; // Nếu checkbox không được chọn, thiết lập giá trị của trường ẩn là "false"
+            console.log(hiddenField.value);
+
+        }
+    }
+
+
+    $(document).ready(function () {
+        debugger
+        // Sự kiện submit của form
+        $("#form-create").submit(function (event) {
+
+            var isValid = true;
+
+            // Kiểm tra từng trường select và hiển thị thông báo lỗi nếu cần
+            $(this).find("select").each(function () {
+                var selectedValue = $(this).val();
+                if (!selectedValue) {
+                    $(this).addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+
+            // Kiểm tra từng trường input và hiển thị thông báo lỗi nếu cần
+            $(this).find("input").each(function () {
+                
+                var inputValue = $(this).val();
+                if (!inputValue) {
+                    $(this).addClass('is-invalid');
+                    console.log(this.id);
+                    $('#' + this.id + 'Error').removeClass('d-none');
+
+                    isValid = false;
+                } else {
+                    $(this).removeClass('is-invalid');
+                    debugger
+                    console.log(this);
+                    $('#' + this.id + 'Error').addClass('d-none');
+                    $('#' + this.id + 'Error').removeAttr('style');
+                }
+            });
+
+            // Nếu có lỗi, ngăn chặn việc gửi form và trả về false
+            if (!isValid) {
+                return false;
+            }
+
+            // Nếu không có lỗi, tiến hành gửi form
+            var formData = new FormData(this);
+            saveForm(formData);
+        });
+    });
+
+    function saveForm(formData) {
+        debugger
+        // var formData = new FormData(document.getElementById('form-create'));
+        event.preventDefault(); // ngan chan hanh dong mac dinh cua nut
+
+        Swal.fire({
+            title: 'Confirm Title',
+            text: 'Bạn có chắc chắn muốn thêm ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, perform the request
+                performRequest(formData);
+            } else {
+                // User canceled, do nothing
+                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+            }
+        });
+    }
+
+
+
+    // // Sử dụng sự kiện input để ẩn dòng thông báo khi người dùng nhập vào
+    // $("input, select").on('input', function () {
+    //     var inputValue = $(this).val();
+    //     if (inputValue) {
+    //         $(this).removeClass('is-invalid');
+    //         $('#' + this.id + 'Error').hide(); // Ẩn dòng thông báo nếu đã nhập
+    //     }
+    // });
+
+
+    // $("#form-create").submit(function (event) {
+    //     var isValid = true; debugger
+    //     // Kiểm tra từng trường select và hiển thị thông báo lỗi nếu cần
+    //     $(this).find("select").each(function () {
+    //         var selectedValue = $(this).val();
+    //         if (!selectedValue) {
+    //             $(this).addClass('is-invalid');
+    //             isValid = false;
+    //         } else {
+    //             $(this).removeClass('is-invalid');
+    //         }
+    //     });
+
+    //     // Kiểm tra từng trường input và hiển thị thông báo lỗi nếu cần
+    //     $(this).find("input").each(function () {
+    //         debugger
+    //         var inputValue = $(this).val();
+    //         if (!inputValue) {
+    //             $(this).addClass('is-invalid');
+    //             isValid = false;
+    //         } else {
+    //             $(this).removeClass('is-invalid');
+    //         }
+    //     });
+
+    //     if (!isValid) {
+    //         event.preventDefault(); // Ngăn chặn việc gửi form nếu có lỗi
+    //         return false;
+    //     }
+    // });
+
+    // Sử dụng sự kiện input để ẩn dòng thông báo khi người dùng nhập vào
+    $("input, select").on('input', function () {
+        var inputValue = $(this).val();
+        if (inputValue) {
+            $(this).removeClass('is-invalid');
+            $('#' + this.id + 'Error').hide(); // Ẩn dòng thông báo nếu đã nhập
+        }
+    });
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right", // Sửa từ "toast-bot-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+
+    function saveForm(formData) {
+        debugger
+        // var formData = new FormData(document.getElementById('form-create'));
+        event.preventDefault(); // ngan chan hanh dong mac dinh cua nut
+        console.log(formData);
+        Swal.fire({
+            title: 'Confirm Title',
+            text: 'Bạn có chắc chắn muốn sửa ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, perform the request
+                performRequest(formData);
+            } else {
+                // User canceled, do nothing
+                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+            }
+        });
+    }
+
+    function performRequest(formData) {
+        debugger
+        $.ajax({
+            url: '/SanPhamChiTiet/Createaa',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "success");
+                    // document.getElementById('editprofile-form').reset();
+                } else {
+                    debugger
+                    console.log(results.message);
+                    // document.getElementById('editprofile-form').reset();
+                    showNotification(results.message, "error");
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+</script>
+
