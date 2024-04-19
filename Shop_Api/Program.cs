@@ -46,6 +46,7 @@ builder.Services.AddScoped<IHoaDonChiTietRepository, HoaDonChiTietRepository>();
 builder.Services.AddScoped<IThuongHieuRepository, ThuongHieuRepository>();
 builder.Services.AddScoped<IChatLieuRepository, ChatLieuRepository>();
 builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
+builder.Services.AddScoped<IThongKeViewModelRepository, ThongKeViewModelRepository>();
 builder.Services.AddScoped<IChiTietKhuyenMaiRepository, ChiTietKhuyenMaiRepository>();
 builder.Services.AddScoped<IChiTietSanPhamRepository, ChiTietSanPhamRepository>();
 builder.Services.AddScoped<IXuatXuRepository, XuatXuRepository>();

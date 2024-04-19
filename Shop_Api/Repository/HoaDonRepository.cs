@@ -15,13 +15,6 @@ namespace Shop_Api.Repository
             _db = db;
         }
 
-        
-
-        List<HoaDon> IHoaDonRepository.GetAll()
-        {
-            return _db.HoaDons.ToList();
-        }
-
         public async Task<ResponseDto> CreateHD(HoaDon a)
         {
             try
@@ -75,7 +68,7 @@ namespace Shop_Api.Repository
             return await _db.HoaDons.FindAsync(id);
         }
 
-        public async Task<List<HoaDon>> GetAsync(int? status, int page = 1)
+        public async Task<List<HoaDon>> GetAsync(int? status,int page)
         {
             var list = _db.HoaDons.AsQueryable();
             if (status.HasValue)
@@ -100,6 +93,11 @@ namespace Shop_Api.Repository
                 LiDoHuy = x.LiDoHuy
             });
             return result.ToList();
+        }
+
+        public List<HoaDon> GetAll()
+        {
+            throw new NotImplementedException();
         }
     }
 }

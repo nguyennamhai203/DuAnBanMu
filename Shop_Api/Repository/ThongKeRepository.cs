@@ -1,4 +1,5 @@
-﻿using Shop_Api.AppDbContext;
+﻿using Microsoft.AspNetCore.Mvc;
+using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
@@ -136,19 +137,13 @@ namespace Shop_Api.Repository
             return list;
         }
 
-        public async Task<List<ThongKe>> GetAsync(int? status, int page = 1)
+        public async Task<List<ThongKe>> GetAsync(int? status, int page)
         {
             var list = _dbContext.ThongKes.AsQueryable();
-            //if (status.HasValue)
-            //{
-            //    list = list.Where(x => x.TrangThai == status);
-            //}
-
-            #region Paging
-            list = list.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE);
-
-            #endregion
-
+            if (status.HasValue)
+            {
+                list = list.Where(x => x.TrangThaiThongKe == status);
+            }
             var result = list.Select(tk => new ThongKe
             {
                 Ngay = tk.Ngay,
@@ -163,5 +158,6 @@ namespace Shop_Api.Repository
             var list = await _dbContext.ThongKes.ToListAsync();
             return list;
         }
+
     }
 }

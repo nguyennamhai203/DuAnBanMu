@@ -1,0 +1,143 @@
+﻿@model IEnumerable<Shop_Models.Dto.ThongKeViewModel>
+
+@{
+    ViewData["Title"] = "IndexDemo";
+}
+
+<h1>IndexDemo</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MaSanPham)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TenSanPham)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GiaBan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GiaNhap)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SoLuongTon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SoLuongDaBan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaHoaDon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NgayTao)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NgayThanhToan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NgayShip)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NgayNhan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NgayThongKe)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThangThongKe)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NamThongKe)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TienGiam)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TienShip)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TongTienThongKe)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhanTramLoiNhuan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhanTramLo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaSanPham)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenSanPham)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GiaBan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GiaNhap)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoLuongTon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoLuongDaBan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaHoaDon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayTao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayThanhToan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayShip)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayNhan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgayThongKe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThangThongKe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NamThongKe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TienGiam)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TienShip)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TongTienThongKe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhanTramLoiNhuan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhanTramLo)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

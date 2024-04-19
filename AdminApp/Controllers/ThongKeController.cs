@@ -85,7 +85,6 @@ namespace AdminApp.Controllers
         public async Task<IActionResult> IndexMain()
         {
             // Để call được API thì chúng ta cần lấy được URL request
-            //string requestURL = "https://localhost:7050/api/ThongKe/Get?page=1";
             string requestURL = "https://localhost:7050/api/ChiTietSanPham/Get";
             var httpClient = new HttpClient();
             var response = await httpClient.GetAsync(requestURL); // lấy response
@@ -93,6 +92,19 @@ namespace AdminApp.Controllers
             string apiData = await response.Content.ReadAsStringAsync();
             // Có data rồi thì ta sẽ convert về dữ liệu mình cần để đưa sang view
             var thongkes = JsonConvert.DeserializeObject<List<ChiTietSanPham>>(apiData);
+            return View(thongkes);
+        }
+
+        public async Task<IActionResult> IndexDemo()
+        {
+            // Để call được API thì chúng ta cần lấy được URL request
+            string requestURL = "https://localhost:7050/api/ThongKeViewModel/Thong-ke-san-pham-update";
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(requestURL); // lấy response
+            // Đọc từ response chuỗi Json là kết quả của phép trả về
+            string apiData = await response.Content.ReadAsStringAsync();
+            // Có data rồi thì ta sẽ convert về dữ liệu mình cần để đưa sang view
+            var thongkes = JsonConvert.DeserializeObject<List<ThongKeViewModel>>(apiData);
             return View(thongkes);
         }
 

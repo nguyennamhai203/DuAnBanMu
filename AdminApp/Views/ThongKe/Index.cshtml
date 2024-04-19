@@ -28,7 +28,7 @@
                 Số lượng đã bán
             </th>
             <th>
-                Tổng doanh thu
+                Doanh thu sản phẩm
             </th>
             <th>
                 Lãi
@@ -82,10 +82,10 @@
                 </td>
                 <td>
                     @{
-                        decimal profit = Convert.ToDecimal((item.GiaBan - item.GiaNhap) * item.SoLuongDaBan);
-                        if (profit >= 0)
+                        decimal profitLai = Convert.ToDecimal((item.GiaBan - item.GiaNhap) * item.SoLuongDaBan);
+                        if (profitLai >= 0)
                         {
-                            @Html.DisplayFor(modelItem => profit)
+                            @Html.DisplayFor(modelItem => profitLai)
                         }
                         else
                         {
@@ -95,9 +95,9 @@
                 </td>
                 <td>
                     @{
-                        if (profit < 0)
+                        if (profitLai < 0)
                         {
-                            @Html.DisplayFor(modelItem => profit)
+                            @Html.DisplayFor(modelItem => profitLai)
                         }
                         else
                         {
@@ -114,22 +114,30 @@
             <td>@totalGiaThucTe</td>
             <td>@totalSLT</td>
             <td>@totalSLDB</td>
-            <td>@totalRevenue</td>
             <td>
                 @{
-                    var averageProfitPercentage = Model.Average(item => (Convert.ToDecimal(item.GiaBan - item.GiaNhap)) * item.SoLuongDaBan / Convert.ToDecimal(totalRevenue) * 100);
-                    @Math.Round(Convert.ToDecimal(averageProfitPercentage), 2) @:%
-
+                    decimal totalAllRevenue = Model.Sum(item => Convert.ToDecimal(item.GiaBan * item.SoLuongDaBan));
+                    @Html.DisplayFor(modelItem => totalAllRevenue)
                 }
             </td>
             <td>
                 @* @{
-                    var averageLossPercentage = Model.Average(item => (Convert.ToDecimal(item.GiaNhap - item.GiaBan)) * item.SoLuongDaBan / Convert.ToDecimal(totalRevenue) * 100);
-                    @Math.Round(Convert.ToDecimal(averageLossPercentage), 2) @:%
+                    var averageProfitPercentage = Model.Average(item => (Convert.ToDecimal(item.GiaBan - item.GiaNhap)) * item.SoLuongDaBan / Convert.ToDecimal(totalRevenue) * 100);
+                    @Math.Round(Convert.ToDecimal(averageProfitPercentage), 2) @:%
                 } *@
                 @{
+                    decimal totalAllProfit = Model.Sum(item => Convert.ToDecimal((item.GiaBan - item.GiaNhap) * item.SoLuongDaBan));
+                    @Html.DisplayFor(modelItem => totalAllProfit)
+                }
+            </td>
+            <td>
+                @* @{
                     var averageLossPercentage = 0;
-                    @Html.DisplayFor(modelItem => averageLossPercentage)
+                    @Html.DisplayFor(modelItem => averageLossPercentage) @:%
+                } *@
+                @{
+                    decimal totalAllLoss = Model.Sum(item => item.GiaNhap > item.GiaBan ? Convert.ToDecimal((item.GiaNhap - item.GiaBan) * item.SoLuongDaBan) : 0);
+                    @:-@Html.DisplayFor(modelItem => totalAllLoss)
                 }
             </td>
         </tr>

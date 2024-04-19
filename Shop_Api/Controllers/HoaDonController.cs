@@ -19,12 +19,11 @@ namespace Shop_Api.Controllers
             _db = _db1;
 
         }
-        [HttpGet("Get-All-HoaDon")]
-        public IEnumerable<HoaDon> GetAllHD()
+        [HttpGet("Get-all")]
+        public async Task<IActionResult> GetHD(int? status,int page)
         {
-            
-                return  _db.GetAll();
-            
+            var result = await _db.GetAsync(status,page);
+            return Ok(result);
         }
         [HttpPost("Create-HoaDon")]
         public async Task<IActionResult> CreateHD( HoaDon a)

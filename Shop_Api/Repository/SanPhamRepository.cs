@@ -9,7 +9,6 @@ namespace Shop_Api.Repository
     public class SanPhamRepository : ISanPhamRepository
     {
         private readonly ApplicationDbContext _dbContext;
-        public static int PAGE_SIZE { get; set; } = 2;
         public SanPhamRepository(ApplicationDbContext context)
         {
             _dbContext = context;
@@ -57,18 +56,13 @@ namespace Shop_Api.Repository
             return list;
         }
 
-        public async Task<List<SanPham>> GetAsync(int? status, int page = 1)
+        public async Task<List<SanPham>> GetAsync(int? status,int page)
         {
             var list = _dbContext.SanPhams.AsQueryable();
             if (status.HasValue)
             {
                 list = list.Where(x => x.TrangThai == status);
             }
-
-            #region Paging
-            list = list.Skip((page - 1) * PAGE_SIZE).Take(PAGE_SIZE);
-
-            #endregion
 
             var result = list.Select(sp => new SanPham
             {

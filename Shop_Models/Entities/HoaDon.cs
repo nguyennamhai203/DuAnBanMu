@@ -31,6 +31,5 @@ namespace Shop_Models.Entities
         public virtual NguoiDung? NguoiDung { get; set; }
         public virtual ICollection<PhuongThucTTChiTiet>? PhuongThucTTChiTiet { get; set; }
         public virtual ICollection<ThongKe>? ThongKes { get; set; }
-
     }
 }

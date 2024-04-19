@@ -28,7 +28,7 @@ namespace Shop_Models.Entities
         public Guid? XuatXuId { get; set; }
         public Guid? MauSacId { get; set; }
         public Guid? ChatLieuId { get; set; }
-
+        public Guid? HoaDonId { get; set; }
         public virtual SanPham? SanPham { get; set; }
         public virtual Loai? Loai { get; set; }
         public virtual ThuongHieu? ThuongHieu { get; set; }
@@ -40,6 +40,6 @@ namespace Shop_Models.Entities
         public virtual ICollection<HoaDonChiTiet>? HoaDonChiTiets { get; set; }
         public virtual ICollection<SanPhamYeuThich>? SanPhamYeuThich { get; set; }
         public virtual ICollection<ThongKe>? ThongKes { get; set; }
-      
+        public virtual ICollection<HoaDon>? HoaDons { get; set; }
     }
 }

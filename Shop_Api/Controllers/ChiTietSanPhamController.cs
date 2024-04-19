@@ -21,9 +21,16 @@ namespace Shop_Api.Controllers
         }
 
         [HttpGet("GetAllDto")]
-        public async Task<IActionResult> GetAll(int? status/*, int page = 1*/)
+        public async Task<IActionResult> GetAll(int? status, int page = 1)
         {
             var result = await _repository.GetAllAsync(status);
+            return Ok(result);
+        }
+        
+        [HttpGet("GetAllDto-2")]
+        public async Task<IActionResult> GetAll2(int? status, int page)
+        {
+            var result = await _repository.GetAllAsync2(status,page);
             return Ok(result);
         }
         

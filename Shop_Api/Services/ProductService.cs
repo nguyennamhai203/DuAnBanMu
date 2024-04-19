@@ -72,8 +72,8 @@ namespace Shop_Api.Services
             }
 
             // 2. Cập nhật giá sản phẩm
-            var productsToUpdate = _context.ChiTietSanPhams
-                .Where(p =>/* p.TrangThai == 1 &&*/ p.TrangThaiKhuyenMai == (int)TrangThaiSaleInProductDetail.DaApDungSale)
+            /*var productsToUpdate = _context.ChiTietSanPhams
+                .Where(p => p.TrangThai == 1 && p.TrangThaiKhuyenMai == (int)TrangThaiSaleInProductDetail.DaApDungSale)
                 .ToList();
 
             foreach (var product in productsToUpdate)
@@ -124,7 +124,7 @@ namespace Shop_Api.Services
                 }
             }
 
-            _context.SaveChanges(); // Lưu tất cả các thay đổi sau khi đã cập nhật trạng thái và giá của sản phẩm
+            _context.SaveChanges(); // Lưu tất cả các thay đổi sau khi đã cập nhật trạng thái và giá của sản phẩm*/
         }
 
 

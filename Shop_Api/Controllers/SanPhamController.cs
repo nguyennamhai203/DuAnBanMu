@@ -18,9 +18,9 @@ namespace Shop_Api.Controllers
             _repository = repository;
         }
         [HttpGet("Get")]
-        public async Task<IActionResult> Get(int? status, int page = 1)
+        public async Task<IActionResult> GetAsyncs(int? status,int page)
         {
-            var result = await _repository.GetAsync(status, page);
+            var result = await _repository.GetAsync(status,page);
             return Ok(result);
         }
         [HttpGet("GetAll")]
