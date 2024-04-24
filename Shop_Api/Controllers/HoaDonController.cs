@@ -49,6 +49,9 @@ namespace Shop_Api.Controllers
             obj.NgayShip = a.NgayShip;
             obj.NgayNhan = a.NgayNhan;
             obj.MoTa = a.MoTa;
+            obj.TenKhachHang = a.TenKhachHang;
+            obj.SoDienThoai = a.SoDienThoai;
+            obj.DiaChiGiaoHang = a.DiaChiGiaoHang;
             obj.TienGiam = a.TienGiam;
             obj.TienShip = a.TienShip;
             obj.TongTien = a.TongTien;
@@ -60,12 +63,13 @@ namespace Shop_Api.Controllers
 
             // Kiểm tra dữ liệu
             if (string.IsNullOrEmpty(obj.MaHoaDon) || obj.NgayTao == null || obj.NgayThanhToan == null || obj.NgayShip == null || obj.NgayNhan == null
-                || string.IsNullOrEmpty(obj.MoTa) || obj.TienGiam == null || obj.TienShip == null || obj.TongTien == null || obj.TrangThaiGiaoHang == null
+                || string.IsNullOrEmpty(obj.MoTa) || string.IsNullOrEmpty(obj.TenKhachHang) || string.IsNullOrEmpty(obj.SoDienThoai) || string.IsNullOrEmpty(obj.DiaChiGiaoHang) 
+                || obj.TienGiam == null || obj.TienShip == null || obj.TongTien == null || obj.TrangThaiGiaoHang == null
                 || obj.TrangThaiThanhToan == null || obj.NgayGiaoDuKien == null || string.IsNullOrEmpty(obj.LiDoHuy))
             {
                 return BadRequest("Dữ liệu thêm bị trống");
             }
-
+            
             try
             {
                 await _db.CreateHD(obj);
