@@ -25,6 +25,7 @@ namespace Shop_Models.Dto
         public string? MoTaSanPham { get; set; }
         public double? GiaKhuyenMai { get; set; }
         public List<SelectListItem>? LstMauSac { get; set; }
+        public List<string>? ListAnh { get; set; }
         public string? Anh { get; set; }
         public int? IsKhuyenMai { get; set; }
     }

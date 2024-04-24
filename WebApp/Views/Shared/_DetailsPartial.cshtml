@@ -1,4 +1,6 @@
-﻿@model Shop_Models.Dto.ItemDetailViewModel
+﻿@inject IConfiguration Configuration;
+
+
 @{
     ViewData["Title"] = "Details";
 
@@ -7,10 +9,37 @@
 @* <div class="product_image_area" id="productDetail"> *@
 <input hidden name="IdChiTietSp" value="@Model.IdChiTietSp" />
 
-    <div class="container">
-        <div class="row s_product_inner">
-            <div class="col-lg-6">
-                <div class="s_Product_carousel">
+<div class="container">
+    <div class="row s_product_inner">
+        <div class="col-lg-6">
+            <div class="s_Product_carousel">
+                @if (Model.ListAnh.Count != 0)
+                {
+                    @foreach (var item in Model.ListAnh)
+                    {
+                        if (Model.ListAnh.Count == 1)
+                        {
+                            <div class="single-prd-item">
+                                <img class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item)" style="width:540px;height:358px;" alt="a">
+                            </div>
+                            <div class="single-prd-item">
+                                <img class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item)" style="width:540px;height:358px;" alt="a">
+                            </div> <div class="single-prd-item">
+                                <img class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item)" style="width:540px;height:358px;" alt="a">
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="single-prd-item">
+                                <img class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item)" style="width:540px;height:358px;" alt="a">
+                            </div>
+                        }
+
+                    }
+                }
+                else
+                {
+
                     <div class="single-prd-item">
                         <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
                     </div>
@@ -20,112 +49,116 @@
                     <div class="single-prd-item">
                         <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
                     </div>
-                </div>
+                }
+
+
 
             </div>
-            <div class="col-lg-5 offset-lg-1">
-                <div class="s_product_text">
-                    <h3>[@Model.MaSanPham]@Model.TenSanPham @Model.LoaiMu</h3>
-                    @if (Model.GiaBan == Model.GiaKhuyenMai)
-                    {
-                        <h2>$ @Model.GiaBan</h2>
-                    }
-                    else
-                    {
-                        <h2>$ @Model.GiaKhuyenMai</h2>
-                        <h4 class="l-through">$ @Model.GiaBan</h4>
-                    }
-                    <ul class="list">
-                        <li><a @* class="active" *@ href="#"><span>Loại Mũ</span> : @Model.LoaiMu</a></li>
-                        <li><a href="#"><span>Thương Hiệu</span> : @Model.ThuongHieu</a></li>
-                        <li><a href="#"><span>Xuất Xứ</span> : @Model.XuatXu</a></li>
-                        <li><a href="#"><span>Số Lượng</span> : @Model.SoLuongTon</a></li>
-                    </ul>
 
-                    <span class="pd-detail__label u-s-m-b-8">Màu sắc:</span>
-                    <div class="pd-detail__color">
-                        @foreach (var item in Model.itemShopListColor!)
+        </div>
+        <div class="col-lg-5 offset-lg-1">
+            <div class="s_product_text">
+                <h3>[@Model.MaSanPham]  @Model.TenSanPham @Model.LoaiMu</h3>
+                @if (Model.GiaBan == Model.GiaKhuyenMai)
+                {
+                    <h2>$ @Model.GiaBan</h2>
+                }
+                else
+                {
+                    <h2>$ @Model.GiaKhuyenMai</h2>
+                    <h4 class="l-through">$ @Model.GiaBan</h4>
+                }
+                <ul class="list">
+                    <li><a @* class="active" *@ href="#"><span>Loại Mũ</span> : @Model.LoaiMu</a></li>
+                    <li><a href="#"><span>Thương Hiệu</span> : @Model.ThuongHieu</a></li>
+                    <li><a href="#"><span>Xuất Xứ</span> : @Model.XuatXu</a></li>
+                    <li><a href="#"><span>Số Lượng</span> : @Model.SoLuongTon</a></li>
+                </ul>
+
+                <span class="pd-detail__label u-s-m-b-8">Màu sắc:</span>
+                <div class="pd-detail__color">
+                    @foreach (var item in Model.itemShopListColor!)
+                    {
+                        if (Model.MauSac == item)
                         {
-                            if (Model.MauSac == item)
+                            if (item == "white")
                             {
-                                if (item == "white")
-                                {
-                                    <div class="color__radio">
+                                <div class="color__radio">
 
-                                        <input type="radio" id="@item" value="@item" name="color" checked>
+                                    <input type="radio" id="@item" value="@item" name="color" checked>
 
-                                        <label class="color__radio-label" for="@item" style="background-color: #8af0ff"></label>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="color__radio">
-
-                                        <input type="radio" id="@item" value="@item" name="color" checked>
-
-                                        <label class="color__radio-label" for="@item" style="background-color: @item;  color:@item"></label>
-                                    </div>
-                                }
-
+                                    <label class="color__radio-label" for="@item" style="background-color: #8af0ff"></label>
+                                </div>
                             }
                             else
                             {
-                                if (item == "white")
-                                {
-                                    <div class="color__radio">
+                                <div class="color__radio">
 
-                                        <input type="radio" id="@item" value="@item" name="color">
+                                    <input type="radio" id="@item" value="@item" name="color" checked>
 
-                                        <label class="color__radio-label" for="@item" style="background-color: #8af0ff"></label>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="color__radio">
-
-                                        <input type="radio" id="@item" value="@item" name="color">
-
-                                        <label class="color__radio-label" for="@item" style="background-color: @item; color:@item"></label>
-                                    </div>
-                                }
-
+                                    <label class="color__radio-label" for="@item" style="background-color: @item;  color:@item"></label>
+                                </div>
                             }
 
                         }
-                    </div>
+                        else
+                        {
+                            if (item == "white")
+                            {
+                                <div class="color__radio">
 
-                    <p>
-                        Chiếc mũ mới nhất của chúng tôi sẽ làm bạn phải trầm trồ! Với thiết kế sáng tạo và chất liệu cao cấp,
-                        chiếc mũ này không chỉ mang lại sự thoải mái mà còn là điểm nhấn hoàn hảo cho phong cách của bạn.
-                        Khám phá ngay để trải nghiệm cảm giác ấm áp và phong cách tinh tế mà chiếc mũ mang lại!
-                    </p>
-                    <div class="product_count">
-                        <label for="qty">Quantity:</label>
-                    <input type="text" name="qty" id="sst" maxlength="12" value="@soluong" title="Quantity:" class="input-text qty" max="@Model.SoLuongTon" onblur="validateQuantity()">
-                        
-                        <button onclick="increaseQuantity()"
-                                class="increase items-count" type="button">
-                            <i class="lnr lnr-chevron-up"></i>
-                        </button>
-                        <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                                class="reduced items-count" type="button">
-                            <i class="lnr lnr-chevron-down"></i>
-                        </button>
-                    </div>
+                                    <input type="radio" id="@item" value="@item" name="color">
 
-                    <div class="card_area d-flex align-items-center">
-                        @* <a class="primary-btn" href="@Url.Action("AddProductToCart","Cart", new {  codeProductDetail=Model.MaSanPham,soluong=  })">Add to Cart</a> *@
-                  
-                    <button class="primary-btn" id="addToCartBtn" onclick="addToCartBtn()">Add to Cart</button>
-                        <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
-                        <a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
-                    </div>
+                                    <label class="color__radio-label" for="@item" style="background-color: #8af0ff"></label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="color__radio">
 
+                                    <input type="radio" id="@item" value="@item" name="color">
 
+                                    <label class="color__radio-label" for="@item" style="background-color: @item; color:@item"></label>
+                                </div>
+                            }
+
+                        }
+
+                    }
                 </div>
+
+                <p>
+                    Chiếc mũ mới nhất của chúng tôi sẽ làm bạn phải trầm trồ! Với thiết kế sáng tạo và chất liệu cao cấp,
+                    chiếc mũ này không chỉ mang lại sự thoải mái mà còn là điểm nhấn hoàn hảo cho phong cách của bạn.
+                    Khám phá ngay để trải nghiệm cảm giác ấm áp và phong cách tinh tế mà chiếc mũ mang lại!
+                </p>
+                <div class="product_count">
+                    <label for="qty">Quantity:</label>
+                    <input type="text" name="qty" id="sst" maxlength="12" value="@soluong" title="Quantity:" class="input-text qty" max="@Model.SoLuongTon" onblur="validateQuantity()">
+
+                    <button onclick="increaseQuantity()"
+                            class="increase items-count" type="button">
+                        <i class="lnr lnr-chevron-up"></i>
+                    </button>
+                    <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
+                            class="reduced items-count" type="button">
+                        <i class="lnr lnr-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div class="card_area d-flex align-items-center">
+                    @* <a class="primary-btn" href="@Url.Action("AddProductToCart","Cart", new {  codeProductDetail=Model.MaSanPham,soluong=  })">Add to Cart</a> *@
+
+                    <button class="primary-btn" id="addToCartBtn" onclick="addToCartBtn()">Add to Cart</button>
+                    <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
+                    <a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
+                </div>
+
+
             </div>
         </div>
     </div>
+</div>
 @* </div> *@
 <script>
     const maxQuantity = parseInt("@Model.SoLuongTon", 10); // Chuyển đổi thành số nguyên
@@ -171,7 +204,7 @@
     }
 
 
-        function decreaseQuantity() {
+    function decreaseQuantity() {
         var input = document.getElementById('sst');
         var value = parseInt(input.value, 10);
 
@@ -227,7 +260,7 @@
 
     function addToCartBtn() {
         var quantity = document.getElementById('sst').value;
-           var codeProductDetail = '@Model.MaSanPham';
+        var codeProductDetail = '@Model.MaSanPham';
         $.ajax({
             url: '/Cart/AddProductToCart',
             type: 'POST',
@@ -241,11 +274,11 @@
                 if (results.code === 200) {
                     debugger
                     console.log(results.message);
-                    showNotification(results.message, "success"); 
+                    showNotification(results.message, "success");
                     // document.getElementById('editprofile-form').reset();
                 } else {
                     debugger
-                    console.log(results.message);                  
+                    console.log(results.message);
                     showNotification(results.message, "error");
 
                 }

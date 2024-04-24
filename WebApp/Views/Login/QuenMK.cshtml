@@ -1,0 +1,199 @@
+﻿@{
+    var httpContext = ViewContext.HttpContext;
+    string thongbao = httpContext.Session.GetString("ThongBao");
+}
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Đăng nhập/Đăng ký</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="/Home">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="/Login">Đăng nhập/Đăng ký</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<link href="~/behat-master/css/linearicons.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/behat-master/css/owl.carousel.css">
+<link rel="stylesheet" href="~/behat-master/css/themify-icons.css">
+<link rel="stylesheet" href="~/behat-master/css/font-awesome.min.css">
+<link rel="stylesheet" href="~/behat-master/css/nice-select.css">
+<link rel="stylesheet" href="~/behat-master/css/nouislider.min.css">
+<link rel="stylesheet" href="~/behat-master/css/bootstrap.css">
+<link rel="stylesheet" href="~/behat-master/css/main.css">
+<!-- End Banner Area -->
+<!--================Login Box Area =================-->
+<section class="login_box_area section_gap">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="login_box_img">
+                    <img class="img-fluid" src="~/behat-master/img/login.jpg" alt="">
+                    <div class="hover">
+                        <div>
+                            <h4>Bạn mới sử dụng trang web của chúng tôi?</h4>
+                            <a class="primary-btn" href="/Login/SignUp">Tạo Tài Khoản</a>
+                        </div>
+                        <div>
+                            <h4>Bạn đã có tài khoản?</h4>
+                            <a class="primary-btn" href="/Login">Đăng Nhập</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="login_form_inner">
+                    <h3>Quên Mật Khẩu</h3>
+                    <form method="post" name="login" class="row login_form" id="contactForm" novalidate="novalidate">
+                        <div class="col-md-12 form-group">
+                            <label>Email mà bạn đã liên kết với tài khoản</label>
+                            <input type="text" class="form-control" id="mail" name="mail">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <button id="guiMAIL" class="primary-btn" onclick="postToMail()">Gủi Mã Xác Nhận Đến Mail</button>
+                        </div>
+
+
+                        <div class="col-md-12 form-group" id="maxacnhan" style="display: none;">
+                            <label>Mã Xác Nhận</label>
+                            <input type="text" class="form-control" id="code" name="code">
+                        </div>
+                        <div class="col-md-12 form-group" id="matkhaumoi" style="display: none;">
+                            <label>Mật Khẩu Mới</label>
+                            <input type="text" class="form-control" id="newpass" name="newpass">
+                            <span id="password-error" class="error-message"></span>
+                        </div>
+                        <div class="col-md-12 form-group" id="buttonDoiMK" style="display: none;">
+                            <button type="submit" value="submit" onclick="DoiMK()" class="primary-btn">Đổi Mật Khẩu</button>
+                        </div>
+                        <p id="demo"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Login Box Area =================-->
+
+<script>
+    var isMailSent = false;
+
+    function postToMail() {
+        event.preventDefault();
+        if (isMailSent) {
+            return;
+        }
+
+        var mail = document.getElementById("mail").value;
+        var formData = new FormData();
+        formData.append("mail", mail);
+
+        if (mail.trim() !== "") {
+            $.ajax({
+                url: '/Login/GuiMail',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (results) {
+                    console.log(results);
+                    if (results.code === 200) {
+                        alert(results.message);
+                        document.getElementById("maxacnhan").style.display = "block";
+                        document.getElementById("matkhaumoi").style.display = "block";
+                        isMailSent = true;
+                        document.getElementById("mail").setAttribute("readonly", true);
+                        document.getElementById("matkhaumoi").style.display = "block";
+                        document.getElementById("guiMAIL").style.display = "none";
+                        document.getElementById("buttonDoiMK").style.display = "block";
+
+                    } else {
+                        alert(results.message);
+                    }
+                },
+                error: function () {
+                    alert("Lỗi hệ thống");
+                }
+            });
+        } else {
+            alert("Vui lòng nhập địa chỉ email của bạn.");
+        }
+    }
+
+    function checkpass() {
+
+        debugger
+        var newpass = document.getElementById("newpass").value; console.log("newpass");
+        var isValid = true; // Flag to track overall form validity
+        if (newpass == "") {
+            document.getElementById("password-error").innerHTML = "Vui lòng nhập Mật Khẩu."; isValid = false;
+
+        }
+        if (newpass !== "") {
+
+            if (!/\d/.test(newpass)) {
+
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải chứa ít nhất 1 kí tự số."; isValid = false;
+
+            }
+            if (!/[A-Z]/.test(newpass)) {
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải chứa ít nhất 1 kí tự hoa."; isValid = false;
+            }
+            if (!/[!@@#$%^&*]/.test(newpass)) {
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải chứa ít nhất 1 kí tự đặc biệt."; isValid = false;
+            }
+            if (newpass.length < 6 || newpass.length > 16) {
+
+                document.getElementById("password-error").innerHTML = "Mật khẩu phải có độ dài từ 6 đến 16 kí tự."; isValid = false;
+
+            }
+        }
+
+
+        return isValid; // Trả về true nếu tất cả các trường hợp validation đều hợp lệ
+    }
+
+    function DoiMK() {
+        debugger
+        event.preventDefault();
+        if (!checkpass()) {
+            event.preventDefault(); // Ngăn chặn form gửi đi nếu không hợp lệ
+            return;
+        }
+        var mail = document.getElementById("mail").value;
+        var code = document.getElementById("code").value;
+        var newpass = document.getElementById("newpass").value;
+        console.log(mail);
+        console.log(code);
+        console.log(newpass);
+
+        var formData = new FormData();
+        formData.append("mail", mail);
+        formData.append("codeconfirm", code);
+        formData.append("newPass", newpass);
+        $.ajax({
+            url: '/Login/QuenMK',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                console.log(results);
+                if (results.code === 200) {
+                    alert(results.message);
+                    window.location.href = "/Login";
+                } else {
+                    alert(results.message);
+                }
+            },
+            error: function () {
+                alert("Lỗi hệ thống");
+            }
+        });
+
+    }
+</script>
