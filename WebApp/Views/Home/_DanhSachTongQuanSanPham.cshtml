@@ -8,39 +8,41 @@
 
 @foreach (var item in Model)
 {
-    
+
 
     <div class="col-lg-3 col-md-6">
-        <div class="single-product" >
+        <div class="single-product">
             @if (item.Anh != null && !string.IsNullOrEmpty(item.Anh))
             {
-@*                 <img style="max-height: 255px; max-width: 275px;" class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.LinkAnh)" alt="">
- *@                <div class="product-m__thumb" data-id="@item.IdChiTietSp" >
+                @*                 <img style="max-height: 255px; max-width: 275px;" class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.LinkAnh)" alt="">
+        *@                <div class="product-m__thumb" data-id="@item.IdChiTietSp">
 
                     <a class="aspect aspect--bg-grey aspect--square u-d-block" onclick="fetchData2('@item.IdChiTietSp')">
 
-                        <img class="aspect__img" style="height: 255.02px; width: 271.5px;" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.Anh)" alt="">
+                        <img class="aspect__img" style=" height: 245.02px; width: 214px;" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.Anh)" alt="">
                     </a>
                 </div>
 
-            }else{@* <img class="img-fluid" src="~/behat-master/img/product/p1.jpg" alt=""> *@
+            }
+            else
+            {@* <img class="img-fluid" src="~/behat-master/img/product/p1.jpg" alt=""> *@
 
                 <div class="product-m__thumb" data-id="@item.IdChiTietSp" onclick="fetchData2('@item.IdChiTietSp')">
 
-                    <a class="aspect aspect--bg-grey aspect--square u-d-block" >
+                    <a class="aspect aspect--bg-grey aspect--square u-d-block">
 
-                        <img class="aspect__img" style="height: 255.02px; width: 271.5px;" src="~/behat-master/img/product/p1.jpg" alt="">
+                        <img class="aspect__img" style=" height: 245.02px; width: 214px;" src="~/behat-master/img/product/p9.jpg" alt="">
                     </a>
                 </div>
             }
 
             <div class="product-details" id="postAPI" data-sumGuid="@item.IdChiTietSp" data-url="@Url.Action("GetRelatedProducts", "SanPhamChiTiet", new { sumGuid = item.IdChiTietSp })" @item.IdChiTietSp>
-                <h6 onclick="fetchData2('@item.IdChiTietSp')" >
-                  [@item.MaSanPham] @item.TenSanPham @item.TheLoai
+                <h6 onclick="fetchData2('@item.IdChiTietSp')">
+                    [@item.MaSanPham] @item.TenSanPham @item.TheLoai
                 </h6>
                 <div class="price">
                     @* <h6>$150.00</h6>
-                    <h6 class="l-through">$210.00</h6> *@
+                <h6 class="l-through">$210.00</h6> *@
                     @if (item.GiaMin == item.GiaMax)
                     {
                         <div class="product-m__price" style="color: red">Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMin)</div>
@@ -55,10 +57,10 @@
                 </div>
                 <div class="prd-bottom">
                     @* <a href="@Url.Action("AddProductToCart","Cart", new { codeProductDetail=item.MaSanPham })" class="social-info"> *@
-                        <a href="#" class="social-info" onclick="addToCartBtn('@item.MaSanPham')">
+                    <a href="#" class="social-info" onclick="addToCartBtn('@item.MaSanPham')">
 
                         <span class="ti-bag"></span>
-                        <p class="hover-text" >add to bag</p>
+                        <p class="hover-text">add to bag</p>
                     </a>
                     <a href="" class="social-info">
                         <span class="lnr lnr-heart"></span>
@@ -77,6 +79,13 @@
         </div>
     </div>
 }
+<style>
+    .single-product {
+        border: 1px solid #ebebeb;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+</style>
 
 @*
 @section Scripts{
@@ -115,14 +124,14 @@
 
 
 
-    <script>
+<script>
     function addToCartBtn(codeProductDetail) {
         // var quantity = document.getElementById('sst').value;
         event.preventDefault(); // Chặn hành vi mặc định của form
         $.ajax({
             url: '/Cart/AddProductToCart',
             type: 'POST',
-            data: { codeProductDetail: codeProductDetail},
+            data: { codeProductDetail: codeProductDetail },
             // contentType: false,
             // processData: false,
             success: function (results) {
@@ -133,10 +142,10 @@
                     debugger
                     console.log(results.message);
                     showNotification(results.message, "success");
-                   
+
                 } else {
                     debugger
-                    console.log(results.message);                 
+                    console.log(results.message);
                     showNotification(results.message, "error");
 
                 }
@@ -174,7 +183,7 @@
             toastr.error(message);
         }
     }
-    </script>
+</script>
 }
 
 
