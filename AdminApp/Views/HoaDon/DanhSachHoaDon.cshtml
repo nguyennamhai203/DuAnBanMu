@@ -1,0 +1,144 @@
+﻿
+@using static Shop_Models.Heplers.TrangThai;
+@model List<Shop_Models.Entities.HoaDon>
+
+@{
+    ViewData["Title"] = "DanhSachHoaDon";
+}
+
+<h1>Danh Sách Hóa Đơn</h1>
+<style>
+    .card-body {
+        padding: 0; /* Xóa padding để giữ bảng không bị lệch */
+    }
+
+    .table-responsive {
+        overflow-x: auto; /* Thêm thanh cuộn ngang khi bảng vượt quá kích thước của thẻ cha */
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive" id="tableContainer">
+                    <table class="table" id="HDTable">
+                        <thead>
+                            <tr>
+                                <th>Mã Hóa Đơn</th>
+                                <th>Ngày Tạo</th>
+                                <th>Ngày Thanh Toán</th>
+                                <th>Ngày Ship</th>
+                                <th>Ngày Nhận</th>
+                                <th>Mô Tả</th>
+                                <th>Tiền Giảm</th>
+                                <th>Tiền Ship</th>
+                                <th>Tổng Tiền</th>
+                                <th>Trạng Thái Thanh Toán</th>
+                                <th>Trạng Thái Giao Hàng</th>
+                                <th>Ngày Giao Dự Kiến</th>
+                                <th>Lí Do Hủy</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.MaHoaDon)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.NgayTao)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.NgayThanhToan)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.NgayShip)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.NgayNhan)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.MoTa)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.TienGiam)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.TienShip)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.TongTien)</td>
+                                    <td>
+                                            @if (item.TrangThaiThanhToan == (int)TrangThaiThanhToan.Chuathanhtoan)
+                                        {
+                                            <span class="text-black">Chưa Thanh Toán</span>
+                                        }
+                                        else if(item.TrangThaiThanhToan == (int)TrangThaiThanhToan.Dathanhtoan)
+                                        {
+                                            <span class="text-black"> Đã Thanh Toán</span>
+                                        } 
+                                        else
+                                        {
+                                            <span class="text-black">Trạng thái không xác định</span>
+                                        }
+                                    </td>
+
+                                    <!-- Button thay đổi trạng thái giao hàng -->
+                                    <td>
+                                        @if (item.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DaGiaoHang)
+                                        {
+                                            <span class="text-black">Đã giao hàng</span>
+                                        }
+                                        else if (item.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang)
+                                        {
+                                            <span class="text-black">Đang giao hàng</span>
+                                        }
+                                        else if (item.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoGiaoHang)
+                                        {
+                                            <span class="text-black">Chờ giao hàng</span>
+                                        }
+                                        else if (item.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoXacNhan)
+                                        {
+                                            <span class="text-black">Chờ xác nhận</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-black">Đã hủy</span>
+                                        }
+                                    </td>
+
+                                    <script>
+                                        function submitForm(formId) {
+                                            var form = document.getElementById(formId);
+                                            form.action = "/HoaDon/UpdateTrangThaiGiaoHangHoaDon"; // Đường dẫn tới action trong controller
+                                            form.submit();
+                                        }
+                                    </script>
+                                    <td>@Html.DisplayFor(modelItem => item.NgayGiaoDuKien)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.LiDoHuy)</td>
+                                    <td>
+                                        <a asp-area="" asp-controller="HoaDon" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary" title="Sửa"><i class="bx bxs-edit"></i></a>
+                                        <a asp-area="" asp-controller="HoaDon" asp-action="Details" asp-route-id="@item.Id" class="btn btn-success" title="Chi tiết"><i class="bx bxs-detail"></i></a>
+                                        @*<a asp-area="" asp-controller="HoaDon" asp-action="CancelOrder" asp-route-id="@item.Id" class="btn btn-danger" title="Hủy đơn hàng"><i class="bx bxs-trash-alt"></i></a>*@
+                                        <a href="/HoaDon/CancelOrder?id=@item.Id" class="btn btn-danger" title="Hủy đơn hàng"><i class="bx bxs-trash-alt"></i></a>
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thư viện DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+<!-- Thư viện jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Thư viện DataTables JavaScript -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+<!-- Thư viện No Pagination UI -->
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.jqueryui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.jqueryui.min.css">
+<script>
+    $(document).ready(function () {
+        $('#HDTable').DataTable({
+            "scrollY": "250px", // Chiều cao của khu vực lướt
+            "paging": true, // Hiển thị chia trang
+            "pagingType": "simple_numbers", // Loại chia trang (không có ô vuông nhỏ)
+            "lengthMenu": [10, 25, 50], // Lựa chọn số lượng hàng trên mỗi trang
+            "renderer": "jqueryui" // Sử dụng renderer của jQuery UI
+        });
+    });
+
+</script>

@@ -1,0 +1,36 @@
+﻿@model Shop_Models.Entities.ThuongHieu
+
+@{
+    ViewData["Title"] = "DetailTH";
+}
+
+<h1>DetailTH</h1>
+
+<div>
+    <h4>ThuongHieu</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MaThuongHieu)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MaThuongHieu)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TenThuongHieu)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TenThuongHieu)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TrangThai)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TrangThai)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "EditTH", new {  id = Model.Guid }) |
+    <a asp-action="GetAllTH">Back to List</a>
+</div>

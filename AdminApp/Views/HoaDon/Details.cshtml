@@ -1,0 +1,75 @@
+﻿@model Shop_Models.Entities.HoaDon
+
+@{
+    ViewData["Title"] = "Chi Tiết Hóa Đơn";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>@ViewData["Title"]</h1>
+
+            <div class="card" style="height: 430px;>
+                <div class="card-body">
+                    <h4>Hóa Đơn</h4>
+                    <hr />
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Mã Hóa Đơn:</th>
+                                <td>@Model.MaHoaDon</td>
+                                <th>Ngày Tạo:</th>
+                                <td>@Model.NgayTao</td>
+                            </tr>
+                            <tr>
+                                <th>Ngày Thanh Toán:</th>
+                                <td>@Model.NgayThanhToan</td>
+                                <th>Ngày Ship:</th>
+                                <td>@Model.NgayShip</td>
+                            </tr>
+                            <tr>
+                                <th>Ngày Nhận:</th>
+                                <td>@Model.NgayNhan</td>
+                                <th>Mô Tả:</th>
+                                <td>@Model.MoTa</td>
+                            </tr>
+                            <tr>
+                                <th>Tiền Giảm:</th>
+                                <td>@Model.TienGiam</td>
+                                <th>Tiền Ship:</th>
+                                <td>@Model.TienShip</td>
+                            </tr>
+                            <tr>
+                                <th>Tổng Tiền:</th>
+                                <td>@Model.TongTien</td>
+                                <th>Trạng Thái Thanh Toán:</th>
+                                <td>@Model.TrangThaiThanhToan</td>
+                            </tr>
+                            <tr>
+                                <th>Trạng Thái Giao Hàng:</th>
+                                <td>@Model.TrangThaiGiaoHang</td>
+                                <th>Ngày Giao Dự Kiến:</th>
+                                <td>@Model.NgayGiaoDuKien</td>
+                            </tr>
+                            <tr>
+                                <th>Lí Do Hủy:</th>
+                                <td>@Model.LiDoHuy</td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="container mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <a asp-action="Edit" class="btn btn-primary">Chỉnh Sửa</a> |
+            <a asp-action="DanhSachHoaDon" class="btn btn-secondary">Quay lại Danh Sách</a>
+        </div>
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

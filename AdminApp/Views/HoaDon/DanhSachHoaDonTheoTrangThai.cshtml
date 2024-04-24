@@ -1,0 +1,137 @@
+﻿@model IEnumerable<Shop_Models.Entities.HoaDon>
+@using static Shop_Models.Heplers.TrangThai;
+
+@{
+    ViewData["Title"] = "DanhSachHoaDonTheoTrangThai";
+}
+
+
+<nav>
+    <ul>
+        <h1>Trạng thái đơn hàng</h1>
+
+        <h2>Chờ xác nhận</h2>
+        <ul>
+            @foreach (var hoaDon in Model.Where(hd => hd.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoXacNhan))
+            {
+                <li>
+                    Đơn hàng ID: @hoaDon.Id
+                    <!-- Nút hoặc liên kết để chuyển đổi trạng thái -->
+                    <form method="post" asp-page-handler="UpdateTrangThaiGiaoHangHoaDon">
+                        <input type="hidden" name="id" value="@hoaDon.Id" />
+                        <button type="button" onclick="updateTrangThai('@hoaDon.Id')">Xác nhận</button>
+                    </form>
+                </li>
+            }
+        </ul>
+        <h2>Chờ Giao Hàng</h2>
+        <ul>
+            @foreach (var hoaDon in Model.Where(hd => hd.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoGiaoHang))
+            {
+                <li>
+                    Đơn hàng ID: @hoaDon.Id
+                    <!-- Nút hoặc liên kết để chuyển đổi trạng thái -->
+                    <form method="post" asp-page-handler="UpdateTrangThaiGiaoHangHoaDon">
+                        <input type="hidden" name="id" value="@hoaDon.Id" />
+                        <button type="button" onclick="updateTrangThai('@hoaDon.Id')">Xác nhận</button>
+                    </form>
+                </li>
+            }
+        </ul>
+        <h2>Đang vận chuyển</h2>
+        <ul>
+            @foreach (var hoaDon in Model.Where(hd => hd.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang))
+            {
+                <li>
+                    Đơn hàng ID: @hoaDon.Id
+                    <!-- Nút hoặc liên kết để chuyển đổi trạng thái -->
+                    <form method="post" asp-page-handler="UpdateTrangThaiGiaoHangHoaDon">
+                        <input type="hidden" name="id" value="@hoaDon.Id" />
+                        <button type="button" onclick="updateTrangThai('@hoaDon.Id')">Xác nhận</button>
+                    </form>
+                </li>
+            }
+        </ul>
+        <h2>Đã Giao Hàng</h2>
+        <ul>
+            @foreach (var hoaDon in Model.Where(hd => hd.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DaGiaoHang))
+            {
+                <li>
+                    Đơn hàng ID: @hoaDon.Id
+                    <!-- Nút hoặc liên kết để chuyển đổi trạng thái -->
+                    <form method="post" asp-page-handler="UpdateTrangThaiGiaoHangHoaDon">
+                        <input type="hidden" name="id" value="@hoaDon.Id" />
+                        <button type="button" onclick="updateTrangThai('@hoaDon.Id')">Xác nhận</button>
+                    </form>
+                </li>
+            }
+        </ul>
+        <h2>Đã Hủy</h2>
+        <ul>
+            @foreach (var hoaDon in Model.Where(hd => hd.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DaHuy))
+            {
+                <li>
+                    Đơn hàng ID: @hoaDon.Id
+                    <!-- Nút hoặc liên kết để chuyển đổi trạng thái -->
+                    <form method="post" asp-page-handler="UpdateTrangThaiGiaoHangHoaDon">
+                        <input type="hidden" name="id" value="@hoaDon.Id" />
+                        <button type="button" onclick="updateTrangThai('@hoaDon.Id')">Xác nhận</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    </ul>
+</nav>
+
+
+@section Scripts {
+    <script>
+        // Định nghĩa một hàm async để sử dụng async và await
+        async function updateTrangThai(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của form
+
+            // Lấy id hóa đơn từ giá trị của input hidden trong form
+            var id = this.querySelector('input[name="id"]').value;
+            debugger
+            // Chuẩn bị dữ liệu để gửi đến API
+            var data = {
+                Id: id,
+                IdNguoiDung = idNguoiDung,
+                TrangThaiGiaoHang = TrangThai,
+                LiDoHuy = Lido,
+                NgayCapNhatGanNhat = ngayCapNhatGanNhat
+                // Thêm các trường dữ liệu khác cần thiết
+            };
+
+            try {
+                // Gửi yêu cầu POST đến API
+                var response = await fetch('/HoaDon/UpdateTrangThaiGiaoHangHoaDon', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Có lỗi xảy ra khi cập nhật trạng thái giao hàng.');
+                }
+
+                // Xử lý phản hồi nếu cần
+                var responseData = await response.json(); // hoặc response.text() tùy thuộc vào định dạng phản hồi
+                console.log('Cập nhật trạng thái giao hàng thành công:', responseData);
+                // Chuyển hướng hoặc thực hiện các hành động khác nếu cần
+            } catch (error) {
+                console.error('Lỗi khi cập nhật trạng thái giao hàng:', error);
+                // Xử lý lỗi nếu cần
+                alert('Đã xảy ra lỗi khi cập nhật trạng thái giao hàng.');
+            }
+        }
+
+        //Lặp qua từng nút "Xác nhận" và gán sự kiện "submit" cho mỗi form
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', updateTrangThai);
+        });
+    </script>
+}
+

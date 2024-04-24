@@ -14,6 +14,10 @@ namespace Shop_Api.Repository.IRepository
         public Task<List<HoaDon>> GetAsync(int? status, int page = 1);
         public Task<HoaDonDto> GetBillByInvoiceCode(string invoiceCode);
         Task<IEnumerable<HoaDonChiTietDto>> GetBillDetailByInvoiceCode(string invoiceCode);
+        public Task<ResponseDto> CancelOrder(Guid id, string lydo);
+        public Task<ResponseDto> UpdateNgayHoaDonOnline(Guid idHoaDon, DateTime? NgayThanhToan, DateTime? NgayNhan, DateTime? NgayShip);
+        public Task<ResponseDto> UpdateThanhToan(Guid idHoaDon, int TrangThaiThanhToan);
+        public Task<bool> CheckCustomerExistence(Guid customerId);
 
     }
 }

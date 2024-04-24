@@ -1,0 +1,57 @@
+﻿
+<style>
+    .rounded-frame {
+        border-radius: 10px; /* Đặt bán kính bo tròn */
+        border: 2px solid #ccc; /* Đặt độ rộng và màu sắc của viền */
+        padding: 20px; /* Đặt khoảng cách bên trong khung */
+        width: fit-content; /* Đặt chiều rộng tự động theo nội dung */
+        margin: auto; /* Đặt lề để căn giữa */
+    }
+</style>
+
+<form id="cancelOrderForm" method="post">
+   <div class="rounded-frame">
+        <form id="cancelOrderForm" method="post">
+            <input type="hidden" id="orderId" value="@Model.Id" />
+            <div style="text-align: center;">
+                <label for="reason">Lý Do Hủy:</label>
+                <input type="text" id="reason" required />
+            </div>
+            <div style="text-align: center; margin-top: 10px;">
+                <button type="button" onclick="cancelOrder()">Hủy Đơn Hàng</button>
+            </div>
+        </form>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        async function cancelOrder() {
+            event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+            var orderId = document.getElementById("orderId").value;
+            var reason = document.getElementById("reason").value;
+            debugger
+            try {
+                var response = await fetch(`/HoaDon/SendCancelOrderRequest?id=${orderId}&reason=${reason}`, {
+                    method: 'POST'
+                });
+
+                var result = await response.json();
+
+                if (result.code === 200) {
+                    // Hủy đơn hàng thành công, thực hiện các hành động phù hợp (ví dụ: chuyển hướng)
+                    alert(result.message);
+
+                    window.location.href = "/HoaDon/DanhSachHoaDon";
+                } else {
+                    // Xử lý lỗi nếu yêu cầu không thành công
+                    alert(result.errorMessage);
+                }
+            } catch (error) {
+                // Xử lý lỗi nếu có lỗi xảy ra trong quá trình gửi yêu cầu
+                console.error('Đã xảy ra lỗi:', error);
+                alert("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+            }
+        }
+    </script>
+}

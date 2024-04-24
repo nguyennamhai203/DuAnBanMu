@@ -1,0 +1,50 @@
+﻿@model Shop_Models.Entities.Loai
+
+@{
+    ViewData["Title"] = "CreateLoai";
+}
+
+<h1>CreateLoai</h1>
+
+<h4>Loai</h4>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-4" style="overflow-y: auto; max-height: 430px;">
+        <form asp-action="CreateLoai">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaLoai" class="control-label"></label>
+                <input asp-for="MaLoai" class="form-control" />
+                <span asp-validation-for="MaLoai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TenLoai" class="control-label"></label>
+                <input asp-for="TenLoai" class="form-control" />
+                <span asp-validation-for="TenLoai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TrangThai" class="control-label"></label>
+                <input asp-for="TrangThai" class="form-control" />
+                <span asp-validation-for="TrangThai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

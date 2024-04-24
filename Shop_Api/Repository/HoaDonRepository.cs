@@ -4,6 +4,7 @@ using Shop_Api.Repository.IRepository;
 using Shop_Api.AppDbContext;
 using Shop_Models.Dto;
 using Microsoft.EntityFrameworkCore;
+using static Shop_Models.Heplers.TrangThai;
 
 namespace Shop_Api.Repository
 {
@@ -156,6 +157,113 @@ namespace Shop_Api.Repository
                 return null;
             }
         }
+        public async Task<ResponseDto> CancelOrder(Guid id, string reason)
+        {
+            try
+            {
+                var hoaDon = await _db.HoaDons.FindAsync(id);
+                if (hoaDon == null)
+                {
+                    return new ResponseDto { Code = 400, Message = "Không tìm thấy hóa đơn." };
+                }
+                hoaDon.NgayThanhToan = DateTime.Now;
+                hoaDon.TrangThaiGiaoHang = (int)TrangThaiGiaoHang.DaHuy;
+                hoaDon.LiDoHuy = reason;
 
+                await _db.SaveChangesAsync();
+
+                return new ResponseDto { Code = 200, Message = "Hóa đơn đã được hủy thành công." };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto { Code = 500, Message = "Đã xảy ra lỗi khi hủy đơn hàng: " + ex.Message };
+            }
+        }
+
+        public async Task<bool> CheckCustomerExistence(Guid nguoidungId)
+        {
+            var customer = await _db.NguoiDungs.FindAsync(nguoidungId);
+            return customer != null;
+        }
+
+        public List<HoaDon> GetHoaDonUpdate()
+        {
+            // Lấy danh sách các hoá đơn cần cập nhật (ví dụ: trạng thái giao hàng)
+            return _db.HoaDons
+                            .Where(hd => hd.TrangThaiGiaoHang != 0) // Thay X bằng trạng thái cụ thể cần cập nhật
+                            .ToList();
+        }
+
+        public List<HoaDon> GetAllHoaDonCho()
+        {
+            // Lấy danh sách tất cả các hoá đơn đang chờ xử lý
+            return _db.HoaDons
+                            .Where(hd => hd.TrangThaiThanhToan == 0) // Thay X bằng trạng thái cụ thể cho hoá đơn chờ xử lý
+                            .Select(hd => new HoaDon
+                            {
+                                MaHoaDon = hd.MaHoaDon,
+                                NgayTao = hd.NgayTao,
+                                NgayThanhToan = hd.NgayThanhToan,
+                                NgayShip = hd.NgayShip,
+                                NgayNhan = hd.NgayNhan,
+                                MoTa = hd.MoTa,
+                                TienGiam = hd.TienGiam,
+                                TienShip = hd.TienShip,
+                                TongTien = hd.TongTien,
+                                TrangThaiThanhToan = hd.TrangThaiThanhToan,
+                                TrangThaiGiaoHang = hd.TrangThaiGiaoHang,
+                                NgayGiaoDuKien = hd.NgayGiaoDuKien,
+                                LiDoHuy = hd.LiDoHuy,
+
+
+                                // Thêm các thuộc tính khác của HoaDonChoDTO cần thiết
+                            })
+                            .ToList();
+        }
+
+        public async Task<ResponseDto> UpdateNgayHoaDonOnline(Guid idHoaDon, DateTime? NgayThanhToan, DateTime? NgayNhan, DateTime? NgayShip)
+        {
+            try
+            {
+                var hoadon = await _db.HoaDons.FindAsync(idHoaDon);
+                if (hoadon == null)
+                    return new ResponseDto { IsSuccess = false, Code = 404, Message = "Không tìm thấy hóa đơn." };
+
+                hoadon.NgayNhan = NgayNhan ?? hoadon.NgayNhan;
+                hoadon.NgayShip = NgayShip ?? hoadon.NgayShip;
+                hoadon.NgayThanhToan = NgayThanhToan ?? hoadon.NgayThanhToan;
+
+                await _db.SaveChangesAsync();
+                return new ResponseDto { IsSuccess = true, Code = 200, Message = "Cập nhật ngày hóa đơn thành công." };
+            }
+            catch (Exception ex)
+            {
+                // Xử lý các trường hợp ngoại lệ nếu cần
+                return new ResponseDto { IsSuccess = false, Code = 500, Message = $"Lỗi khi cập nhật ngày hóa đơn: {ex.Message}" };
+            }
+        }
+
+        public async Task<ResponseDto> UpdateThanhToan(Guid idHoaDon, int TrangThaiThanhToan)
+        {
+            try
+            {
+                var hoaDon = await _db.HoaDons.FindAsync(idHoaDon);
+
+                if (hoaDon == null)
+                {
+                    return new ResponseDto { IsSuccess = false, Code = 400, Message = "Hóa đơn không tồn tại" };
+                }
+
+                hoaDon.TrangThaiThanhToan = TrangThaiThanhToan;
+                _db.Update(hoaDon);
+                await _db.SaveChangesAsync();
+
+                return new ResponseDto { IsSuccess = true, Code = 200, Message = "Cập nhật trạng thái thanh toán thành công" };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto { IsSuccess = false, Code = 500, Message = $"Lỗi: {ex.Message}" };
+            }
+        }
     }
 }

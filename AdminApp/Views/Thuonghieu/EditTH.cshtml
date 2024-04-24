@@ -1,0 +1,43 @@
+﻿@model Shop_Models.Entities.ThuongHieu
+
+@{
+    ViewData["Title"] = "EditTH";
+}
+
+<h1>EditTH</h1>
+
+<h4>ThuongHieu</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditTH">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="MaThuongHieu" class="control-label"></label>
+                <input asp-for="MaThuongHieu" class="form-control" />
+                <span asp-validation-for="MaThuongHieu" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TenThuongHieu" class="control-label"></label>
+                <input asp-for="TenThuongHieu" class="form-control" />
+                <span asp-validation-for="TenThuongHieu" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TrangThai" class="control-label"></label>
+                <input asp-for="TrangThai" class="form-control" />
+                <span asp-validation-for="TrangThai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="GetAllTH">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
