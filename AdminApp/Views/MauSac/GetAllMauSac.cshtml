@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Shop_Models.Entities.MauSac>
+
+@{
+    ViewData["Title"] = "GetAllMauSac";
+}
+
+<h1>GetAllMauSac</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Guid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaMauSac)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TenMauSac)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TrangThai)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Guid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaMauSac)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenMauSac)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrangThai)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditMauSac", new {  id=item.Guid  }) |
+                @Html.ActionLink("Details", "DeleteMauSac", new {  id=item.Guid  }) |
+                @Html.ActionLink("Delete", "DeleteMauSac", new {  id=item.Guid  })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

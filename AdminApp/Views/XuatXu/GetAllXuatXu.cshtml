@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Shop_Models.Entities.XuatXu>
+
+@{
+    ViewData["Title"] = "GetAllXuatXu";
+}
+
+<h1>GetAllXuatXu</h1>
+
+<p>
+    <a asp-action="CreateXuatXu">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.MaXuatXu)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TenXuatXu)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TrangThai)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Guid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaXuatXu)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenXuatXu)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrangThai)
+            </td>
+            <td>
+                @Html.ActionLink("EditXuatXu", "EditXuatXu", new {  id=item.Guid  }) |
+                
+                @Html.ActionLink("DeleteXuatXu", "DeleteXuatXu", new { id=item.Guid })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
