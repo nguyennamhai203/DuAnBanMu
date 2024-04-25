@@ -661,6 +661,18 @@ namespace Shop_Api.Repository
                         IsKhuyenMai = gr.First().TrangThaiKhuyenMai
                     }).ToListAsync();
 
+
+
+                foreach (var item in await viewModelResult)
+                {
+                    var anh = _dbContext.Anhs.FirstOrDefault(image =>
+                        image.ChiTietSanPhamId.ToString() == item.IdChiTietSp && image.MaAnh == "Anh1");
+
+                    if (anh != null)
+                    {
+                        item.Anh = anh.URL;
+                    }
+                }
                 return await viewModelResult;
 
             }
@@ -726,6 +738,10 @@ namespace Shop_Api.Repository
                 MoTaSanPham = sanPhamChiTiet.Mota,
                 itemShopListColor = distinctColors,
                 LstMauSac = distinctColors2,
+                ListAnh = _dbContext.Anhs
+                 .Where(image => image.ChiTietSanPhamId == sanPhamChiTiet.Id)
+  .Select(image => image.URL)
+  .ToList(),
 
             };
             return itemDetailViewModel;
@@ -1002,7 +1018,10 @@ namespace Shop_Api.Repository
                     GiaKhuyenMai = gr.First().GiaBan,
                     LstMauSac = gr.Select(it => new SelectListItem { Value = it.MauSacId.ToString(), Text = it.MauSac.TenMauSac }).ToList(),
                     IsKhuyenMai = gr.First().TrangThaiKhuyenMai,
-                    //Anh = gr.First().Anhs.
+                    ListAnh = _dbContext.Anhs
+                    .Where(image => image.ChiTietSanPhamId == gr.First().Id)
+                    .Select(image => image.URL)
+                    .ToList(),
                 }).ToList();
 
             foreach (var item in viewModelResult)

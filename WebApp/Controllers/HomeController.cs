@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using WebApp.Models;
 using Shop_Models.Dto;
 using Newtonsoft.Json;
+using Shop_Models.Heplers;
 
 namespace WebApp.Controllers
 {
@@ -20,9 +21,39 @@ namespace WebApp.Controllers
             _config = config;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            return View();
+            try
+            {
+                var client = _httpClientFactory.CreateClient("BeHat");
+                var response = await client.GetAsync("/api/ChiTietSanPham/GetItemShopViewModelAsync2");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    var respone = JsonConvert.DeserializeObject<ResponseDto>(jsonResponse);
+                    var content = JsonConvert.DeserializeObject<List<ItemShopViewModel>>(respone.Content.ToString());
+                    var listKM = content.Where(x => x.IsKhuyenMai == (int)TrangThai.TrangThaiSaleInProductDetail.DaApDungSale).ToList();
+                    // Lấy số lượng bản ghi từ phản hồi và truyền nó qua ViewBag
+                    ViewBag.TotalRecords = respone.Count;
+                    ViewBag.TotalPage = respone.TotalPage;
+                    ViewBag.listKM = listKM;
+                    ViewBag.content = content;
+
+
+                    return View(listKM);
+                }
+
+                else
+                {
+                    return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
         }
 
         //[HttpPost]
@@ -66,11 +97,7 @@ namespace WebApp.Controllers
         {
             try
             {
-                //var accessToken = HttpContext.Session.GetString("AccessToken");
-                //var token = HttpContext.Session.GetString("TokenCheck");
                 var client = _httpClientFactory.CreateClient("BeHat");
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
                 var response = await client.GetAsync("/api/ChiTietSanPham/GetItemShopViewModelAsync2");
 
                 if (response.IsSuccessStatusCode)
@@ -78,10 +105,14 @@ namespace WebApp.Controllers
                     var jsonResponse = await response.Content.ReadAsStringAsync();
 
                     var respone = JsonConvert.DeserializeObject<ResponseDto>(jsonResponse);
-                    var content = JsonConvert.DeserializeObject<List<ItemShopViewModel>>(respone.Content.ToString());
+                    var content = JsonConvert.DeserializeObject<List<ItemShopViewModel>>(respone.Content.ToString()).Take(4).ToList();
+                    var listKM = content.Where(x => x.IsKhuyenMai == (int)TrangThai.TrangThaiSaleInProductDetail.DaApDungSale).ToList();
                     // Lấy số lượng bản ghi từ phản hồi và truyền nó qua ViewBag
                     ViewBag.TotalRecords = respone.Count;
                     ViewBag.TotalPage = respone.TotalPage;
+                    ViewBag.listKM = listKM;
+
+
                     return PartialView("/Views/Home/_DanhSachTongQuanSanPham.cshtml", content);
                 }
 

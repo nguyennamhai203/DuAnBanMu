@@ -387,28 +387,28 @@
         });
     });
 
-    function saveForm(formData) {
-        debugger
-        // var formData = new FormData(document.getElementById('form-create'));
-        event.preventDefault(); // ngan chan hanh dong mac dinh cua nut
+    // function saveForm(formData) {
+    //     debugger
+    //     // var formData = new FormData(document.getElementById('form-create'));
+    //     event.preventDefault(); // ngan chan hanh dong mac dinh cua nut
 
-        Swal.fire({
-            title: 'Confirm Title',
-            text: 'Bạn có chắc chắn muốn thêm ?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Có',
-            cancelButtonText: 'Không'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // User confirmed, perform the request
-                performRequest(formData);
-            } else {
-                // User canceled, do nothing
-                // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
-            }
-        });
-    }
+    //     Swal.fire({
+    //         title: 'Confirm Title',
+    //         text: 'Bạn có chắc chắn muốn thêm ?',
+    //         icon: 'question',
+    //         showCancelButton: true,
+    //         confirmButtonText: 'Có',
+    //         cancelButtonText: 'Không'
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             // User confirmed, perform the request
+    //             performRequest(formData);
+    //         } else {
+    //             // User canceled, do nothing
+    //             // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
+    //         }
+    //     });
+    // }
 
 
 
@@ -497,7 +497,7 @@
         console.log(formData);
         Swal.fire({
             title: 'Confirm Title',
-            text: 'Bạn có chắc chắn muốn sửa ?',
+            text: 'Bạn có chắc chắn muốn thêm ?',
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Có',

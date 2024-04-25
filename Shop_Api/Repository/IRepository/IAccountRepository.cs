@@ -15,10 +15,11 @@ namespace Shop_Api.Repository.IRepository
 
 		public Task<LoginResponseDto> LoginAsync(LoginDto model);
 
-        Task<bool> SendEmailAsync(string email, string subject, string message);
+        Task<ResponseDto> SendEmailAsync(string email, string subject, string message);
 
         public Task<bool> UpdateUserInfoAndSendVerificationEmail(Guid userId, UpdateUserInfoDto model, string Pass);
         public Task<ResponseDto> XacNhanTaoTkChoNhanVienAsync(SignUpDto model, string maxacnhan, string emailAdmin);
+        public Task<ResponseDto> QuenMk(string maxacnhan, string emailAdmin,string newPass);
         public Task<bool> CheckPass(string username, string Pass);
 
     }
