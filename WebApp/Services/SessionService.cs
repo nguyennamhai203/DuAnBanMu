@@ -21,6 +21,23 @@ namespace WebApp.Services
                 return CartItemDtos;
             }
         }
+
+        public static RequestBillDto GetObjFromSessionRequestBillDto(ISession session, string key)
+        {
+            string jsonData = session.GetString(key);
+            if (jsonData == null)
+            {
+
+                return new RequestBillDto();
+
+            }
+            else
+            {
+                var CartItemDtos = JsonConvert.DeserializeObject<RequestBillDto>(jsonData);
+                return CartItemDtos;
+            }
+        }
+
         // 2. Ghi đè dữ liệu vào session từ 1 list
         public static void SetObjToSession(ISession session, string key, object data)
         {

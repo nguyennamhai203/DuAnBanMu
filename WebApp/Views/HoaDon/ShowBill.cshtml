@@ -71,14 +71,14 @@
             <div class="row order_d_inner">
                 <div class="col-lg-4">
                     <div class="details_item">
-                       
+
                         <ul class="list">
                             <li><a href="#"><span>Mã Hóa Đơn:</span> : @ViewBag.Bill.InvoiceCode</a></li>
                             <li><a href="#"><span>Tên Khách Hàng:</span> : @ViewBag.Bill.TenKhachHang</a></li>
                             <li><a href="#"><span>Số Điện Thoại:</span> : @ViewBag.Bill.PhoneNumber</a></li>
                             <li><a href="#"><span>Ngày Tạo:</span> : @ViewBag.Bill.CreateDate</a></li>
-                            @* <li><a href="#"><span>Địa Chỉ Giao Hàng:</span> : @ViewBag.Bill.Address</a></li> *@
-                           
+                            <li><a href="#"><span>Phương thức thanh toán:</span> : @ViewBag.Bill.Phuongthucthanhtoan</a></li>
+
                         </ul>
                     </div>
                 </div>
@@ -103,6 +103,12 @@
                                     }
                                 </a>
                             </li>
+
+                            @if (ViewBag.Bill.TrangThaiThanhToan == 1)
+                            {
+                                <li><a href="#"><span>Ngày Thanh Toán: </span> : @ViewBag.Bill.NgayThanhToan</a></li>
+
+                            }
                             @* <li><a href="#"><span>Total</span> : @ViewBag.Bill.ThanhTien</a></li> *@
                             <li>
                                 <a href="#">
@@ -153,7 +159,7 @@
                             {
                                 thanhTien = i.price * i.quantity;
                                 total += thanhTien;
-                               
+
                                 <tr>
                                     <td>
                                         <p>@i.codeProductDetail</p>
@@ -172,13 +178,13 @@
 
                             <tr><td></td><td></td><td></td><td>Tổng thành tiền: @total</td></tr>
                             <tr><td></td><td></td><td>Giảm Giá VouCher: @ViewBag.Bill.GiamGia %</td><td>Quy Đổi Sang Tiền: @ViewBag.Bill.TienGiam</td></tr>
-                            <tr><td></td><td></td><td>Phí Ship (Mặc Định): @ViewBag.Bill.TienShip</td><td>Tổng tiền phải thanh toán: @(total - ViewBag.Bill.TienGiam + ViewBag.Bill.TienShip)</td></tr>
+                            <tr><td></td><td></td><td>Phí Ship (Mặc Định): @ViewBag.Bill.TienShip</td><td>Tổng tiền phải thanh toán: @ViewBag.Bill.ThanhTien</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     }
-   
-   
+
+
 </section>

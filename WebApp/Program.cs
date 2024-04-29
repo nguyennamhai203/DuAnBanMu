@@ -1,3 +1,5 @@
+﻿using WebApp.Services.IServices;
+
 namespace WebApp
 {
     public class Program
@@ -19,6 +21,12 @@ namespace WebApp
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddHttpClient();
+
+
+            // đăng kí PayClient dạng Singleton() - chỉ có 1 instance duy nhất trong toàn ứng dụng
+            //builder.Services.AddSingleton();
+
+            builder.Services.AddSingleton<IVNPayService, VNPayService>();
 
             var app = builder.Build();
 

@@ -107,8 +107,10 @@ namespace Shop_Api.Repository
         {
             var query = from bill in _db.HoaDons
                         where bill.MaHoaDon == invoiceCode
-                        join v in _db.Vouchers on bill.VoucherId equals v.Guid into voucherGroup
+                        join v in _db.Vouchers on bill.VoucherId equals v.Guid into voucherGroup            
                         from voucher in voucherGroup.DefaultIfEmpty()
+                        join thanhtoanchitiet in _db.PhuongThucTTChiTiets on bill.Id equals thanhtoanchitiet.HoaDonId
+                        join pttt in _db.PhuongThucThanhToans on thanhtoanchitiet.PTTToanId equals pttt.Id
                         select new HoaDonDto
                         {
                             InvoiceCode = bill.MaHoaDon,
@@ -120,11 +122,13 @@ namespace Shop_Api.Repository
                             TrangThaiThanhToan = bill.TrangThaiThanhToan,
                             TenKhachHang = bill.TenKhachHang,
                             CreateDate = bill.NgayTao,
+                            NgayThanhToan = bill.NgayThanhToan,
                             TienGiam = (int)bill.TienGiam,
                             GiamGia = voucher != null ? voucher.PhanTramGiam : 0,
                             CodeVoucher = voucher != null ? voucher.MaVoucher : null,
                             UserId = bill.NguoiDungId,
                             ThanhTien = (int)bill.TongTien,
+                            Phuongthucthanhtoan = pttt.TenMaPTThanhToan
 
                         };
 
