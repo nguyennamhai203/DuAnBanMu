@@ -7,6 +7,7 @@ namespace Shop_Models.Entities
     [Table("NguoiDung")]
     public class NguoiDung : IdentityUser<Guid>
     {
+        public Guid Id {  get; set; }
         public string? MaNguoiDung { get; set; }
         //public string? Password { get; set; } 
         public int TrangThai { get; set; }
@@ -14,11 +15,8 @@ namespace Shop_Models.Entities
         public string? SoDienThoai { get; set; }
         public string? DiaChi { get; set; }
         public bool? GioiTinh { get; set; }
-
-
         // Thêm các trường cho mã xác nhận
         public string? VerificationCode { get; set; }
         public DateTime VerificationCodeExpiry { get; set; }
-
     }
 }

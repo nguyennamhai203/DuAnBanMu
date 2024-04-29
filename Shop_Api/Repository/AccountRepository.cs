@@ -21,6 +21,7 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using System;
 using SmtpClient = System.Net.Mail.SmtpClient;
+using Microsoft.VisualBasic;
 
 namespace Shop_Api.Repository
 {
@@ -932,6 +933,33 @@ namespace Shop_Api.Repository
             }
         }
 
-
+        public async Task<List<NguoiDung>> GetAllNguoiDungAsync(int? status,int page)
+        {
+            try
+            {
+                var list = _context.NguoiDungs.AsQueryable();
+                if (status.HasValue)
+                {
+                    list = list.Where(x => x.TrangThai == status);
+                }
+                var result = list.Select(x => new NguoiDung
+                {
+                    Id = x.Id,
+                    MaNguoiDung = x.MaNguoiDung,
+                    TenNguoiDung = x.TenNguoiDung,
+                    SoDienThoai = x.SoDienThoai,
+                    DiaChi = x.DiaChi,
+                    GioiTinh = x.GioiTinh,
+                    TrangThai = x.TrangThai,
+                    VerificationCode = x.VerificationCode,
+                    VerificationCodeExpiry = x.VerificationCodeExpiry
+                });
+                return result.ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

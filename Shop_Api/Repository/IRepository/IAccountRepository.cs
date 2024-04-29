@@ -12,7 +12,7 @@ namespace Shop_Api.Repository.IRepository
         public Task<ResponseDto> CapNhatSDTDiaChi(userSDTDiaChi obj);
         public Task<ResponseDto> SignUpNhanVienAsync(SignUpDto model);
         public Task<ResponseDto> SignUpKhacHangAsync(SignUpDto model);
-
+        public Task<List<NguoiDung>> GetAllNguoiDungAsync(int? status,int page);
 		public Task<LoginResponseDto> LoginAsync(LoginDto model);
 
         Task<ResponseDto> SendEmailAsync(string email, string subject, string message);
