@@ -20,8 +20,9 @@ namespace Shop_Api.Services
         private readonly HoaDonDto _reponseBill;
         private readonly ResponseDto _reponse;
         ApplicationDbContext _context;
+        private readonly IPhuongThucThanhToanRepository _phuongThucThanhToanRepos;
         public HoaDonServices(UserManager<NguoiDung> userManager, IHoaDonRepository hoaDonRepository, IGioHangChiTietRepository gioHangCtRepository, IVoucherRepository voucherRepository,
-            IHoaDonChiTietRepository hoaDonCTRepository, ApplicationDbContext applicationDbContext)
+            IHoaDonChiTietRepository hoaDonCTRepository, ApplicationDbContext applicationDbContext, IPhuongThucThanhToanRepository phuongThucThanhToanRepos)
         {
             _userManager = userManager;
             _hoaDonRepository = hoaDonRepository;
@@ -31,6 +32,7 @@ namespace Shop_Api.Services
             _context = applicationDbContext;
             _reponseBill = new HoaDonDto();
             _reponse = new ResponseDto();
+            _phuongThucThanhToanRepos = phuongThucThanhToanRepos;
         }
 
         public async Task<ResponseDto> CreateBill(RequestBillDto requestBill)
@@ -41,24 +43,29 @@ namespace Shop_Api.Services
                 var user = _context.NguoiDungs.FirstOrDefault(x => x.UserName == requestBill.Usename);
 
 
-
                 //if (cartItem == null)
                 //{
                 //    return NotFoundResponse("Không có sản phẩm trong giỏ hàng");
                 //}
+                var tongTienSanPham = 0;
+                foreach (var x in requestBill.CartItem)
+                {
 
+                    tongTienSanPham = (int)(x.GiaBan * x.SoLuong);
+                   
+                }
                 var listVoucher = await _voucherRepository.GetAll();
                 var voucherX = listVoucher.FirstOrDefault(x => x.MaVoucher == requestBill.CodeVoucher);
                 var tienGiam = 0;
                 if (voucherX != null)
                 {
-                    tienGiam = (requestBill.Payment / 100) * voucherX.PhanTramGiam.Value;
+                    tienGiam = (tongTienSanPham / 100) * voucherX.PhanTramGiam.Value;
                 }
                 else tienGiam = 0;
                 var bill = new HoaDon
                 {
                     Id = Guid.NewGuid(),
-                    MaHoaDon = "Bill" + GenerateRandomString(10),
+                    MaHoaDon = requestBill.MaHoaDon != null ? requestBill.MaHoaDon : "Bill" + GenerateRandomString(10),
                     NgayTao = DateTime.Now,
                     //NgayShip = DateTime.Now,
                     //NgayNhan = DateTime.Now,
@@ -70,14 +77,20 @@ namespace Shop_Api.Services
                     SoDienThoai = requestBill.PhoneNumber,
                     DiaChiGiaoHang = requestBill.Address,
                     NguoiDungId = user != null ? user.Id : null,
-                    TongTien = requestBill.Payment - tienGiam + 40000,
+                    TongTien = requestBill.Payment /*- tienGiam + 40000*/,
                     TienGiam = tienGiam,
                     TienShip = 40000, // mặc định ship
                     VoucherId = voucherX != null ? voucherX.Guid : (Guid?)null
                 };
+                if (requestBill.trangthaithanhtoan == 1)
+                {
+                    bill.NgayThanhToan = DateTime.Now;
+                    bill.TrangThaiThanhToan = 1;
+                }
                 var createHoaDon = await _hoaDonRepository.CreateHD(bill);
                 if (createHoaDon.IsSuccess == true)
                 {
+                  
                     if (requestBill.Usename == null)
                     {
                         foreach (var x in requestBill.CartItem)
@@ -91,7 +104,6 @@ namespace Shop_Api.Services
                                 SoLuong = x.SoLuong,
                                 HoaDonId = bill.Id
                             };
-
                             await _hoaDonCTRepository.CreateAsync(billDetail);
                         }
 
@@ -114,17 +126,43 @@ namespace Shop_Api.Services
                         }
                     }
                     var pttt = _context.PhuongThucThanhToans.FirstOrDefault(x => x.MaPTThanhToan == requestBill.MaPTTT);
-                    PhuongThucTTChiTiet phuongThucTTChiTiet = new PhuongThucTTChiTiet()
+                    if (pttt == null)
                     {
-                        Id = Guid.NewGuid(),
-                        HoaDonId = bill.Id,
-                        PTTToanId = pttt.Id,
-                        TrangThai = 0, // trạng thái chưa thanh toán
-                        SoTien = 0,
+                        var ptttCreate = new PhuongThucThanhToan();
+                        ptttCreate.TenMaPTThanhToan = requestBill.MaPTTT;
+                        ptttCreate.MaPTThanhToan = requestBill.MaPTTT;
+                        ptttCreate.MoTa = "";
+                        ptttCreate.TrangThai = 1;
 
-                    };
-                    await _context.PhuongThucTTChiTiets.AddAsync(phuongThucTTChiTiet);
-                    _context.SaveChanges();
+                        await _phuongThucThanhToanRepos.CreateAsync(ptttCreate);
+                    }
+                    if (requestBill.trangthaithanhtoan == 0)
+                    {
+                        PhuongThucTTChiTiet phuongThucTTChiTiet = new PhuongThucTTChiTiet()
+                        {
+                            Id = Guid.NewGuid(),
+                            HoaDonId = bill.Id,
+                            PTTToanId = pttt.Id,
+                            TrangThai = 0, // trạng thái chưa thanh toán
+                            SoTien = 0,
+
+                        }; await _context.PhuongThucTTChiTiets.AddAsync(phuongThucTTChiTiet);
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        PhuongThucTTChiTiet phuongThucTTChiTiet = new PhuongThucTTChiTiet()
+                        {
+                            Id = Guid.NewGuid(),
+                            HoaDonId = bill.Id,
+                            PTTToanId = pttt.Id,
+                            TrangThai = 1, // trạng thái đã thanh toán
+                            SoTien = bill.TongTien,
+
+                        }; await _context.PhuongThucTTChiTiets.AddAsync(phuongThucTTChiTiet);
+                        _context.SaveChanges();
+                    }
+
                     //return SuccessResponse(bill, $"{bill.InvoiceCode}");
                     return new ResponseDto
                     {
@@ -181,6 +219,7 @@ namespace Shop_Api.Services
                 _reponseBill.TrangThaiGiaoHang = billT.TrangThaiGiaoHang;
                 _reponseBill.TrangThaiThanhToan = billT.TrangThaiThanhToan;
                 _reponseBill.CreateDate = billT.CreateDate;
+                _reponseBill.NgayThanhToan = billT.NgayThanhToan;
                 _reponseBill.CodeVoucher = billT.CodeVoucher;
                 _reponseBill.GiamGia = billT.GiamGia;
                 _reponseBill.Payment = billT.Payment;
@@ -190,6 +229,7 @@ namespace Shop_Api.Services
                 _reponseBill.UserId = billT.UserId;
                 _reponseBill.BillDetail = listBillDetail;
                 _reponseBill.Count = listBillDetail.Count();
+                _reponseBill.Phuongthucthanhtoan = billT.Phuongthucthanhtoan;
                 _reponse.Message = $"Lấy hóa đơn {invoiceCode} thành công.";
                 _reponse.Content = _reponseBill;
                 return _reponse;

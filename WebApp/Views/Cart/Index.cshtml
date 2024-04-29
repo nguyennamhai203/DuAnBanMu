@@ -269,20 +269,39 @@
         var idCartDetail_buuton = $(button).siblings('.delete')[0];
         var idCartDetail = $(button).data('cartdetail-id');
 
-        $.ajax({
-            url: '/Cart/delete',
-            type: 'GET',
-            data: { idCartDetail: idCartDetail },
-            success: function (response) {
-                // Sau khi giảm số lượng, cập nhật lại nội dung của div.carts
-                updateCart();
-                console.log('Quantity decrease successfully');
-                console.log(response);
-            },
-            error: function (xhr, status, error) {
-                console.error('Error decrease quantity:', error);
+        
+
+
+        Swal.fire({
+            title: 'Thông báo!',
+            text: 'Bạn có muốn xóa mặt hàng này khỏi giỏ hàng của bạn ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Cart/delete',
+                    type: 'GET',
+                    data: { idCartDetail: idCartDetail },
+                    success: function (response) {
+                        // Sau khi giảm số lượng, cập nhật lại nội dung của div.carts
+                        updateCart();
+                        console.log('Quantity decrease successfully');
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error decrease quantity:', error);
+                    }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire('Đã hủy bỏ', 'Hành động không được thực hiện.', 'error').then(() => {
+                    location.reload();
+                });
             }
         });
+
     }
 
 
@@ -307,6 +326,7 @@
         // var option1 = document.getElementById("option1");
         var option2 = document.getElementById("option2");
         var option3 = document.getElementById("option3");
+        var option4 = document.getElementById("option4");
 
         // Lấy ra div kết quả
         var resultDiv = document.getElementById("result");
@@ -315,6 +335,8 @@
         if (option2.checked) {
             resultDiv.innerHTML = text;
         } else if (option3.checked) {
+            resultDiv.innerHTML = text;
+        } else if (option4.checked) {
             resultDiv.innerHTML = text;
         } else {
             resultDiv.innerHTML = "Vui lòng chọn một phương thức thanh toán."; event.preventDefault();
@@ -349,3 +371,4 @@
 
 
 </script>
+
