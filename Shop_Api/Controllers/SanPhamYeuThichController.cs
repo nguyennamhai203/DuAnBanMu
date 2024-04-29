@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shop_Api.Repository.IRepository;
+using Shop_Models.Dto;
 using Shop_Models.Entities;
 using System;
 using System.Security.Principal;
@@ -17,9 +18,9 @@ namespace Shop_Api.Controllers
         {
             res = repository;
         }
-        // GET: api/<SanPhamYeuThichController>
+        
         [HttpGet("get-spyt")]
-        public async Task<IActionResult> GetSPYTAsync(int? status,int page = 1)
+        public async Task<IActionResult> GetSPYTAsync(int? status,int page)
         {
             try
             {
@@ -32,7 +33,6 @@ namespace Shop_Api.Controllers
             }
         }
 
-        // POST api/<SanPhamYeuThichController>
         [HttpPost("post-spyt")]
         public async Task<IActionResult> PostSPYTAsync(Guid id,Guid nguoidungid,Guid chitietsanphamid,int trangthai)
         {
@@ -56,7 +56,6 @@ namespace Shop_Api.Controllers
             }
         }
 
-        // PUT api/<SanPhamYeuThichController>/5
         [HttpPut("put-spyt")]
         public async Task<IActionResult> PutSPYTAsync(Guid id, Guid nguoidungid, Guid chitietsanphamid, int trangthai)
         {
@@ -71,7 +70,6 @@ namespace Shop_Api.Controllers
             return NoContent();
         }
 
-        // DELETE api/<SanPhamYeuThichController>/5
         [HttpDelete("delete-spyt")]
         public async Task<IActionResult> DeleteSPYTAsync(Guid id)
         {
@@ -79,5 +77,118 @@ namespace Shop_Api.Controllers
             await res.DeleteSPYT(id);
             return NoContent();
         }
+
+        [HttpPost("Thêm một sản phẩm vào danh sách yêu thích của người dùng")]
+        public async Task<IActionResult> AddToFavoriteAsync(Guid userId, Guid productId)
+        {
+            try
+            {
+                var response = await res.AddToFavoriteAsync(userId, productId);
+                return StatusCode(response.Code, response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("Xóa một sản phẩm khỏi danh sách yêu thích của người dùng")]
+        public async Task<IActionResult> RemoveFromFavoriteAsync(Guid userId, Guid productId)
+        {
+            try
+            {
+                var response = await res.RemoveFromFavoriteAsync(userId, productId);
+                return StatusCode(response.Code, response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("Kiểm tra xem một sản phẩm có trong danh sách yêu thích của người dùng hay không")]
+        public async Task<IActionResult> IsInFavoriteAsync(Guid userId, Guid productId)
+        {
+            try
+            {
+                var isFavorite = await res.IsInFavoriteAsync(userId, productId);
+                return Ok(isFavorite);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("Lấy danh sách các sản phẩm yêu thích của người dùng")]
+        public async Task<IActionResult> GetFavoriteProductsAsync(Guid userId)
+        {
+            try
+            {
+                var favoriteProducts = await res.GetFavoriteProductsAsync(userId);
+                return Ok(favoriteProducts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("Kiểm tra xem một sản phẩm có trong danh sách yêu thích hay không")]
+        public async Task<IActionResult> IsFavoriteProductAsync(Guid productId)
+        {
+            try
+            {
+                var isFavoriteProduct = await res.IsFavoriteProductAsync(productId);
+                return Ok(isFavoriteProduct);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("Đếm số lượng sản phẩm yêu thích của người dùng")]
+        public async Task<IActionResult> CountFavoriteProductsAsync(Guid userId)
+        {
+            try
+            {
+                var count = await res.CountFavoriteProductsAsync(userId);
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("Xóa toàn bộ sản phẩm trong danh sách yêu thích của người dùng")]
+        public async Task<IActionResult> ClearFavoriteProductsAsync(Guid userId)
+        {
+            try
+            {
+                var response = await res.ClearFavoriteProductsAsync(userId);
+                return StatusCode(response.Code, response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("Lấy trạng thái yêu thích của một sản phẩm")]
+        public async Task<IActionResult> GetFavoriteStatusAsync(Guid userId, Guid productId)
+        {
+            try
+            {
+                var favoriteStatus = await res.GetFavoriteStatusAsync(userId, productId);
+                return Ok(favoriteStatus);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 }

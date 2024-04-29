@@ -127,6 +127,17 @@ namespace Shop_Api.Controllers
             }
             return BadRequest(result);
         }
+        
+        [HttpGet("GetNguoiDung")]
+        public async Task<IActionResult> GetNguoiDung(int? status,int page)
+        {
+            var result = await _accountRepository.GetAllNguoiDungAsync(status,page);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
        
     }
 }
