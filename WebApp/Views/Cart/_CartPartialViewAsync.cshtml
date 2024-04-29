@@ -4,7 +4,8 @@
 @{
     int stt = 0;
     double thanhTien = 0;
-    double tongTien = 0;
+    double tongTien = 0; var phiShip = 40000;
+
     int soluongsanpham = 0;
     string username = ViewContext.HttpContext.Session.GetString("username");
 }
@@ -41,6 +42,7 @@
                                 soluongsanpham = item.SoLuongBanSanPham;
                                 thanhTien = item.GiaBan * item.SoLuong;
                                 tongTien += thanhTien;
+
                                 <tr>
                                     <td>
                                         <div class="media">
@@ -96,7 +98,7 @@
                                     </div>
                                 </td>
                             </tr>
-                         
+
 
                         </tbody>
                     </table>
@@ -108,14 +110,17 @@
                                 <div class="col-md-4 col-sm-4" style="border: solid 1px darkorchid;">
                                     <h3>Chọn phương thức thanh toán:</h3>
                                     <div>
-                                     @*    <input type="radio" id="option1" name="options" value="1" onclick="displayText('Thanh toán tại cửa hàng'); setPaymentMethod(1); document.getElementById('MaPTTT').value = 'ThanhToanTaiCuaHang';">
-                                        <label for="option1">Thanh toán tại cửa hàng</label><br /> *@
+                                        @*    <input type="radio" id="option1" name="options" value="1" onclick="displayText('Thanh toán tại cửa hàng'); setPaymentMethod(1); document.getElementById('MaPTTT').value = 'ThanhToanTaiCuaHang';">
+                                    <label for="option1">Thanh toán tại cửa hàng</label><br /> *@
 
-                                        <input type="radio" id="option2" name="options" onclick="displayText('Trả tiền mặt khi giao hàng');setPaymentMethod(2); document.getElementById('MaPTTT').value = 'ThanhToanKhiNhanHang';">
+                                        <input type="radio" id="option2" name="options" onclick="displayText('Trả tiền mặt khi giao hàng');setPaymentMethod(2); document.getElementById('MaPTTT').value = 'COD';">
                                         <label for="option2">Thanh toán khi nhận hàng (COD)</label><br />
 
                                         <input type="radio" id="option3" name="options" onclick="displayText('Thực hiện thanh toán vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn trong phần Nội dung đơn đặt hàng thành công. Đơn hàng sẽ đươc giao sau khi tiền đã chuyển.Thông tin tài Khoản ngân hàng: – STK: 08489497321 – Chủ TK: Phạm Thùy Linh – Tại ngân hàng TCB chi nhánh Nam Từ Liêm'); setPaymentMethod(3); document.getElementById('MaPTTT').value = 'ChuyenKhoanNganHang';">
-                                        <label for="option3">Thanh toán bằng chuyển khoản ngân hàng</label>
+                                        <label for="option3">Thanh toán bằng chuyển khoản ngân hàng</label><br />
+
+                                        <input type="radio" id="option4" name="options" onclick="displayText('Thực hiện thanh toán vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn trong phần Nội dung đơn đặt hàng thành công. Đơn hàng sẽ đươc giao sau khi tiền đã chuyển.Thông tin tài Khoản ngân hàng: – STK: 08489497321 – Chủ TK: Phạm Thùy Linh – Tại ngân hàng TCB chi nhánh Nam Từ Liêm'); setPaymentMethod(4); document.getElementById('MaPTTT').value = 'VNPay';">
+                                        <label for="option4">VNPay</label>
 
                                         <div id="result" style="background-color:aqua"></div>
 
@@ -143,18 +148,18 @@
                                         <div id="phoneNumberError" style="color: red; display: none;">Số điện thoại không hợp lệ. Vui lòng nhập lại.</div>
                                     </div>
 
-                               
+
 
                                 </div>
                                 <div class="col-md-4 col-sm-4" style="border: solid 1px darkorchid;">
                                     <div class="d-flex justify-content-between" style="font-weight: 500;">
-                                        <p class="mb-2">Tổng tiền</p>
+                                        <p class="mb-2">Tổng tiền sản phẩm</p>
                                         <p class="mb-2">@tongTien</p>
                                     </div>
 
                                     <div class="d-flex justify-content-between" style="font-weight: 500;">
-                                        <p class="mb-0">Phí ship</p>
-                                        <p class="mb-0">0</p>
+                                        <p class="mb-0">Phí ship (Mặc định)</p>
+                                        <p class="mb-0">40000</p>
                                     </div>
 
 
@@ -162,31 +167,40 @@
 
                                     <div class="form-outline mb-4">
                                         <label class="form-label" for="voucherSelect">Chọn mã giảm giá</label>
-                                        <select id="voucherSelect" name="CodeVoucher" class="form-select form-select-lg">
-                                             <option value="null">Không có</option>
-                                        @foreach (var i in ViewBag.listVoucher)
-                                        {
-                                        <option value="@i.MaVoucher">@i.MaVoucher</option>
-                                        }
+                                        @* <select id="voucherSelect" name="CodeVoucher" class="form-select form-select-lg">
+                                    <option value="null">Không có</option>
+                                    @foreach (var i in ViewBag.listVoucher)
+                                    {
+                                    <option value="@i.MaVoucher">@i.MaVoucher</option>
+                                    }
+                                    </select> *@
+                                        <select name="CodeVoucher" id="voucherSelect" class="form-control">
+                                            <option value="null">Không có</option>
+                                            @foreach (var voucher in ViewBag.listVoucher)
+                                            {
+                                                <option value="@voucher.MaVoucher" data-percent="@voucher.PhanTramGiam">@voucher.MaVoucher</option>
+                                            }
                                         </select>
+
                                     </div>
                                     <hr class="my-4">
 
                                     <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
-                                        <p class="mb-2">Thành tiền</p>
-                                        <p class="mb-2" id="thanhtien">@tongTien</p>
+                                        <p class="mb-2">Thành tiền phải thanh toán</p>
+                                        <p class="mb-2" id="thanhtien" data-thanhtien="@(tongTien + phiShip)">@(tongTien + phiShip)</p>
+                                        <p class="mb-2" id="tongtiensanpham" data-tongtiensanpham="@(tongTien)"></p>
                                     </div>
-                                    <input type="number" name="Payment" id="Payment" class="form-control" value="@tongTien" hidden />
+                                    <input type="number" name="Payment" id="Payment" class="form-control" value="@(tongTien+phiShip)" hidden />
                                     <button class="btn primary-btn btn-block btn-lg" style="max-width:200px; border-radius:10px;" type="submit" onclick="validateForm(event)">
                                         <div class="d-flex justify-content-between">
                                             <span>Đặt hàng</span>
                                         </div>
                                     </button>
 
-                                  
+
                                 </div>
                             </div>
-                        </form>                     
+                        </form>
                     </div>
                 </div>
             }
@@ -209,4 +223,26 @@
         }
     });
 
+</script>
+
+<script>
+    var phiShip = 40000;
+
+    $(document).ready(function () {
+        $('#voucherSelect').change(function () {
+            var selectedPercent = $(this).find(':selected').data('percent');
+            var totalAmount = $("#tongtiensanpham").data('tongtiensanpham');
+            if (selectedPercent == null) {
+                selectedPercent = 0;
+            }
+            var discountAmount = totalAmount * (selectedPercent / 100);
+            var finalAmount1 = totalAmount - discountAmount + phiShip;
+            var finalAmount = Math.round(totalAmount - discountAmount + phiShip);
+            console.log("Phần trăm giảm giá: " + selectedPercent);
+            console.log("Tổng tiền: " + totalAmount);
+
+            $('#thanhtien').text(finalAmount);
+            $('#Payment').val(finalAmount);
+        });
+    });
 </script>

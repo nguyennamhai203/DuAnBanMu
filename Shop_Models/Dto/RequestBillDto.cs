@@ -15,14 +15,18 @@ namespace Shop_Models.Dto
         public string? CodeVoucher { get; set; }
         public int Payment { get; set; }
         public string? MaPTTT { get; set; }
+        public int? trangthaithanhtoan { get; set; }
+        public string? MaHoaDon { get; set; }
         public PaymentMethod PaymentMethod { get; set; } // Thuộc tính mới để lưu trữ PTTT
         public List<GioHangChiTietViewModel>? CartItem { get; set; }
     }
     public enum PaymentMethod
-{
-    ThanhToanTaiCuaHang = 1,
-    ThanhToanKhiNhanHang = 2,
-    ChuyenKhoanNganHang = 3
-}
+    {
+        ThanhToanTaiCuaHang = 1,
+        ThanhToanKhiNhanHang = 2,
+        ChuyenKhoanNganHang = 3,
+        VNPay = 4
+
+    }
 }
 
