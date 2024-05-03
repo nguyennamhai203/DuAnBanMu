@@ -7,7 +7,6 @@ namespace Shop_Models.Entities
     [Table("NguoiDung")]
     public class NguoiDung : IdentityUser<Guid>
     {
-        public Guid Id {  get; set; }
         public string? MaNguoiDung { get; set; }
         //public string? Password { get; set; } 
         public int TrangThai { get; set; }
