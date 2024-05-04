@@ -118,7 +118,7 @@ namespace Shop_Api.Repository
                 idupdate.SoLuong = update.SoLuong;  
                 idupdate.NgayBatDau = update.NgayBatDau;
                 idupdate.NgayHetHan = update.NgayHetHan;
-                /*idupdate.TrangThai = update.TrangThai;*/
+                idupdate.TrangThai = update.TrangThai;
                 contextVC.Vouchers.Update(idupdate);
                 await contextVC.SaveChangesAsync();
                 return new ResponseDto

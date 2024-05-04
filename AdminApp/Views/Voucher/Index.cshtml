@@ -36,6 +36,7 @@
                                         <th>Số Lượng</th>
                                         <th>Ngày Bắt Đầu</th>
                                         <th>Ngày Kết Thúc</th>
+                                        <th>Trạng Thái</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -47,8 +48,18 @@
                                             <td>@item.TenVoucher</td>
                                             <td>@item.PhanTramGiam</td>
                                             <td>@item.SoLuong</td>
-                                            <td>@item.NgayBatDau</td>
-                                            <td>@item.NgayHetHan</td>
+                                            <td>@item.NgayBatDau.Value.Day/@item.NgayBatDau.Value.Month/@item.NgayBatDau.Value.Year</td>
+                                            <td>@item.NgayHetHan.Value.Day/@item.NgayHetHan.Value.Month/@item.NgayHetHan.Value.Year</td>
+                                            <td>
+                                                @if (item.TrangThai == 0)
+                                                {
+                                                    <span>Hoạt Động</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Hết Hạn</span>
+                                                }
+                                            </td>
                                             <td>
                                                 <a asp-area="Admin" asp-controller="Voucher" asp-action="Detail" asp-route-id="@item.Guid" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">
                                                     <i class="bx bxs-detail"></i>
@@ -144,6 +155,24 @@
                                             <input asp-for="@voucher.First().NgayHetHan" type="text" class="form-control" />
                                         </div>
                                     </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Trạng Thái</label>
+                                        <div class="col-sm-8">
+
+                                            <select asp-for="@voucher.First().TrangThai" class="form-select" aria-label="Default select example">
+                                                @if (voucher.First().TrangThai == 0)
+                                                {
+                                                    <option value="0" selected>Đang Hoạt Động</option>
+                                                    <option value="1">Đã Hết Hạn</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="0">Đang Hoạt Động</option>
+                                                    <option value="1" selected>Đã Hết Hạn</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
 
                                     <button type="submit" class="btn btn-warning" onclick="updateForm()">Lưu</button>
                                 </form>
@@ -219,15 +248,11 @@
                                             <p>@item.NgayHetHan</p>
                                             @if (item.TrangThai == 0)
                                             {
-                                                <span>Mới</span>
-                                            }
-                                            else if (item.TrangThai == 1)
-                                            {
-                                                <span>Đã sửa</span>
+                                                <span>Đang Hoạt Động</span>
                                             }
                                             else
                                             {
-                                                <span>Đã xóa</span>
+                                                <span>Đã Hết Hạn</span>
                                             }
                                         }
                                     </label>
@@ -454,6 +479,7 @@
                     '<th>Số Lượng</th>' +
                     '<th>Ngày Bắt Đầu</th>' +
                     '<th>Ngày Kết Thúc</th>' +
+                    '<th>Trạng thái</th>' +
                     '<th></th>' +
                     '</tr>' +
                     '</thead>' +
@@ -465,8 +491,9 @@
                             '<td>' + item.tenVoucher + '</td>' +
                             '<td>' + item.phanTramGiam + '</td>' +
                             '<td>' + item.soLuong + '</td>' +
-                            '<td>' + item.ngayBatDau + '</td>' +
+                            '<td>' + item.ngayBatDau  + '</td>' +
                             '<td>' + item.ngayHetHan + '</td>' +
+                            '<td>' + (item.trangThai === 0 ? 'Hoạt Động' : 'Hết Hạn') + '</td>' +
                             '<td>' +
                             '<a href="/Voucher/Index/' + item.guid + '" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">' +
                             '<i class="bx bxs-detail"></i>' +
