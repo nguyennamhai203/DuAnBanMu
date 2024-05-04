@@ -34,6 +34,7 @@
                                     <tr>
                                         <th>Mã chất liệu</th>
                                         <th>Tên chất liệu</th>
+                                        <th>Trạng thái</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -43,6 +44,16 @@
                                         <tr>
                                             <td>@item.MaChatLieu</td>
                                             <td>@item.TenChatLieu</td>
+                                            <td>
+                                                @if (item.TrangThai == 0)
+                                                {
+                                                    <span>Còn hàng</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Hết hàng</span>
+                                                }
+                                            </td>
                                             <td>
                                                 <a asp-area="Admin" asp-controller="ChatLieu" asp-action="Detail" asp-route-id="@item.Guid" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">
                                                     <i class="bx bxs-detail"></i>
@@ -113,6 +124,24 @@
                                             <input asp-for="@chatLieu.First().TenChatLieu" type="text" class="form-control" />
                                         </div>
                                     </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Trạng Thái</label>
+                                        <div class="col-sm-8">
+
+                                            <select asp-for="@chatLieu.First().TrangThai" class="form-select" aria-label="Default select example">
+                                                @if (chatLieu.First().TrangThai == 0)
+                                                {
+                                                    <option value="0" selected>Còn Hàng</option>
+                                                    <option value="1">Hết Hàng</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="0">Còn Hàng</option>
+                                                    <option value="1" selected>Hết Hàng</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
 
                                     <button type="submit" class="btn btn-warning" onclick="updateForm()">Lưu</button>
                                 </form>
@@ -156,15 +185,11 @@
                                             <p>@item.TenChatLieu</p>
                                             @if (item.TrangThai == 0)
                                             {
-                                                <span>Mới</span>
-                                            }
-                                            else if (item.TrangThai == 1)
-                                            {
-                                                <span>Đã sửa</span>
+                                                <span>Còn Hàng</span>
                                             }
                                             else
                                             {
-                                                <span>Đã xóa</span>
+                                                <span>Hết Hàng</span>
                                             }
                                         }
                                     </label>
@@ -376,6 +401,7 @@
                     '<tr>' +
                     '<th>Mã chất liệu</th>' +
                     '<th>Tên chất liệu</th>' +
+                    '<th>Trạng thái</th>' +
                     '<th></th>' +
                     '</tr>' +
                     '</thead>' +
@@ -386,6 +412,7 @@
                         var newRow = '<tr>' +
                             '<td>' + item.maChatLieu + '</td>' +
                             '<td>' + item.tenChatLieu + '</td>' +
+                            '<td>' + (item.trangThai === 0 ? 'Còn hàng' : 'Hết hàng') + '</td>' +
                             '<td>' +
                             '<a href="/ChatLieu/Index/' + item.guid + '" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">' +
                             '<i class="bx bxs-detail"></i>' +
