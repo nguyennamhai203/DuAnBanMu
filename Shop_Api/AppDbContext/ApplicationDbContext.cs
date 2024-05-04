@@ -3,6 +3,7 @@ using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Shop_Models.Dto;
+using System;
 
 namespace Shop_Api.AppDbContext
 {
@@ -10,7 +11,7 @@ namespace Shop_Api.AppDbContext
     {
         public ApplicationDbContext()
         {
-
+            
         }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -44,10 +45,39 @@ namespace Shop_Api.AppDbContext
             base.OnConfiguring(optionsBuilder.UseSqlServer("Server =.\\SQLEXPRESS; Database =DATN_Website_SellLHat3; Trusted_Connection = True;TrustServerCertificate=True"));
         }
 
+        private string GenerateRandomPhoneNumber(Random random)
+        {
+            string[] prefixes = { "03", "05", "07", "08", "09" };
+            string prefix = prefixes[random.Next(0, prefixes.Length)];
+            string number = prefix;
+            for (int i = 0; i < 7; i++)
+            {
+                number += random.Next(0, 10);
+            }
+            return number;
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             Random random = new Random();
+            for (int i = 0; i < 5; i++)
+            {
+                builder.Entity<NguoiDung>().HasData(
+                    new NguoiDung
+                    {
+                        Id = Guid.NewGuid(),
+                        MaNguoiDung = "ND" + random.Next(1, 6),
+                        TenNguoiDung = "TND" + random.Next(1, 6),
+                        SoDienThoai = GenerateRandomPhoneNumber(random),
+                        DiaChi = "DC" + random.Next(1, 6),
+                        GioiTinh = random.Next(0, 2) == 0 ? true : false,
+                        TrangThai = random.Next(0, 2),
+                        VerificationCode = "VC" + random.Next(1, 6),
+                        VerificationCodeExpiry = DateTime.UtcNow.AddHours(random.Next(1, 48))
+                    }
+                );
+            }
             for (int i = 0; i < 5; i++)
             {
                 builder.Entity<SanPham>().HasData(
@@ -62,64 +92,55 @@ namespace Shop_Api.AppDbContext
             }
             for (int i = 0; i < 5; i++)
             {
-                builder.Entity<ThongKe>().HasData(
-                    new ThongKe
-                    {
-                        Id = Guid.NewGuid(),
-                        Ngay = random.Next(1, 32),
-                        Thang = random.Next(1, 13),
-                        Nam = random.Next(2000, 2024),
-                        TrangThai = random.Next(0,2),
-                        HoaDonId = Guid.NewGuid(),
-                        SanPhamChiTietId = Guid.NewGuid()
-                    }
-                );
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                builder.Entity<HoaDon>().HasData(
-                    new HoaDon
-                    {
-                        Id = Guid.NewGuid(),
-                        MaHoaDon = "HD" + random.Next(1, 6),
-                        NgayTao = new DateTime(),
-                        NgayThanhToan = new DateTime(),
-                        NgayShip = new DateTime(),
-                        NgayNhan = new DateTime(),
-                        MoTa = "mo ta" + random.Next(1, 6),
-                        TienGiam = random.Next(10000, 100000),
-                        TienShip = random.Next(10000, 50000),
-                        TongTien = random.Next(10000, 100000) + random.Next(10000, 50000),
-                        TrangThaiThanhToan = random.Next(0, 2),
-                        TrangThaiGiaoHang = random.Next(0, 2),
-                        NgayGiaoDuKien = new DateTime(),
-                        LiDoHuy = "ly do huy" + random.Next(1, 6)
-                    }
-                );
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                builder.Entity<ChiTietSanPham>().HasData(
-                    new ChiTietSanPham()
-                    {
-                        Id = Guid.NewGuid(),
-                        MaSanPham = "SP" + random.Next(1, 6),
-                        GiaNhap = random.Next(100000, 1000000),
-                        GiaBan = random.Next(100000, 1000000),
-                        GiaThucTe = random.Next(100000, 1000000),
-                        SoLuongTon = random.Next(1, 10),
-                        SoLuongDaBan = random.Next(1, 10),
-                        TrangThai = random.Next(0, 2),
-                        Mota = "mo ta" + random.Next(1, 6),
-                        TrangThaiKhuyenMai = random.Next(0, 2),
-                        SanPhamId = null,
-                        LoaiId = null,
-                        ThuongHieuId = null,
-                        XuatXuId = null,
-                        MauSacId = null,
-                        ChatLieuId = null
-                    }
-                );
+                var hdid = Guid.NewGuid();
+                builder.Entity<HoaDon>().HasData(new HoaDon
+                {
+                    Id = hdid,
+                    MaHoaDon = "HD" + random.Next(1, 6),
+                    NgayTao = DateTime.UtcNow,
+                    NgayThanhToan = DateTime.UtcNow,
+                    NgayShip = DateTime.UtcNow,
+                    NgayNhan = DateTime.UtcNow,
+                    MoTa = "mo ta" + random.Next(1, 6),
+                    TienGiam = random.Next(10000, 100000),
+                    TienShip = random.Next(10000, 50000),
+                    TongTien = random.Next(10000, 100000) + random.Next(10000, 50000),
+                    TrangThaiThanhToan = random.Next(0, 2),
+                    TrangThaiGiaoHang = random.Next(0, 2),
+                    NgayGiaoDuKien = DateTime.UtcNow,
+                    LiDoHuy = "ly do huy" + random.Next(1, 6)
+                });
+                var ctspid = Guid.NewGuid();
+                builder.Entity<ChiTietSanPham>().HasData(new ChiTietSanPham
+                {
+                    Id = ctspid,
+                    MaSanPham = "SP" + random.Next(1, 6),
+                    GiaNhap = random.Next(100000, 1000000),
+                    GiaBan = random.Next(100000, 1000000),
+                    GiaThucTe = random.Next(100000, 1000000),
+                    SoLuongTon = random.Next(1, 10),
+                    SoLuongDaBan = random.Next(1, 10),
+                    TrangThai = random.Next(0, 2),
+                    Mota = "mo ta" + random.Next(1, 6),
+                    TrangThaiKhuyenMai = random.Next(0, 2),
+                    SanPhamId = null, // Replace null with valid foreign key
+                    LoaiId = null, // Replace null with valid foreign key
+                    ThuongHieuId = null, // Replace null with valid foreign key
+                    XuatXuId = null, // Replace null with valid foreign key
+                    MauSacId = null, // Replace null with valid foreign key
+                    ChatLieuId = null // Replace null with valid foreign key
+                });
+
+                builder.Entity<ThongKe>().HasData(new ThongKe
+                {
+                    Id = Guid.NewGuid(),
+                    Ngay = random.Next(1, 32),
+                    Thang = random.Next(1, 13),
+                    Nam = random.Next(2000, 2024),
+                    TrangThai = random.Next(0, 2),
+                    HoaDonId = hdid,
+                    SanPhamChiTietId = ctspid
+                });
             }
         }*/
     }

@@ -11,12 +11,14 @@ namespace Shop_Models.Dto
 
         public string? InvoiceCode { get; set; }
         public DateTime CreateDate { get; set; }
+        public DateTime? NgayThanhToan { get; set; }
         public string? PhoneNumber { get; set; }
         public string? FullName { get; set; }
         public string? Address { get; set; }
         public string? CodeVoucher { get; set; }
         public double? GiamGia { get; set; }
         public int Payment { get; set; }
+        public string? Phuongthucthanhtoan { get; set; }
         public int TienShip { get; set; }
         public int TienGiam { get; set; }
         public int ThanhTien { get; set; }

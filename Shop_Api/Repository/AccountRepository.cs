@@ -21,6 +21,7 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using System;
 using SmtpClient = System.Net.Mail.SmtpClient;
+using Microsoft.VisualBasic;
 
 namespace Shop_Api.Repository
 {
@@ -148,7 +149,7 @@ namespace Shop_Api.Repository
                     };
 
                 }
-                else if (user == null) { return new ResponseDto { Message = "Không tìm thấy người dùng",Code=405 }; }
+                else if (user == null) { return new ResponseDto { Message = "Không tìm thấy người dùng", Code = 405 }; }
                 else
                 {
                     if (IsValidPhoneNumber(obj.SDT) == true)
@@ -195,17 +196,17 @@ namespace Shop_Api.Repository
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto model)
         {
-			if (model.NameAccount==null ||model.Password==null)
-			{
-				return new LoginResponseDto
-				{
-					Message = "Vui Lòng Nhập Thông Tin !",
-					Success = false,
-					Code = 405,
-				};
-			}
+            if (model.NameAccount == null || model.Password == null)
+            {
+                return new LoginResponseDto
+                {
+                    Message = "Vui Lòng Nhập Thông Tin !",
+                    Success = false,
+                    Code = 405,
+                };
+            }
 
-			var user = await _userManager.FindByNameAsync(model.NameAccount);
+            var user = await _userManager.FindByNameAsync(model.NameAccount);
 
             var passWordVaild = await _userManager.CheckPasswordAsync(user, model.Password);
 
@@ -513,21 +514,21 @@ namespace Shop_Api.Repository
             }
         }
 
-		public async Task<ResponseDto> SignUpKhacHangAsync(SignUpDto model)
-		{
-			// Kiểm tra xem email đã tồn tại chưa
-			//existingUser = await _userManager.FindByEmailAsync(model.Email);
-			var existingEMail = _context.NguoiDungs.FirstOrDefault(x => x.Email == model.Email);
+        public async Task<ResponseDto> SignUpKhacHangAsync(SignUpDto model)
+        {
+            // Kiểm tra xem email đã tồn tại chưa
+            //existingUser = await _userManager.FindByEmailAsync(model.Email);
+            var existingEMail = _context.NguoiDungs.FirstOrDefault(x => x.Email == model.Email);
 
-			if (existingEMail != null)
-			{
-				return new ResponseDto
-				{
-					IsSuccess = false,
-					Code = 400,
-					Message = "Email đã được sử dụng để đăng ký. Vui lòng sử dụng email khác."
-				};
-			}
+            if (existingEMail != null)
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Email đã được sử dụng để đăng ký. Vui lòng sử dụng email khác."
+                };
+            }
 
             var existingUserName = _context.NguoiDungs.FirstOrDefault(x => x.UserName == model.UserName);
 
@@ -543,84 +544,84 @@ namespace Shop_Api.Repository
 
             // Tiếp tục thực hiện đăng ký người dùng
             var user = new NguoiDung
-			{
-				MaNguoiDung = GenerateUserIdAsync(model.TenNguoiDung),
-				TenNguoiDung = model.TenNguoiDung,
-				UserName = model.UserName,
-				Email = model.Email,
-				SoDienThoai = model.SDT
-			};
+            {
+                MaNguoiDung = GenerateUserIdAsync(model.TenNguoiDung),
+                TenNguoiDung = model.TenNguoiDung,
+                UserName = model.UserName,
+                Email = model.Email,
+                SoDienThoai = model.SDT
+            };
 
 
-			// Kiểm tra mật khẩu
-			if (!model.PassWord.Any(char.IsUpper))
-			{
-				return new ResponseDto
-				{
-					IsSuccess = false,
-					Code = 400,
-					Message = "Mật khẩu phải chứa ít nhất một ký tự in hoa."
-				};
-			}
-			if (!model.PassWord.Any(char.IsDigit))
-			{
-				return new ResponseDto
-				{
-					IsSuccess = false,
-					Code = 400,
-					Message = "Mật khẩu phải chứa ít nhất một chữ số."
-				};
-			}
-			if (!model.PassWord.Any(char.IsSymbol) && !model.PassWord.Any(char.IsPunctuation))
-			{
-				return new ResponseDto
-				{
-					IsSuccess = false,
-					Code = 400,
-					Message = "Mật khẩu phải chứa ít nhất một ký tự đặc biệt."
-				};
-			}
+            // Kiểm tra mật khẩu
+            if (!model.PassWord.Any(char.IsUpper))
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Mật khẩu phải chứa ít nhất một ký tự in hoa."
+                };
+            }
+            if (!model.PassWord.Any(char.IsDigit))
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Mật khẩu phải chứa ít nhất một chữ số."
+                };
+            }
+            if (!model.PassWord.Any(char.IsSymbol) && !model.PassWord.Any(char.IsPunctuation))
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Mật khẩu phải chứa ít nhất một ký tự đặc biệt."
+                };
+            }
 
-			var result = await _userManager.CreateAsync(user, model.PassWord);
-			if (result.Succeeded)
-			{
-				// Kiểm tra role "NhanVien" đã tồn tại chưa
-				if (!await _roleManager.RoleExistsAsync("KhachHang"))
-				{
-					// Nếu chưa tồn tại, tạo mới chức vụ "NhanVien"
-					var newRole = new ChucVu
-					{
-						Name = "KhachHang",
-						MaChucVu = "1" + Guid.NewGuid(),
-						TenChucVu = "Khách Hàng",
-						TrangThai = 1 // Set trạng thái mặc định cho chức vụ
-					};
-					await _roleManager.CreateAsync(newRole);
-				}
+            var result = await _userManager.CreateAsync(user, model.PassWord);
+            if (result.Succeeded)
+            {
+                // Kiểm tra role "NhanVien" đã tồn tại chưa
+                if (!await _roleManager.RoleExistsAsync("KhachHang"))
+                {
+                    // Nếu chưa tồn tại, tạo mới chức vụ "NhanVien"
+                    var newRole = new ChucVu
+                    {
+                        Name = "KhachHang",
+                        MaChucVu = "1" + Guid.NewGuid(),
+                        TenChucVu = "Khách Hàng",
+                        TrangThai = 1 // Set trạng thái mặc định cho chức vụ
+                    };
+                    await _roleManager.CreateAsync(newRole);
+                }
 
-				// Gán chức vụ "NhanVien" cho người dùng
-				await _userManager.AddToRoleAsync(user, "KhachHang");
+                // Gán chức vụ "NhanVien" cho người dùng
+                await _userManager.AddToRoleAsync(user, "KhachHang");
 
-				return new ResponseDto
-				{
+                return new ResponseDto
+                {
                     IsSuccess = true,
                     Code = 200,
                     Message = "Đăng ký thành công.",
-				};
-			}
-			else
-			{
-				return new ResponseDto
-				{
-					IsSuccess = false,
-					Code = 400,
-					Message = "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin."
-				};
-			}
-		}
+                };
+            }
+            else
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin."
+                };
+            }
+        }
 
-		// For Admin
-		public async Task<ResponseDto> XacNhanTaoTkChoNhanVienAsync(SignUpDto model, string maxacnhan, string emailAdmin)
+        // For Admin
+        public async Task<ResponseDto> XacNhanTaoTkChoNhanVienAsync(SignUpDto model, string maxacnhan, string emailAdmin)
         {
 
 
@@ -736,6 +737,57 @@ namespace Shop_Api.Repository
         }
 
 
+        public async Task<ResponseDto> QuenMk(string maxacnhan, string emailAdmin, string newPass)
+        {
+
+
+            //var user = await _userManager.FindByEmailAsync(emailAdmin);
+            var user1 = _context.NguoiDungs.FirstOrDefault(x => x.Email == emailAdmin);
+
+            if (user1 != null)
+            {
+                if (user1.VerificationCode == maxacnhan && user1.VerificationCodeExpiry > DateTime.Now)
+                {
+                    user1.VerificationCode = "";
+                    _context.NguoiDungs.Update(user1);
+                    await _context.SaveChangesAsync();
+
+                    user1.PasswordHash = _userManager.PasswordHasher.HashPassword(user1, newPass);
+                    var result = await _userManager.UpdateAsync(user1);
+                    return new ResponseDto
+                    {
+                        IsSuccess = true,
+                        Code = 200,
+                        Message = "Thành công"
+                    };
+                }
+                else if (user1.VerificationCode!=maxacnhan)
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Code = 400,
+                        Message = "Mã xác nhận không chính xác!"
+                    };
+                }
+                else return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Mã xác nhận đã được sử dụng hoặc đã hết hạn !"
+                };
+
+            }
+            else return new ResponseDto
+            {
+                IsSuccess = false,
+                Code = 400,
+                Message = "Đổi mật khẩu không thành công. Vui lòng kiểm tra lại thông tin."
+            };
+
+
+        }
+
         //public async Task<Task> SendEmailAsync1(/*string _fromMail,string _passFromMail,*/string _Toemail, string? subject, string message)
         //{
         //    subject = "Mã xác thực của bạn là:";
@@ -811,7 +863,7 @@ namespace Shop_Api.Repository
 
 
         // For Admin
-        public async Task<bool> SendEmailAsync(string toEmail, string subject, string body)
+        public async Task<ResponseDto> SendEmailAsync(string toEmail, string subject, string body)
         {
             try
             {
@@ -820,7 +872,12 @@ namespace Shop_Api.Repository
 
                 if (user == null)
                 {
-                    return false;
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Code = 400,
+                        Message = "Email chưa được liên kết với tài khoản nào!"
+                    };
                 }
                 Random random = new Random();
 
@@ -855,15 +912,54 @@ namespace Shop_Api.Repository
                     await client.DisconnectAsync(true);
                 }
 
-                return true; // Gửi email thành công
+                //return true; // Gửi email thành công
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Message = "Gửi Thành Công, kiểm tra email của bạn và nhập mã xác nhận vào ô bên dưới !"
+                };
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error sending email: {ex.Message}");
-                return false; // Gửi email thất bại
+                //return false; // Gửi email thất bại
+                return new ResponseDto
+                {
+                    IsSuccess = true,
+                    Code = 400,
+                    Message = "Lỗi Hệ Thống!"
+                };
             }
         }
 
-
+        public async Task<List<NguoiDung>> GetAllNguoiDungAsync(int? status,int page)
+        {
+            try
+            {
+                var list = _context.NguoiDungs.AsQueryable();
+                if (status.HasValue)
+                {
+                    list = list.Where(x => x.TrangThai == status);
+                }
+                var result = list.Select(x => new NguoiDung
+                {
+                    Id = x.Id,
+                    MaNguoiDung = x.MaNguoiDung,
+                    TenNguoiDung = x.TenNguoiDung,
+                    SoDienThoai = x.SoDienThoai,
+                    DiaChi = x.DiaChi,
+                    GioiTinh = x.GioiTinh,
+                    TrangThai = x.TrangThai,
+                    VerificationCode = x.VerificationCode,
+                    VerificationCodeExpiry = x.VerificationCodeExpiry
+                });
+                return result.ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

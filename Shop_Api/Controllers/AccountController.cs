@@ -62,15 +62,27 @@ namespace Shop_Api.Controllers
         }
 
         [HttpPost("MailToAdmin")]
-        public IActionResult Mail(string mail, string subjectt, string mess)
+        public IActionResult Mail(string mail)
         {
-            var result = _accountRepository.SendEmailAsync(mail, subjectt, mess);
-            if (result.Result==true)
+            var result = _accountRepository.SendEmailAsync(mail, null, null).Result;
+            if (result.IsSuccess==true)
             {
-                return Ok("oke");
-            }
-            return BadRequest("No");
+                return Ok(result);
+            }   
+            return BadRequest(result);
         }
+
+        [HttpPost("QuenMK")]
+        public async Task<IActionResult> QuenMK(string mail, string codeconfirm,string newPass)
+        {
+            var result = await _accountRepository.QuenMk(codeconfirm, mail, newPass);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
 
         [HttpPost("XacNhan")]
         public async Task<IActionResult> Xac(SignUpDto model, string mail, string codeconfirm)
@@ -109,6 +121,17 @@ namespace Shop_Api.Controllers
         public async Task<IActionResult> CapNhatSDTDiaChi(userSDTDiaChi obj)
         {
             var result = await _accountRepository.CapNhatSDTDiaChi(obj);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        
+        [HttpGet("GetNguoiDung")]
+        public async Task<IActionResult> GetNguoiDung(int? status,int page)
+        {
+            var result = await _accountRepository.GetAllNguoiDungAsync(status,page);
             if (result != null)
             {
                 return Ok(result);

@@ -86,6 +86,53 @@ namespace Shop_Api.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+
+
+        [HttpPost("GetFilteredDaTaDSKhuyenMaiAynsc")]
+        public async Task<IActionResult> GetFilteredDaTaDSKhuyenMaiAynsc(ParametersTongQuanDanhSach parameters)
+        {
+            try
+            {
+                var viewModelResult = await _repository.GetFilteredDaTaDSTongQuanAynsc(parameters);
+                //var totalItems = await query.CountAsync();
+                if (parameters.SumGuid != null)
+                {
+                    var totalPages = (int)Math.Ceiling(viewModelResult.Count / (double)parameters.Length);
+                    var paginatedResult = viewModelResult
+                        .Skip(parameters.Start)
+                        .Take(parameters.Length)
+                        .ToList();
+                    var result = new ResponseDto()
+                    {
+                        Content = viewModelResult,
+                        Count = viewModelResult.Count,
+                        TotalPage = totalPages
+                    };
+                    return new ObjectResult(result);
+                }
+                else
+                {
+                    var totalPages = (int)Math.Ceiling(viewModelResult.Count / (double)parameters.Length);
+                    var paginatedResult = viewModelResult
+                        .Skip(parameters.Start)
+                        .Take(parameters.Length)
+                        .ToList();
+                    var result = new ResponseDto()
+                    {
+                        Content = paginatedResult,
+                        Count = viewModelResult.Count,
+                        TotalPage = totalPages
+                    };
+                    return new ObjectResult(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+
         [HttpGet("Get-List-RelatedProduct")]
         public List<SanPhamChiTietDto> GetRelatedProducts(string sumGuild)
         {
@@ -120,7 +167,8 @@ namespace Shop_Api.Controllers
 
             var result = new ResponseDto()
             {
-                Content = pagedViewModelResult,
+                Content = viewModelResult,
+                //Content = pagedViewModelResult,
                 PagingInfo = new PagingInfo()
                 {
                     TongSoItem = viewModelResult.Count(),

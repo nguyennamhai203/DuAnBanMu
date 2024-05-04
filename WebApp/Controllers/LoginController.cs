@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Shop_Models.Dto;
 using System.Net.Http;
+using System.Security.Principal;
 using System.Text;
 
 namespace WebApp.Controllers
@@ -19,11 +20,21 @@ namespace WebApp.Controllers
 
         public IActionResult Index()
         {
+            var token = HttpContext.Session.GetString("AccessToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
         public IActionResult SignUp()
         {
+            var token = HttpContext.Session.GetString("AccessToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -100,6 +111,15 @@ namespace WebApp.Controllers
             }
         }
 
+        public IActionResult LogOut()
+        {
+
+            HttpContext.Session.Remove("AccessToken");
+            HttpContext.Session.Remove("UserName");
+            HttpContext.Session.Remove("username");
+            return RedirectToAction("Index", "Login");
+
+        }
 
         [HttpPost]
         public async Task<IActionResult> SignUpWithJWT(string SDT, string email, string tennguoidung, string username, string password, string repeatPassword)
@@ -118,10 +138,65 @@ namespace WebApp.Controllers
             var respone = await httpclient.PostAsync(apiUrl, requestdata);
 
             var jsonRespone = await respone.Content.ReadAsStringAsync();
-          
+
             if (respone.IsSuccessStatusCode)
             {
-                return Content(jsonRespone,"application/json");
+                return Content(jsonRespone, "application/json");
+            }
+            return Content(jsonRespone, "application/json");
+        }
+
+        public IActionResult QuenMK()
+        {
+            var token = HttpContext.Session.GetString("AccessToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GuiMail(string mail)
+        {
+
+
+            var apiUrl = $"/api/Account/MailToAdmin?mail={mail}";
+            var httpclient = _httpClientFactory.CreateClient("BeHat");
+
+            var respone = await httpclient.PostAsync(apiUrl, null);
+
+            var jsonRespone = await respone.Content.ReadAsStringAsync();
+
+            if (respone.IsSuccessStatusCode)
+            {
+                return Content(jsonRespone, "application/json");
+            }
+            return Content(jsonRespone, "application/json");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> QuenMK(string mail, string codeconfirm, string newPass)
+        {
+
+
+            var apiUrl = $"/api/Account/QuenMK?mail={mail}&codeconfirm={codeconfirm}&newPass={newPass}";
+            var httpclient = _httpClientFactory.CreateClient("BeHat");
+            var requestData = new
+            {
+                mail,
+                codeconfirm,
+                newPass,
+            };
+
+            var requestdata = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+            var respone = await httpclient.PostAsync(apiUrl, requestdata);
+
+            var jsonRespone = await respone.Content.ReadAsStringAsync();
+
+            if (respone.IsSuccessStatusCode)
+            {
+                return Content(jsonRespone, "application/json");
             }
             return Content(jsonRespone, "application/json");
         }

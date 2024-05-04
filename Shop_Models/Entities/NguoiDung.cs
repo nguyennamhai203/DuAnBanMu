@@ -14,11 +14,8 @@ namespace Shop_Models.Entities
         public string? SoDienThoai { get; set; }
         public string? DiaChi { get; set; }
         public bool? GioiTinh { get; set; }
-
-
         // Thêm các trường cho mã xác nhận
         public string? VerificationCode { get; set; }
         public DateTime VerificationCodeExpiry { get; set; }
-
     }
 }

@@ -1,0 +1,48 @@
+﻿@model Shop_Models.Entities.XuatXu
+
+@{
+    ViewData["Title"] = "CreateXuatXu";
+}
+
+<h1>CreateXuatXu</h1>
+
+<h4>XuatXu</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateXuatXu">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Guid" class="control-label"></label>
+                <input asp-for="Guid" class="form-control" />
+                <span asp-validation-for="Guid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaXuatXu" class="control-label"></label>
+                <input asp-for="MaXuatXu" class="form-control" />
+                <span asp-validation-for="MaXuatXu" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TenXuatXu" class="control-label"></label>
+                <input asp-for="TenXuatXu" class="form-control" />
+                <span asp-validation-for="TenXuatXu" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TrangThai" class="control-label"></label>
+                <input asp-for="TrangThai" class="form-control" />
+                <span asp-validation-for="TrangThai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="GetAllXuatXu">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

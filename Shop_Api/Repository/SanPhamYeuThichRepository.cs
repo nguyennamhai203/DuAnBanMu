@@ -1,4 +1,5 @@
-﻿using Shop_Api.AppDbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
@@ -83,7 +84,7 @@ namespace Shop_Api.Repository
             }
         }
 
-        public async Task<List<SanPhamYeuThich>> GetListSPYT(int? status, int page = 1)
+        public async Task<List<SanPhamYeuThich>> GetListSPYT(int? status, int page)
         {
             var list = contextSPYT.SanPhamYeuThichs.AsQueryable();
             if (status.HasValue)
@@ -129,6 +130,106 @@ namespace Shop_Api.Repository
                     Message = "Cap nhat loi roi"
                 };
             }
+        }
+
+        // Thêm một sản phẩm vào danh sách yêu thích của người dùng
+        public async Task<ResponseDto> AddToFavoriteAsync(Guid userId, Guid productId)
+        {
+            try
+            {
+                var existingFavorite = await contextSPYT.SanPhamYeuThichs
+                    .FirstOrDefaultAsync(x => x.NguoiDungId == userId && x.ChiTietSanPhamId == productId);
+
+                if (existingFavorite != null)
+                {
+                    return new ResponseDto { Code = 400, Message = "Sản phẩm đã tồn tại trong danh sách yêu thích." };
+                }
+                
+                var newFavorite = new SanPhamYeuThich { NguoiDungId = userId, ChiTietSanPhamId = productId };
+                await contextSPYT.SanPhamYeuThichs.AddAsync(newFavorite);
+                await contextSPYT.SaveChangesAsync();
+
+                return new ResponseDto { Code = 200, Message = "Thêm sản phẩm vào danh sách yêu thích thành công." };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto { Code = 500, Message = $"Đã xảy ra lỗi khi thêm sản phẩm vào danh sách yêu thích: {ex.Message}" };
+            }
+        }
+
+        // Xóa một sản phẩm khỏi danh sách yêu thích của người dùng
+        public async Task<ResponseDto> RemoveFromFavoriteAsync(Guid userId, Guid productId)
+        {
+            try
+            {
+                var favorite = await contextSPYT.SanPhamYeuThichs
+                    .FirstOrDefaultAsync(x => x.NguoiDungId == userId && x.ChiTietSanPhamId == productId);
+
+                if (favorite == null)
+                {
+                    return new ResponseDto { Code = 404, Message = "Không tìm thấy sản phẩm trong danh sách yêu thích của người dùng." };
+                }
+
+                contextSPYT.SanPhamYeuThichs.Remove(favorite);
+                await contextSPYT.SaveChangesAsync();
+
+                return new ResponseDto { Code = 200, Message = "Xóa sản phẩm khỏi danh sách yêu thích thành công." };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto { Code = 500, Message = $"Đã xảy ra lỗi khi xóa sản phẩm khỏi danh sách yêu thích: {ex.Message}" };
+            }
+        }
+        
+        // Kiểm tra xem một sản phẩm có trong danh sách yêu thích của người dùng hay không
+        public async Task<bool> IsInFavoriteAsync(Guid userId, Guid productId)
+        {
+            return await contextSPYT.SanPhamYeuThichs.AnyAsync(x => x.NguoiDungId == userId && x.ChiTietSanPhamId == productId);
+        }
+
+        // Lấy danh sách các sản phẩm yêu thích của người dùng
+        public async Task<List<ChiTietSanPham>> GetFavoriteProductsAsync(Guid userId)
+        {
+            var list = await contextSPYT.SanPhamYeuThichs.Where(x => x.NguoiDungId == userId).Select(x => x.ChiTietSanPham).ToListAsync();
+            return list;
+        }
+
+        // Kiểm tra xem một sản phẩm có trong danh sách yêu thích hay không
+        public async Task<bool> IsFavoriteProductAsync(Guid productId)
+        {
+            return await contextSPYT.SanPhamYeuThichs.AnyAsync(x => x.ChiTietSanPhamId == productId);
+        }
+
+        // Đếm số lượng sản phẩm yêu thích của người dùng
+        public async Task<int> CountFavoriteProductsAsync(Guid userId)
+        {
+            return await contextSPYT.SanPhamYeuThichs.CountAsync(x => x.NguoiDungId == userId);
+        }
+
+        // Xóa toàn bộ sản phẩm trong danh sách yêu thích của người dùng
+        public async Task<ResponseDto> ClearFavoriteProductsAsync(Guid userId)
+        {
+            try
+            {
+                var favorites = await contextSPYT.SanPhamYeuThichs.Where(x => x.NguoiDungId == userId).ToListAsync();
+                contextSPYT.SanPhamYeuThichs.RemoveRange(favorites);
+                await contextSPYT.SaveChangesAsync();
+
+                return new ResponseDto { Code = 200, Message = "Xóa toàn bộ sản phẩm trong danh sách yêu thích thành công." };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDto { Code = 500, Message = $"Đã xảy ra lỗi khi xóa toàn bộ sản phẩm trong danh sách yêu thích: {ex.Message}" };
+            }
+        }
+
+        // Lấy trạng thái yêu thích của một sản phẩm
+        public async Task<FavoriteStatus> GetFavoriteStatusAsync(Guid userId, Guid productId)
+        {
+            var favoriteStatus = new FavoriteStatus();
+            favoriteStatus.IsFavorite = await IsInFavoriteAsync(userId, productId);
+            favoriteStatus.FavoriteCount = await CountFavoriteProductsAsync(userId);
+            return favoriteStatus;
         }
     }
 }

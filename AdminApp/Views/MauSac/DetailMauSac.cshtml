@@ -1,0 +1,42 @@
+﻿@model Shop_Models.Entities.MauSac
+
+@{
+    ViewData["Title"] = "DetailMauSac";
+}
+
+<h1>DetailMauSac</h1>
+
+<div>
+    <h4>MauSac</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Guid)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Guid)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MaMauSac)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MaMauSac)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TenMauSac)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TenMauSac)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TrangThai)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TrangThai)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "EditMauSac", new {  id = Model.Guid  }) |
+    <a asp-action="GetAllMauSac">Back to List</a>
+</div>

@@ -117,8 +117,10 @@
             <td>@totalRevenue</td>
             <td>
                 @{
-                    var averageProfitPercentage = Model.Average(item => (Convert.ToDecimal(item.GiaBan - item.GiaNhap)) * item.SoLuongDaBan / Convert.ToDecimal(totalRevenue) * 100);
-                    @Math.Round(Convert.ToDecimal(averageProfitPercentage), 2) @:%
+                    var averageProfitPercentage = Model.Sum(item => (Convert.ToDecimal(item.GiaBan - item.GiaNhap)) * item.SoLuongDaBan);
+                    @Html.DisplayFor(x => averageProfitPercentage)
+                    /*var averageProfitPercentage = Model.Sum(item => (Convert.ToDecimal(item.GiaBan - item.GiaNhap)) * item.SoLuongDaBan / Convert.ToDecimal(totalRevenue) * 100);
+                    @Math.Round(Convert.ToDecimal(averageProfitPercentage), 2) @:%*/
 
                 }
             </td>
@@ -128,13 +130,10 @@
                     @Math.Round(Convert.ToDecimal(averageLossPercentage), 2) @:%
                 } *@
                 @{
-                    var averageLossPercentage = 0;
+                    var averageLossPercentage = Model.Sum(item => (Convert.ToDecimal(item.GiaNhap - item.GiaBan)) * item.SoLuongDaBan);
                     @Html.DisplayFor(modelItem => averageLossPercentage)
                 }
             </td>
         </tr>
     </tbody>
 </table>
-<form asp-controller="ThongKe" asp-action="ExportToExcel" method="post">
-    <button type="submit" class="btn btn-primary">Export to Excel</button>
-</form>
