@@ -125,13 +125,13 @@
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Mã chất liệu</label>
                                     <div class="col-sm-8">
-                                        <input name="MaChatLieu" type="text" class="form-control" />
+                                        <input id="MaChatLieu" name="MaChatLieu" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Tên chất liệu</label>
                                     <div class="col-sm-8">
-                                        <input name="TenChatLieu" type="text" class="form-control" />
+                                        <input id="TenChatLieu" name="TenChatLieu" type="text" class="form-control" />
                                     </div>
                                 </div>
 
@@ -213,6 +213,21 @@
     }
 
     function saveForm() {
+        // Ngăn chặn hành động mặc định của nút submit
+        event.preventDefault();
+
+        // Lấy ra các giá trị từ các trường trong form
+        var parentElement = document.getElementById('createProfileForm');
+        var maChatLieu = parentElement.querySelector('#MaChatLieu').value;
+        var tenChatLieu = parentElement.querySelector('#TenChatLieu').value;
+
+        // Kiểm tra xem các trường có bị bỏ trống không
+        if (!maChatLieu || !tenChatLieu) {
+            // Hiển thị thông báo lỗi nếu có trường nào bị bỏ trống
+            showNotification("Vui lòng điền đầy đủ thông tin vào các trường", "warning");
+            return; // Ngăn không cho tiếp tục thực hiện lưu form
+        }
+
         var formData = new FormData(document.getElementById('createProfileForm'));
 
         Swal.fire({
@@ -257,7 +272,7 @@
 
     function updateForm() {
         var formData = new FormData(document.getElementById('updateProfileForm'));
-
+        
         Swal.fire({
             title: 'Xác nhận',
             text: 'Bạn có chắc chắn muốn Cập nhật bản ghi này ?',
@@ -375,7 +390,7 @@
                             '<a href="/ChatLieu/Index/' + item.guid + '" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">' +
                             '<i class="bx bxs-detail"></i>' +
                             '</a>' +
-                            '<a id="deleteProfileForm" class="btn btn-danger" onclick="deleteForm()" title="Xóa">' +
+                            '<a id="deleteProfileForm" class="btn btn-danger" onclick="deleteForm(\'' + item.guid + '\')" title="Xóa">' +
                             '<i class="bx bxs-trash-alt"></i>' +
                             '</a>' +
                             '</td>' +
@@ -407,5 +422,5 @@
             }
         });
     }
-
+    
 </script>

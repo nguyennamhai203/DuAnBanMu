@@ -156,37 +156,37 @@
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Mã</label>
                                     <div class="col-sm-8">
-                                        <input name="MaVoucher" type="text" class="form-control" />
+                                        <input id="MaVoucher" name="MaVoucher" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Tên</label>
                                     <div class="col-sm-8">
-                                        <input name="TenVoucher" type="text" class="form-control" />
+                                        <input id="TenVoucher" name="TenVoucher" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Tỉ Lệ</label>
                                     <div class="col-sm-8">
-                                        <input name="PhanTramGiam" type="text" class="form-control" />
+                                        <input id="PhanTramGiam" name="PhanTramGiam" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Sô Lượng</label>
                                     <div class="col-sm-8">
-                                        <input name="SoLuong" type="number" class="form-control" />
+                                        <input id="SoLuong" name="SoLuong" type="number" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Ngày Bắt Đầu</label>
                                     <div class="col-sm-8">
-                                        <input name="NgayBatDau" type="date" class="form-control" />
+                                        <input id="NgayBatDau" name="NgayBatDau" type="date" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Ngày Kết Thúc</label>
                                     <div class="col-sm-8">
-                                        <input name="NgayHetHan" type="date" class="form-control" />
+                                        <input id="NgayHetHan" name="NgayHetHan" type="date" class="form-control" />
                                     </div>
                                 </div>
 
@@ -275,7 +275,33 @@
         }
     }
 
-    function saveForm() {
+    function saveForm(event) {
+        // Ngăn chặn hành động mặc định của nút submit
+        event.preventDefault();
+
+        // Lấy ra các giá trị từ các trường trong form
+        var parentElement = document.getElementById('createProfileForm');
+        var maVoucher = parentElement.querySelector('#MaVoucher').value;
+        var tenVoucher = parentElement.querySelector('#TenVoucher').value;
+        var phanTramGiam = parentElement.querySelector('#PhanTramGiam').value;
+        var soLuong = parentElement.querySelector('#SoLuong').value;
+        var ngayBatDau = parentElement.querySelector('#NgayBatDau').value;
+        var ngayHetHan = parentElement.querySelector('#NgayHetHan').value;
+
+        // Kiểm tra xem các trường có bị bỏ trống không
+        if (!maVoucher || !tenVoucher || !phanTramGiam || !soLuong || !ngayBatDau || !ngayHetHan) {
+            // Hiển thị thông báo lỗi nếu có trường nào bị bỏ trống
+            showNotification("Vui lòng điền đầy đủ thông tin vào các trường", "warning");
+            return; // Ngăn không cho tiếp tục thực hiện lưu form
+        }
+
+        // Kiểm tra ngày hết hạn phải sau ngày bắt đầu
+        if (new Date(ngayHetHan) <= new Date(ngayBatDau)) {
+            showNotification("Ngày hết hạn phải sau ngày bắt đầu", "warning");
+            return;
+        }
+
+        // Nếu các trường đều được điền đầy đủ, tiếp tục xác nhận thêm bản ghi
         var formData = new FormData(document.getElementById('createProfileForm'));
 
         Swal.fire({
@@ -287,16 +313,12 @@
             cancelButtonText: 'Không'
         }).then((result) => {
             if (result.isConfirmed) {
-                // User confirmed, perform the request
                 performRequest(formData);
             } else {
-                // User canceled, do nothing
+                // Người dùng huỷ bỏ, không làm gì cả
                 // Swal.fire('Cancelled', 'Your action has been cancelled', 'info');
             }
         });
-
-        event.preventDefault(); // Di chuyển lệnh này xuống phía dưới
-
     }
 
     function performRequest(formData) {
@@ -307,16 +329,20 @@
             contentType: false,
             processData: false,
             success: function (results) {
-                showNotification("Thêm thành công", "success");
-                document.getElementById('createProfileForm').reset();
-
+                // Hiển thị thông báo thành công
+                showNotification("Thêm bản ghi thành công", "success");
                 updateTable();
+                document.getElementById('createProfileForm').reset();
             },
             error: function () {
-                showNotification("Lỗi hệ thống", "error");
+                // Hiển thị thông báo lỗi
+                showNotification("Đã xảy ra lỗi khi thêm bản ghi", "error");
             }
         });
     }
+
+    // Lắng nghe sự kiện submit của biểu mẫu và gọi hàm saveForm
+    document.getElementById('createProfileForm').addEventListener('submit', saveForm);
 
     function updateForm() {
         var formData = new FormData(document.getElementById('updateProfileForm'));
@@ -445,7 +471,7 @@
                             '<a href="/Voucher/Index/' + item.guid + '" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">' +
                             '<i class="bx bxs-detail"></i>' +
                             '</a>' +
-                            '<a id="deleteProfileForm" class="btn btn-danger" onclick="deleteForm()" title="Xóa">' +
+                            '<a id="deleteProfileForm" class="btn btn-danger" onclick="deleteForm(\'' + item.guid + '\')" title="Xóa">' +
                             '<i class="bx bxs-trash-alt"></i>' +
                             '</a>' +
                             '</td>' +
