@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Shop_Api.AppDbContext;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace Shop_Api.Services
                     productService.UpdatePromotionStatusAndProductPrice();
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
             }
         }
     }
