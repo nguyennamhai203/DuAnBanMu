@@ -40,11 +40,11 @@ namespace Shop_Api.AppDbContext
         public virtual DbSet<XuatXu> XuatXus { get; set; }
         public virtual DbSet<SanPhamYeuThichViewModel> SanPhamYeuThichViewModels { get; set;}
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder.UseSqlServer("Server =.\\SQLEXPRESS; Database =DATN_Website_SellLHat3; Trusted_Connection = True;TrustServerCertificate=True"));
-            optionsBuilder.EnableSensitiveDataLogging();
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder.UseSqlServer("Server =.\\SQLEXPRESS; Database =DATN_Website_SellLHat3; Trusted_Connection = True;TrustServerCertificate=True"));
+        //    optionsBuilder.EnableSensitiveDataLogging();
+        //}
 
         /*protected override void OnModelCreating(ModelBuilder builder)
         {

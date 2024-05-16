@@ -19,33 +19,46 @@ namespace AdminApp.Controllers
 
         public async Task<IActionResult> DanhSachHoaDonCho()
         {
-            var client = _httpClientFactory.CreateClient("BeHat");
-            var url = $"/api/BanHangTaiQuay/GetAllHdTaiQuay";
-            var respone = client.GetAsync(url).Result;
-            string data = await respone.Content.ReadAsStringAsync();
-            //var responsedata = JsonConvert.DeserializeObject<ResponseDto>(data);
-            var listHoaDonCho = JsonConvert.DeserializeObject<List<HoaDonChoDTO>>(data);
-            //var listHoaDonCho = await _hoaDonServices.GetAllHoaDonCho();
-
-            var urlSPCT = $"/api/ChiTietSanPham/GetAllDto?status=1";
-            var responeSPCT = client.GetAsync(urlSPCT).Result;
-            string dataSPCT = await responeSPCT.Content.ReadAsStringAsync();
-            //var responsedataSPCT = JsonConvert.DeserializeObject<ResponseDto>(dataSPCT);
-            var listsanpham = JsonConvert.DeserializeObject<List<SanPhamChiTietDto>>(dataSPCT);
-            //var listHoaDonCho = await _hoaDonServices.GetAllHoaDonCho();
-            //var listsanpham = await _sanPhamChiTietService.GetDanhSachBienTheItemShopViewModelAsync();
-            foreach (var item in listHoaDonCho)
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                foreach (var item2 in item.hoaDonChiTietDTOs)
-                {
-                    var sanpham = listsanpham.FirstOrDefault(c => c.Id == item2.SanPhamChiTietId);
-                    item2.NameProductDetail = sanpham.TenSanPham + "/" + sanpham.TenMauSac + "/" + sanpham.TenThuongHieu;
-                    //item2.masanpham  = sanpham
-                }
-            }
-            var v = listHoaDonCho.OrderBy(c => Convert.ToInt32(c.MaHoaDon.Substring(4)));
+                var client = _httpClientFactory.CreateClient("BeHat");
+                var url = $"/api/BanHangTaiQuay/GetAllHdTaiQuay";
+                var respone = client.GetAsync(url).Result;
+                string data = await respone.Content.ReadAsStringAsync();
+                //var responsedata = JsonConvert.DeserializeObject<ResponseDto>(data);
+                var listHoaDonCho = JsonConvert.DeserializeObject<List<HoaDonChoDTO>>(data);
+                //var listHoaDonCho = await _hoaDonServices.GetAllHoaDonCho();
 
-            return View(listHoaDonCho.OrderBy(c => Convert.ToInt32(c.MaHoaDon.Substring(4))));
+                var urlSPCT = $"/api/ChiTietSanPham/GetAllDto";
+                var responeSPCT = client.GetAsync(urlSPCT).Result;
+                string dataSPCT = await responeSPCT.Content.ReadAsStringAsync();
+                //var responsedataSPCT = JsonConvert.DeserializeObject<ResponseDto>(dataSPCT);
+                var listsanpham = JsonConvert.DeserializeObject<List<SanPhamChiTietDto>>(dataSPCT);
+                //var listHoaDonCho = await _hoaDonServices.GetAllHoaDonCho();
+                //var listsanpham = await _sanPhamChiTietService.GetDanhSachBienTheItemShopViewModelAsync();
+                foreach (var item in listHoaDonCho)
+                {
+                    foreach (var item2 in item.hoaDonChiTietDTOs)
+                    {
+                        var sanpham = listsanpham.FirstOrDefault(c => c.Id == item2.SanPhamChiTietId);
+                        item2.NameProductDetail = sanpham.TenSanPham + "/" + sanpham.TenMauSac + "/" + sanpham.TenThuongHieu;
+                        //item2.masanpham  = sanpham
+                    }
+                }
+                var v = listHoaDonCho.OrderBy(c => Convert.ToInt32(c.MaHoaDon.Substring(4)));
+
+                return View(listHoaDonCho.OrderBy(c => Convert.ToInt32(c.MaHoaDon.Substring(4))));
+            }
+            else
+            {
+
+                return RedirectToAction("Login","Home");
+            }
+
+
+
         }
 
         [HttpPost]
@@ -469,18 +482,18 @@ namespace AdminApp.Controllers
             var hoaDon = hoaDonChoDtoList.FirstOrDefault(x => x.MaHoaDon == maHD);
 
             var hoaDonChiTiet = hoaDonChoDtoList.FirstOrDefault(x => x.MaHoaDon == maHD).hoaDonChiTietDTOs;
-            
-            
-                
-                if (hoaDonChiTiet.Count()==0)
-                {
-                    return Ok(new
-                    {
-                        TrangThai = false,
-                    });
-                }
 
-            
+
+
+            if (hoaDonChiTiet.Count() == 0)
+            {
+                return Ok(new
+                {
+                    TrangThai = false,
+                });
+            }
+
+
             var hoaDonUpdate = new HoaDon()
             {
                 Id = hoaDon.Id,
@@ -495,7 +508,7 @@ namespace AdminApp.Controllers
                 TenKhachHang = tenKhachHang,
                 SoDienThoai = SDT,
             };
-    
+
             var urlThanhToan = $"/api/BanHangTaiQuay/ThanhToanTaiQuay";
             var responeThanhToan = await client.PutAsJsonAsync(urlThanhToan, hoaDonUpdate);
             if (responeThanhToan.IsSuccessStatusCode)
@@ -693,9 +706,9 @@ namespace AdminApp.Controllers
 
             if (reponseDto.IsSuccess == true)
             {
-                  return Ok(
-                  new { TrangThai = true, }
-                  );
+                return Ok(
+                new { TrangThai = true, }
+                );
             }
             return Ok(new
             {
