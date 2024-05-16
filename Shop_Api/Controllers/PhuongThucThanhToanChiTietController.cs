@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Shop_Api.Controllers
 {
-    
+
     public class PhuongThucThanhToanChiTietController : ControllerBase
     {
         private readonly IPhuongThucThanhToanChiTietRepository db4;
@@ -22,28 +22,28 @@ namespace Shop_Api.Controllers
         [HttpGet("Get-All-PTTTCT")]
         public IEnumerable<PhuongThucTTChiTiet> GetAllPTTTCT()
         {
-            
-                return db4.GetAll();
-            
+
+            return db4.GetAll();
+
         }
         [HttpPost("Create-PTTTCT")]
-        public async Task<IActionResult> CreatePTTTCT( Guid hdid, Guid ptttid, double sotien, int trangthai)
+        public async Task<IActionResult> CreatePTTTCT(Guid hdid, Guid ptttid, double sotien, int trangthai)
         {
             var obj = new PhuongThucTTChiTiet();
             obj.Id = new Guid();
-            obj.HoaDonId=hdid;
-            obj.PTTToanId=ptttid;
+            obj.HoaDonId = hdid;
+            obj.PTTToanId = ptttid;
             obj.SoTien = sotien;
             obj.TrangThai = trangthai;
-            
-            if ( hdid == null || ptttid == null|| sotien==null || trangthai==null)
+
+            if (hdid == null || ptttid == null || sotien == null || trangthai == null)
             {
                 return BadRequest("Du lieu them bi trong");
             }
             try
-                
+
             {
-               await db4.Create(obj);
+                await db4.Create(obj);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -52,7 +52,7 @@ namespace Shop_Api.Controllers
             }
         }
         [HttpPost("Update-PTTTCT")]
-        public async Task<IActionResult> UpdatePTTTCT(Guid id ,Guid hdid, Guid ptttid, double sotien, int trangthai)
+        public async Task<IActionResult> UpdatePTTTCT(Guid id, Guid hdid, Guid ptttid, double sotien, int trangthai)
         {
             var obj = await db4.GetById(id);
             obj.HoaDonId = hdid;
@@ -61,7 +61,7 @@ namespace Shop_Api.Controllers
             obj.TrangThai = trangthai;
             try
             {
-                await db4.Update(id,obj);
+                await db4.Update(id, obj);
                 return Ok(obj);
             }
             catch (Exception ex)
@@ -73,9 +73,30 @@ namespace Shop_Api.Controllers
         [HttpDelete("delete-PTTTCT")]
         public async Task<IActionResult> DeletePTTTCT(Guid id)
         {
-            
-           var a= await db4.Delete(id);
+
+            var a = await db4.Delete(id);
             return Ok(a);
+        }
+
+
+        [HttpPost("AddPhuongThucThanhToanChiTietTaiQuay")]
+        public bool AddPhuongThucThanhToanChiTietTaiQuay(Guid IdHoaDon, Guid IdThanhToan, double SoTien, int TrangThai)
+        {
+            var PhuongThucThanhToanChiTiet = new PhuongThucTTChiTiet()
+            {
+                Id = Guid.NewGuid(),
+                HoaDonId = IdHoaDon,
+                PTTToanId = IdThanhToan,
+                SoTien = SoTien,
+                TrangThai = TrangThai
+            };
+            var result = db4.Create(PhuongThucThanhToanChiTiet).Result;
+            if (result.IsSuccess)
+            {
+                return true;
+
+            }
+            return false;
         }
     }
 }

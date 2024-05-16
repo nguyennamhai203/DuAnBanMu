@@ -35,6 +35,30 @@ namespace Shop_Api.Controllers
             return Ok(phuongThucThanhToan);
         }
 
+        [HttpGet("PhuongThucThanhToanByName")]
+        public async Task<IActionResult> PhuongThucThanhToanByName(string name)
+        {
+            var phuongThucThanhToan = _ptttRepository.GetAllAsync().Result.FirstOrDefault(c => c.TenMaPTThanhToan == name);
+            if (phuongThucThanhToan == null)
+            {
+                PhuongThucThanhToan pttt = new PhuongThucThanhToan()
+                {
+                    Id = Guid.NewGuid(),
+                    TenMaPTThanhToan = name,
+                    MaPTThanhToan = name,
+                    MoTa = name,
+                    TrangThai = 1,
+                };
+                var result = await _ptttRepository.CreateAsync(pttt);
+                if (result.IsSuccess)
+                {
+                    var phuongThucThanhToan2 = _ptttRepository.GetAllAsync().Result.FirstOrDefault(c => c.TenMaPTThanhToan == name);
+                    return Ok(pttt.Id);
+                }
+            }
+            return Ok(Guid.Parse(phuongThucThanhToan.Id.ToString()));
+        }
+
         [HttpPost]
         public async Task<ActionResult<ResponseDto>> Create(PhuongThucThanhToan phuongThucThanhToan)
         {

@@ -44,14 +44,18 @@
                 <div class="price">
                     @* <h6>$150.00</h6>
                 <h6 class="l-through">$210.00</h6> *@
-                    @if (item.GiaMin == item.GiaMax)
+                    @if (item.GiaBan == item.GiaGoc)
                     {
-                        <div class="product-m__price" style="color: red">Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMin)</div>
+                        <div class="product-m__price" style="color: red">Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</div>
 
                     }
                     else
                     {
-                        <div class="product-m__price" style="color: red">Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMin)  -  @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMax)</div>
+                        <div class="product-m__price" style="color: red">
+                            Giá:
+                            <span style="font-weight: bold">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                            <del>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaGoc)</del>
+                        </div>
                     }
                     <a href="@Url.Action("Details","SanPhamChiTiet", new {  sumguid=item.IdChiTietSp })" class="dropdown-item" style="color: orange;">Xem Mũ</a>
 
@@ -182,7 +186,7 @@
 
 
     $(document).ready(function () {
-       
+
     });
 
 

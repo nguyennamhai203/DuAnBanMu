@@ -8,6 +8,7 @@ namespace Shop_Models.Dto
 {
     public class ProfileOfUserDto
     {
+        public Guid Id { get; set; }
         public string? TenTaiKhoan { get; set; }
         public string? TenNguoiDung { get; set; }
         public string? soDienThoai { get; set; }

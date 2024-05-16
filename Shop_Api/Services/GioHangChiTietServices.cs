@@ -47,6 +47,11 @@ namespace Shop_Api.Services
 				{
 					return ErrorResponse("Không tìm thấy sản phẩm", 404);
 				}
+				
+				if (sanPhamChiTietDTO.SoLuongTon < soluong)
+				{
+					return ErrorResponse("Sản phẩm hiện đang hết hàng", 404);
+				}
 
 
 				var userCart = _reposGioHang.GetByIdGioHang(user.Id).Result;
