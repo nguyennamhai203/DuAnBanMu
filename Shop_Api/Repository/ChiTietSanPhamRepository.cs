@@ -1010,7 +1010,7 @@ namespace Shop_Api.Repository
                     TheLoai = gr.First().Loai.TenLoai,
                     TenSanPham = gr.First().SanPham.TenSanPham,
                     GiaMin = gr.Min(sp => sp.GiaBan),
-                    GiaBan = gr.First().GiaThucTe.GetValueOrDefault(),
+                    GiaBan = gr.First().GiaBan.GetValueOrDefault(),
                     SoLuongTon = gr.Sum(sp => sp.SoLuongTon),
                     GiaGoc = gr.First().GiaThucTe,
                     GiaMax = gr.Max(sp => sp.GiaBan),

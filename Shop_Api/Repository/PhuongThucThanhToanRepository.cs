@@ -71,5 +71,10 @@ namespace Shop_Api.Repository
                 return new ResponseDto { IsSuccess = false, Code = 500, Message = "Lỗi hệ thống" };
             }
         }
+
+        public Task<Guid> GetByIdAsync(string name)
+        {
+            throw new NotImplementedException();
+        }
     }
     }

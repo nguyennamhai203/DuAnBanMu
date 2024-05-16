@@ -81,6 +81,8 @@ namespace AdminApp.Controllers
 
                 if (profileUserJson != null)
                 {
+                    HttpContext.Session.SetString("IdNguoiDung", profileUserJson.Id.ToString());
+
                     if (profileUserJson.TenNguoiDung != null)
                     {
                         HttpContext.Session.SetString("TenNguoiDung", profileUserJson.TenNguoiDung);

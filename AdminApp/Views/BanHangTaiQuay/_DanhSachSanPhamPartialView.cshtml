@@ -1,0 +1,175 @@
+﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@model IEnumerable<Shop_Models.Dto.SanPhamChiTietDto>;
+
+@foreach (var item in Model)
+{
+    <div class="col-6">
+        <div class="card" style="width: 15rem;">
+            <div class="card-body">
+                <h5 class="card-title"> </h5>
+                <div style="height:200px;width:200px">
+                    <img src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.AnhThuNhat)" class="card-img-top" alt="..." style="height:200px;width:200px">
+                </div>
+                <p class="card-text">
+                    <div style="height:30px">
+                        <span>@item.TenSanPham/@item.TenMauSac/@item.TenThuongHieu</span>
+                    </div>
+                    <br />
+                    <span>Mã: @item.MaSanPham</span>
+                    <br />
+                    @{
+                        if (item.GiaBan != item.GiaThucTe)
+                        {
+                            <span style="color: red;">
+                                Giá:<strike>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", @item.GiaBan)</strike><br>
+                            </span>
+                        }
+                        else
+                        {
+                            <br>
+                        }
+                    }
+                    <span style="color: red;">
+                        Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", @item.GiaThucTe)
+                    </span><br>
+                    @{
+
+                        <span>Số lượng:</span>
+                        if (item.SoLuongTon > 0)
+                        {
+                            <span id="@item.Id">@item.SoLuongTon</span>
+                        }
+                        else
+                        {
+                            <span id="@item.Id">Hết Hàng</span>
+                        }
+                        <button onclick="add('@item.Id')" class="btn btn-success" style="float: right;"> Add </button>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+
+}
+<script>
+    // var isAdding = false;
+    function add(id) {
+        debugger
+        var element = document.getElementById(id);
+        if (isAdding) {
+            return;
+        }
+        // isAdding = true;
+        if (parseInt(element.textContent, 10) >= 1) {
+            var maHoaDon = "";
+            if ($("#tabs .ui-tabs-active a").length > 0) { maHoaDon = $("#tabs .ui-tabs-active a").text(); }
+            if (maHoaDon == "") {
+                // isAdding = false;
+                toastr.error('Vui lòng chọn hóa đơn ', 'Lỗi');
+                return;
+            }
+            $.ajax({
+                url: "@Url.Action("ThemSanPhamVaoHoaDon", "BanHangTaiQuay")",
+                type: "POST",
+                data: {
+                    "maHD": maHoaDon,
+                    "idSanPham": id
+                },
+                success: function (response) {
+                    if (response.trangThai) {
+                        var foundElement = $("#tab-" + maHoaDon + " table tbody").find("tr[id='hdct-" + response.idSanPhamChiTiet + "']");
+                        if (foundElement.length > 0) {
+                            var inputWithinFoundElement = foundElement.find("input");
+                            inputWithinFoundElement.val(response.soLuong);
+                            // isAdding = false;
+                            var tongTien = parseInt($("#TongTienHoaDon").val().replace(/\D/g, ''), 10) + response.tongTienThayDoi;
+                            var tienPhaiTra = parseInt($("#SoTienPhaiTra").val().replace(/\D/g, ''), 10) + response.soTienTraLaiThayDoi;
+                            var khuyenMaiGiam = parseInt($("#KhuyenMaiGiam").val().replace(/\D/g, ''), 10) + response.soTienKhyenMaiGiam;
+                            $("#TongTienHoaDon").val(tongTien.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            $("#SoTienPhaiTra").val(tienPhaiTra.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            $("#KhuyenMaiGiam").val(khuyenMaiGiam.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            $("#VoucherGiam").val(response.soTienVoucherGiam.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            $("#TongGiam").val((tongTien - tienPhaiTra).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            $("#MaVoucher").val("");
+                            CapNhapLaiTien(maHoaDon);
+
+                        }
+                        else {
+                            var stt = $("#tab-" + maHoaDon + " table tbody tr").length + 1;
+                            // Create a new row and append it to the table
+                            var newRow = $("<tr>").attr("id", "hdct-" + response.idSanPhamChiTiet);
+                            newRow.append("<td>" + stt + "</td>");
+                            newRow.append("<td hidden>" + response.idSanPhamChiTiet + "</td>");
+                            newRow.append("<td>" + response.maSanPham + "</td>");
+                            newRow.append("<td>" + response.tenSanPham + "</td>");
+                            var formattedCurrency = response.giaBan.toLocaleString('vi-VN', {
+                                style: 'currency',
+                                currency: 'VND',
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            });
+
+                            newRow.append("<td>" + formattedCurrency + "</td>");
+
+                            // Create an input element for quantity
+                            var quantityInput = $("<input>").attr({
+                                type: "number",
+                                max: 1000,
+                                min: 1,
+                                pattern: "[0-9]*",
+                                oninput: "this.value = this.value.replace(/[^0-9]/g, '')",
+                                onchange: "suaSoLuongSanPham('" + response.idSanPhamChiTiet + "', this)",
+                                value: response.soLuong
+                            });
+                            newRow.append($("<td>").append(quantityInput));
+                            newRow.append("<td><a class='btn btn-tone' onclick=\"XoaSanPhamTrongHoaDon('hdct-" + response.idSanPhamChiTiet + "','" + response.idSanPhamChiTiet + "')\">X</a></td>");
+                            // Append the new row to the table body
+                            $("#tab-" + maHoaDon + " table tbody").append(newRow);
+                            var tongTien = parseInt($("#TongTienHoaDon").val().replace(/\D/g, ''), 10) + response.tongTienThayDoi;
+                            var tienPhaiTra = parseInt($("#SoTienPhaiTra").val().replace(/\D/g, ''), 10) + response.soTienTraLaiThayDoi;
+                            var khuyenMaiGiam = parseInt($("#KhuyenMaiGiam").val().replace(/\D/g, ''), 10) + response.soTienKhyenMaiGiam;
+                            $("#TongTienHoaDon").val(tongTien.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            $("#SoTienPhaiTra").val(tienPhaiTra.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            $("#KhuyenMaiGiam").val(khuyenMaiGiam.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            $("#VoucherGiam").val(response.soTienVoucherGiam.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            $("#MaVoucher").val("");
+                            $("#TongGiam").val((tongTien - tienPhaiTra).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                            CapNhapLaiTien(maHoaDon);
+                            // isAdding = false;
+                        }
+                        toastr.success('Thêm sản phẩm thành công', 'Thành công');
+
+                    }
+                    else {
+                        if (response.trangThaiHang) {
+                            element.textContent = "Hết hàng";
+                            toastr.error('Sản phẩm đã hết', 'Lỗi');
+                            // isAdding = false;
+                            return;
+                        }
+                        return;
+                    }
+                    updateTienThua();
+                },
+                error: function (error) {
+                    console.error(error);
+                }
+            });
+            if (parseInt(element.textContent, 10) === 1) { // Đổi dấu bằng sang '==='
+                element.textContent = "Hết hàng";
+            }
+            else {
+                var currentNumber = parseInt(element.textContent, 10);
+                var newNumber = currentNumber - 1;
+                element.textContent = newNumber;
+            }
+        }
+        else {
+            element.textContent = "Hết hàng";
+            toastr.error('Sản phẩm đã hết', 'Lỗi');
+            // isAdding = false;
+        }
+
+    }
+
+</script>

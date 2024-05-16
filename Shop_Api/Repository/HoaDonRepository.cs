@@ -4,6 +4,7 @@ using Shop_Api.Repository.IRepository;
 using Shop_Api.AppDbContext;
 using Shop_Models.Dto;
 using Microsoft.EntityFrameworkCore;
+using Shop_Api.Migrations;
 
 namespace Shop_Api.Repository
 {
@@ -107,12 +108,15 @@ namespace Shop_Api.Repository
         {
             var query = from bill in _db.HoaDons
                         where bill.MaHoaDon == invoiceCode
-                        join v in _db.Vouchers on bill.VoucherId equals v.Guid into voucherGroup            
+                        join v in _db.Vouchers on bill.VoucherId equals v.Guid into voucherGroup
                         from voucher in voucherGroup.DefaultIfEmpty()
-                        join thanhtoanchitiet in _db.PhuongThucTTChiTiets on bill.Id equals thanhtoanchitiet.HoaDonId
-                        join pttt in _db.PhuongThucThanhToans on thanhtoanchitiet.PTTToanId equals pttt.Id
+                        join ttct in _db.PhuongThucTTChiTiets on bill.Id equals ttct.HoaDonId into ttctGroup
+                        from thanhtoanchitiet in ttctGroup.DefaultIfEmpty()
+                        join pttt in _db.PhuongThucThanhToans on thanhtoanchitiet.PTTToanId equals pttt.Id into ptttGroup
+                        from phuongthucthanhtoan in ptttGroup.DefaultIfEmpty()
                         select new HoaDonDto
                         {
+                            IdHoaDon = bill.Id,
                             InvoiceCode = bill.MaHoaDon,
                             PhoneNumber = bill.SoDienThoai,
                             FullName = bill.TenKhachHang,
@@ -128,7 +132,7 @@ namespace Shop_Api.Repository
                             CodeVoucher = voucher != null ? voucher.MaVoucher : null,
                             UserId = bill.NguoiDungId,
                             ThanhTien = (int)bill.TongTien,
-                            Phuongthucthanhtoan = pttt.TenMaPTThanhToan
+                            Phuongthucthanhtoan = phuongthucthanhtoan.TenMaPTThanhToan
 
                         };
 
@@ -148,10 +152,14 @@ namespace Shop_Api.Repository
                     join z in _db.ChiTietSanPhams.AsQueryable().AsNoTracking() on y.ChiTietSanPhamId equals z.Id
                     select new HoaDonChiTietDto
                     {
+                        HoaDonId = x.Id,
+                        Id = y.Guid,
                         SanPhamChiTietId = y.ChiTietSanPhamId,
                         CodeProductDetail = z.MaSanPham,
                         Quantity = y.SoLuong,
-                        Price = (float)y.GiaBan
+                        Price = (float)z.GiaThucTe,
+                        PriceBan = (float)y.GiaBan,
+
                     }).AsEnumerable();
                 return billDetails;
             }

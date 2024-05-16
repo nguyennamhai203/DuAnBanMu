@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Shop_Models.Dto.HoaDonChiTietDto>;
+@{
+    int stt = 1;
+}
+@foreach (var hoaDonChiTiet in Model)
+{
+    <tr scope="col" id="hdct-@hoaDonChiTiet.SanPhamChiTietId">
+        <td>@stt</td>
+        <td hidden>@hoaDonChiTiet.SanPhamChiTietId</td>
+        <td>@hoaDonChiTiet.CodeProductDetail</td>
+        <td>@hoaDonChiTiet.NameProductDetail</td>
+        @{
+            if (hoaDonChiTiet.Price != hoaDonChiTiet.PriceBan)
+            {
+                <td><strike>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", hoaDonChiTiet.Price)</strike> <br>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", hoaDonChiTiet.PriceBan)</td>
+            }
+            else
+            {
+                <td>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", hoaDonChiTiet.PriceBan)</td>
+            }
+        }
+        <td><input type="number" max="1000" min="1" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" onchange="suaSoLuongSanPham('@hoaDonChiTiet.SanPhamChiTietId',this)" value="@hoaDonChiTiet.Quantity" /></td>
+        <td><a class="btn btn-tone" onclick="XoaSanPhamTrongHoaDon('hdct-@hoaDonChiTiet.SanPhamChiTietId','@hoaDonChiTiet.SanPhamChiTietId')">X</a></td>
+    </tr>
+    stt++;
+}

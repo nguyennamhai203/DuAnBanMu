@@ -9,6 +9,7 @@ namespace Shop_Models.Dto
     public class HoaDonDto
     {
 
+        public Guid IdHoaDon { get; set; }
         public string? InvoiceCode { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? NgayThanhToan { get; set; }

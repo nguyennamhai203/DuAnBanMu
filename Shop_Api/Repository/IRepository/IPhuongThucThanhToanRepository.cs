@@ -8,6 +8,7 @@ namespace Shop_Api.Repository.IRepository
         public Task<ResponseDto> CreateAsync(PhuongThucThanhToan PTTT);
         public Task<List<PhuongThucThanhToan>> GetAllAsync();
         public Task<PhuongThucThanhToan> GetByIdAsync(Guid id);
+        public Task<Guid> GetByIdAsync(string name);
         public Task<ResponseDto> UpdateAsync(Guid id, PhuongThucThanhToan PTTT);
         public Task<ResponseDto> DeleteAsync(Guid id);
     }

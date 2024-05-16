@@ -177,6 +177,11 @@ namespace WebApp.Controllers
                     var Cart = SessionService.GetObjFromSession(HttpContext.Session, "Cart");
                     GioHangChiTietViewModel s = new GioHangChiTietViewModel();
 
+                    if (product.SoLuongTon == 0)
+                    {
+                        return Json(new { code = 400, message = "Sản phẩm hiện đang hết hàng" });
+                    }
+
                     if (SessionService.CheckObjInList(codeProductDetail, Cart))
                     {
                         GioHangChiTietViewModel ghct = Cart.FirstOrDefault(x => x.MaSPCT == codeProductDetail);
@@ -499,7 +504,7 @@ namespace WebApp.Controllers
                 ViewBag.Message = message; // Truyền giá trị sang ViewBag để sử dụng trong view
                 return View();
             }
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> PaymentCallBackAsync()

@@ -66,62 +66,6 @@
 </section>
 <!-- End banner Area -->
 
-<section>
-    <!-- sản phẩm-->
-    <!-- single product slide -->
-    <div class="container">
-        <div class="row justify-content">
-            <div class="col-lg-6 text-left">
-                @* <div class="section-title"> *@
-                <h3><b>Sản Phẩm Mới</b></h3>
-                <a href="/SanPhamChiTiet/GianHang" class="vm-deal" id="viewAllLinkGaming">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                @* </div> *@
-            </div>
-            @* </div> *@
-            <div class="product-wrapper">
-                <div class="row" id="productList">
-                    <!-- single product -->
-                    <div class="col-lg-3 col-md-6">
-                        <div class="single-product">
-                            <img class="img-fluid" src="~/behat-master/img/product/p9.jpg" alt="">
-                            <div class="product-details">
-                                <h6>
-                                    addidas New Hammer sole
-                                    for Sports person
-                                </h6>
-                                <div class="price">
-                                    <h6>$150.00</h6>
-                                    <h6 class="l-through">$210.00</h6>
-                                </div>
-                                <div class="prd-bottom">
-
-                                    <a href="" class="social-info">
-                                        <span class="ti-bag"></span>
-                                        <p class="hover-text">add to bag</p>
-                                    </a>
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-heart"></span>
-                                        <p class="hover-text">Wishlist</p>
-                                    </a>
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-sync"></span>
-                                        <p class="hover-text">compare</p>
-                                    </a>
-                                    <a href="" class="social-info">
-                                        <span class="lnr lnr-move"></span>
-                                        <p class="hover-text">view more</p>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    ..
-                </div>
-            </div>
-        </div>
-    </div>
-
-</section>
 <style>
     .justify-content {
         border: 1px solid orange;
@@ -130,17 +74,29 @@
         border-radius: 5px;
     }
 </style>
-<!-- start product Area -->
-<!-- end product Area -->
+<style>
+    .bg-image {
+        background-image: url('~/behat-master/img/product/p9.jpg'); /* Đường dẫn tương đối */
+        background-size: cover;
+        background-position: center;
+        padding: 50px; /* Điều chỉnh padding nếu cần thiết */
+        color: #fff; /* Đảm bảo văn bản dễ đọc trên nền */
+    }
+</style>
+<!-- End exclusive deal Area -->
 <!-- Start exclusive deal Area -->
-<section class="exclusive-deal-area bg-image">
+<section class="exclusive-deal-area">
     <div class="container-fluid">
         <div class="row justify-content-center align-items-center">
-            <div class="col-lg-6 no-padding exclusive-left ">
+            <div class="col-lg-6 no-padding exclusive-left">
                 <div class="row clock_sec clockdiv" id="clockdiv">
                     <div class="col-lg-12">
-                        <h1>Exclusive Hot Deal Ends Soon!</h1>
-                        <p>Who are in extremely love with eco friendly system.</p>
+                        <h1>
+                            Ưu đãi hấp dẫn độc quyền sẽ sớm kết thúc!
+                        </h1>
+                        <p>
+                            Những người cực kỳ yêu thích hệ thống thân thiện với môi trường.
+                        </p>
                     </div>
                     <div class="col-lg-12">
                         <div class="row clock-wrap">
@@ -163,20 +119,10 @@
                         </div>
                     </div>
                 </div>
-                <a href="/SanPhamChiTiet/GianHang" class="primary-btn">Shop Now</a>
+                <a href="" class="primary-btn">Shop Now</a>
             </div>
-            <style>
-                .bg-image {
-                    background-image: url('~/behat-master/img/product/p9.jpg'); /* Đường dẫn tương đối */
-                    background-size: cover;
-                    background-position: center;
-                    padding: 50px; /* Điều chỉnh padding nếu cần thiết */
-                    color: #fff; /* Đảm bảo văn bản dễ đọc trên nền */
-                }
-            </style>
-
-            <div class="col-lg-6 no-padding exclusive-right ">
-                <div class="row active-exclusive-product-slider">
+            <div class="col-lg-6 no-padding exclusive-right">
+                <div class="active-exclusive-product-slider">
                     <!-- single exclusive carousel -->
                     @foreach (var item in Model)
                     {
@@ -194,37 +140,40 @@
                                 <div class="add-bag d-flex align-items-center justify-content-center">
                                     @* <a class="add-btn" href=""><span class="ti-bag"></span></a> *@
                                     <a href="#" class="add-btn" onclick="addToCartBtn('@item.MaSanPham')"><span class="ti-bag"></span></a>
+                                    <a href="#" class="social-info" onclick="addToCartBtn('@item.MaSanPham')"></a>
 
-                                    <span class="add-text text-uppercase">Add to Bag</span>
+                           </div>
+                            </div>
+                        </div>
+                        <div class="single-exclusive-slider">
+                            @* <img class="img-fluid" src="~/behat-master/img/product/e-p1.png" alt=""> *@
+                            <img class="img-fluid" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(item.Anh)" alt="" style="width:630px;height:570px;" />
+                            <div class="product-details">
+                                <div class="price">
+                                    <h6>$ @item.GiaKhuyenMai</h6>
+                                    <h6 class="l-through">$@item.GiaBan</h6>
+                                </div>
+                                <h4>
+                                    @item.TenSanPham @item.TheLoai @item.XuatXu
+                                </h4>
+                                <div class="add-bag d-flex align-items-center justify-content-center">
+                                    @* <a class="add-btn" href=""><span class="ti-bag"></span></a> *@
+                                    <a href="#" class="add-btn" onclick="addToCartBtn('@item.MaSanPham')"><span class="ti-bag"></span></a>
+                                    <a href="#" class="social-info" onclick="addToCartBtn('@item.MaSanPham')"></a>
+
+                                    @* <span class="add-text text-uppercase">Add to Bag</span> *@
                                 </div>
                             </div>
                         </div>
                     }
-
-                    @*   <!-- single exclusive carousel -->
-                    <div class="single-exclusive-slider">
-                    <img class="img-fluid" src="~/behat-master/img/product/e-p1.png" alt="">
-                    <div class="product-details">
-                    <div class="price">
-                    <h6>$150.00</h6>
-                    <h6 class="l-through">$210.00</h6>
-                    </div>
-                    <h4>
-                    addidas New Hammer sole
-                    for Sports person
-                    </h4>
-                    <div class="add-bag d-flex align-items-center justify-content-center">
-                    <a class="add-btn" href=""><span class="ti-bag"></span></a>
-                    <span class="add-text text-uppercase">Add to Bag</span>
-                    </div>
-                    </div>
-                    </div> *@
                 </div>
             </div>
         </div>
     </div>
 </section>
 <!-- End exclusive deal Area -->
+
+
 <!-- start features Area -->
 <section class="features-area section_gap">
     <div class="container">
@@ -477,10 +426,11 @@
         });
     }
     $(document).ready(function () {
+        debugger
         // Khởi tạo dữ liệu ban đầu
         fetchData(1); // Gọi hàm fetchData với trang đầu tiên khi trang tải
         var isFirstLoad = true; // Cờ để kiểm tra xem trang đã được tải lần đầu hay chưa
-
+        debugger
         // Hàm fetchData để gửi yêu cầu AJAX và cập nhật dữ liệu
         function fetchData(page) {
             var length = 4; // Kích thước trang mặc định
@@ -490,7 +440,7 @@
                 Length: length,
                 Start: start,
             };
-
+            
             // Gửi yêu cầu AJAX để lấy dữ liệu từ máy chủ
             $.ajax({
                 url: '/Home/DanhSachTongQuanSanPham',
@@ -530,4 +480,66 @@
             fetchData(currentPage); // Gọi hàm fetchData với trang trước đó
         });
     });
+
+
+
+    function addToCartBtn(codeProductDetail) {
+        // var quantity = document.getElementById('sst').value;
+        event.preventDefault(); // Chặn hành vi mặc định của form
+        $.ajax({
+            url: '/Cart/AddProductToCart',
+            type: 'POST',
+            data: { codeProductDetail: codeProductDetail },
+            // contentType: false,
+            // processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "success");
+
+                } else {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "error");
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right", // Sửa từ "toast-bot-right" thành "toast-bottom-right"
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+
 </script>

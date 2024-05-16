@@ -51,6 +51,7 @@ namespace Shop_Api.Repository
 
             return new ProfileOfUserDto
             {
+                Id = user.Id,
                 TenTaiKhoan = user.UserName,
                 TenNguoiDung = user.TenNguoiDung,
                 soDienThoai = user.SoDienThoai,
@@ -761,7 +762,7 @@ namespace Shop_Api.Repository
                         Message = "Thành công"
                     };
                 }
-                else if (user1.VerificationCode!=maxacnhan)
+                else if (user1.VerificationCode != maxacnhan)
                 {
                     return new ResponseDto
                     {
@@ -933,7 +934,7 @@ namespace Shop_Api.Repository
             }
         }
 
-        public async Task<List<NguoiDung>> GetAllNguoiDungAsync(int? status,int page)
+        public async Task<List<NguoiDung>> GetAllNguoiDungAsync(int? status, int page)
         {
             try
             {
