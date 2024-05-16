@@ -1,0 +1,68 @@
+﻿@model Shop_Models.Entities.Loai
+@using static Shop_Models.Heplers.TrangThai;
+
+@{
+    ViewData["Title"] = "CreateLoai";
+}
+
+<h1>CreateLoai</h1>
+
+<h4>Loai</h4>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-4" style="overflow-y: auto; max-height: 430px;">
+            <form id="myForm" asp-action="CreateLoai" method="post">
+                <div class="form-group">
+                    <label for="maLoai">Mã loại:</label>
+                    <input type="text" class="form-control" id="maLoai" name="MaLoai" />
+                </div>
+                <div class="form-group">
+                    <label for="tenLoai">Tên loại:</label>
+                    <input type="text" class="form-control" id="tenLoai" name="TenLoai" />
+                </div>
+                <div class="form-group">
+                    <label for="Trangthai">Trạng Thái :</label>
+                    <input type="text" class="form-control" id="Trangthai" name="Trangthai" />
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-success">Thêm</button>
+                </div>
+            </form>
+    </div>
+</div>
+</div>
+
+<div>
+    <a asp-action="GetAllLoai">Quay lại danh sách</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+document.getElementById('myForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form submission
+
+    // Get values from input fields
+    var maLoaiValue = document.getElementById('maLoai').value;
+    var tenLoaiValue = document.getElementById('tenLoai').value;
+
+    // Example: Check if maLoai and tenLoai are empty
+    if (maLoaiValue.trim() === '' || tenLoaiValue.trim() === '') {
+        alert('Vui lòng nhập Mã loại và Tên loại');
+        return;
+    }
+
+    // Example: Check if maLoai and tenLoai are duplicate
+    // You'll need to implement server-side logic to check duplicates
+    // This is just a client-side check for demonstration
+    if (maLoaiValue === 'existingMaLoai' || tenLoaiValue === 'existingTenLoai') {
+        alert('Mã loại hoặc Tên loại đã tồn tại');
+        return;
+    }
+
+    // If everything is fine, submit the form
+    this.submit();
+});
+</script>
+}

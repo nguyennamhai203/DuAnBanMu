@@ -1,0 +1,129 @@
+﻿@using static Shop_Models.Heplers.TrangThai;
+@model IEnumerable<Shop_Models.Entities.HoaDon>
+
+@{
+    ViewData["Title"] = "GetCustomerPurchaseHistory";
+}
+<style>
+    .table-container {
+    border: 2px solid #ccc; /* Đường viền xung quanh khung */
+    padding: 20px; /* Đệm trong khung */
+    border-radius: 8px; /* Bo góc khung */
+    margin: 20px; /* Khoảng cách bên ngoài khung */
+    background-color: #f9f9f9; /* Màu nền khung */
+}
+
+.table {
+    width: 100%; /* Chiếm toàn bộ chiều rộng khung */
+    border-collapse: collapse; /* Gộp các đường viền bảng lại */
+}
+
+.table th {
+    background-color: #f2f2f2; /* Màu nền tiêu đề bảng */
+    font-weight: bold; /* Chữ đậm cho tiêu đề bảng */
+}
+
+</style>
+
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+			<div class="col-first">
+				<h1>Tra Cứu Đơn Hàng</h1>
+				<nav class="d-flex align-items-center">
+					<a href="/Home">Home<span class="lnr lnr-arrow-right"></span></a>
+					<a href="/HoaDon/ShowBill">Tra Cứu Đơn Hàng</a>
+				</nav>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- End Banner Area -->
+<br />
+<h2 style="margin-left: 50px;">Lịch Sử Mua Hàng</h2>
+
+<div id="hoaDonContainer" class="table-container">
+    @if (Model != null && Model.Count() > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mã Hóa Đơn</th>
+                    <th>Ngày Tạo</th>
+                    <th>Ngày Thanh Toán</th>
+                    <th>Ngày Ship</th>
+                    <th>Ngày Nhận</th>
+                    <th>Mô Tả</th>
+                    <th>Tiền Giảm</th>
+                    <th>Tiền Ship</th>
+                    <th>Tổng Tiền</th>
+                    <th>Trạng Thái Thanh Toán</th>
+                    <th>Trạng Thái Giao Hàng</th>
+                    <th>Lí Do Hủy</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hoaDon in Model)
+                {
+                    <tr>
+                        <td>@hoaDon.MaHoaDon</td>
+                        <td>@hoaDon.NgayTao</td>
+                        <td>@hoaDon.NgayThanhToan</td>
+                        <td>@hoaDon.NgayShip</td>
+                        <td>@hoaDon.NgayNhan</td>
+                        <td>@hoaDon.MoTa</td>
+                        <td>@hoaDon.TienGiam</td>
+                        <td>@hoaDon.TienShip</td>
+                        <td>@hoaDon.TongTien</td>
+                        <td>
+                            @if (@hoaDon.TrangThaiThanhToan == (int)TrangThaiThanhToan.Chuathanhtoan)
+                            {
+                                <span class="text-black">
+                                    <i class="bi bi-x-circle" style="color: red;"></i> Chưa Thanh Toán
+                                </span>
+                            }
+                            else if (@hoaDon.TrangThaiThanhToan == (int)TrangThaiThanhToan.Dathanhtoan)
+                            {
+                                <span class="text-black">
+                                    <i class="bi bi-check-circle" style="color: green;"></i> Đã Thanh Toán
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-black">Trạng thái không xác định</span>
+                            }
+                        </td>
+                        <td>
+                            @if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DaGiaoHang)
+                            {
+                                <span class="text-black"><i class="fas fa-check-circle" style="color: green;"></i> Đã giao hàng</span>
+                            }
+                            else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang)
+                            {
+                                <span class="text-black"><i class="fas fa-truck-moving" style="color: orange;"></i> Đang giao hàng</span>
+                            }
+                            else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoGiaoHang)
+                            {
+                                <span class="text-black"><i class="fas fa-shipping-fast" style="color: blue;"></i> Chờ giao hàng</span>
+                            }
+                            else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoXacNhan)
+                            {
+                                <span class="text-black"><i class="fas fa-clock" style="color: yellow;"></i> Chờ xác nhận</span>
+                            }
+                            else
+                            {
+                                <span class="text-black"><i class="fas fa-times-circle" style="color: red;"></i> Đã hủy</span>
+                            }
+                        </td>
+                        <td>@hoaDon.LiDoHuy</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Không có đơn hàng nào phù hợp với yêu cầu lọc.</p>
+    }
+</div>
