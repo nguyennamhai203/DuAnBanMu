@@ -34,6 +34,7 @@
                                     <tr>
                                         <th>Mã chất liệu</th>
                                         <th>Tên chất liệu</th>
+                                        <th>Trạng thái</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -43,6 +44,16 @@
                                         <tr>
                                             <td>@item.MaChatLieu</td>
                                             <td>@item.TenChatLieu</td>
+                                            <td>
+                                                @if (item.TrangThai == 0)
+                                                {
+                                                    <span>Còn hàng</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>Hết hàng</span>
+                                                }
+                                            </td>
                                             <td>
                                                 <a asp-area="Admin" asp-controller="ChatLieu" asp-action="Detail" asp-route-id="@item.Guid" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">
                                                     <i class="bx bxs-detail"></i>
@@ -113,6 +124,24 @@
                                             <input asp-for="@chatLieu.First().TenChatLieu" type="text" class="form-control" />
                                         </div>
                                     </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-4 col-form-label">Trạng Thái</label>
+                                        <div class="col-sm-8">
+
+                                            <select asp-for="@chatLieu.First().TrangThai" class="form-select" aria-label="Default select example">
+                                                @if (chatLieu.First().TrangThai == 0)
+                                                {
+                                                    <option value="0" selected>Còn Hàng</option>
+                                                    <option value="1">Hết Hàng</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="0">Còn Hàng</option>
+                                                    <option value="1" selected>Hết Hàng</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
 
                                     <button type="submit" class="btn btn-warning" onclick="updateForm()">Lưu</button>
                                 </form>
@@ -125,13 +154,13 @@
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Mã chất liệu</label>
                                     <div class="col-sm-8">
-                                        <input name="MaChatLieu" type="text" class="form-control" />
+                                        <input id="MaChatLieu" name="MaChatLieu" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Tên chất liệu</label>
                                     <div class="col-sm-8">
-                                        <input name="TenChatLieu" type="text" class="form-control" />
+                                        <input id="TenChatLieu" name="TenChatLieu" type="text" class="form-control" />
                                     </div>
                                 </div>
 
@@ -156,15 +185,11 @@
                                             <p>@item.TenChatLieu</p>
                                             @if (item.TrangThai == 0)
                                             {
-                                                <span>Mới</span>
-                                            }
-                                            else if (item.TrangThai == 1)
-                                            {
-                                                <span>Đã sửa</span>
+                                                <span>Còn Hàng</span>
                                             }
                                             else
                                             {
-                                                <span>Đã xóa</span>
+                                                <span>Hết Hàng</span>
                                             }
                                         }
                                     </label>
@@ -213,6 +238,21 @@
     }
 
     function saveForm() {
+        // Ngăn chặn hành động mặc định của nút submit
+        event.preventDefault();
+
+        // Lấy ra các giá trị từ các trường trong form
+        var parentElement = document.getElementById('createProfileForm');
+        var maChatLieu = parentElement.querySelector('#MaChatLieu').value;
+        var tenChatLieu = parentElement.querySelector('#TenChatLieu').value;
+
+        // Kiểm tra xem các trường có bị bỏ trống không
+        if (!maChatLieu || !tenChatLieu) {
+            // Hiển thị thông báo lỗi nếu có trường nào bị bỏ trống
+            showNotification("Vui lòng điền đầy đủ thông tin vào các trường", "warning");
+            return; // Ngăn không cho tiếp tục thực hiện lưu form
+        }
+
         var formData = new FormData(document.getElementById('createProfileForm'));
 
         Swal.fire({
@@ -257,7 +297,7 @@
 
     function updateForm() {
         var formData = new FormData(document.getElementById('updateProfileForm'));
-
+        
         Swal.fire({
             title: 'Xác nhận',
             text: 'Bạn có chắc chắn muốn Cập nhật bản ghi này ?',
@@ -361,6 +401,7 @@
                     '<tr>' +
                     '<th>Mã chất liệu</th>' +
                     '<th>Tên chất liệu</th>' +
+                    '<th>Trạng thái</th>' +
                     '<th></th>' +
                     '</tr>' +
                     '</thead>' +
@@ -371,11 +412,12 @@
                         var newRow = '<tr>' +
                             '<td>' + item.maChatLieu + '</td>' +
                             '<td>' + item.tenChatLieu + '</td>' +
+                            '<td>' + (item.trangThai === 0 ? 'Còn hàng' : 'Hết hàng') + '</td>' +
                             '<td>' +
                             '<a href="/ChatLieu/Index/' + item.guid + '" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">' +
                             '<i class="bx bxs-detail"></i>' +
                             '</a>' +
-                            '<a id="deleteProfileForm" class="btn btn-danger" onclick="deleteForm()" title="Xóa">' +
+                            '<a id="deleteProfileForm" class="btn btn-danger" onclick="deleteForm(\'' + item.guid + '\')" title="Xóa">' +
                             '<i class="bx bxs-trash-alt"></i>' +
                             '</a>' +
                             '</td>' +
@@ -395,6 +437,18 @@
                 $('#dataTable').DataTable({
                     // Các cài đặt DataTables, bao gồm cài đặt phân trang
                     "paging": true,
+                    "lengthMenu": [5, 10, 15, 20, 25], // Define options for the number of records per page
+                    "pageLength": 10, // Initial records per page
+                    "searching": true, // Enable search feature
+                    "language": {
+                        "searchPlaceholder": "Search.."
+                    },
+                    "initComplete": function (settings, json) {
+                        setTimeout(function () {
+                            $('.dt-search label').remove();
+                            applyCustomStyles();
+                        }, 100);
+                    }
                     // Các cài đặt khác...
                 });
                 $('.datatable-top').remove();
@@ -408,4 +462,17 @@
         });
     }
 
+    function applyCustomStyles() {
+        // Add your custom CSS styling here
+        // For example:
+        $('#dataTable').addClass('datatable');
+        $('.dt-layout-row').addClass('datatable-top');
+        $('.dt-layout-table').addClass('datatable-container');
+        $('#dt-length-0').addClass('datatable-selector');
+        $('#dt-search-0').addClass('datatable-input');
+        $('.dt-paging').addClass('datatable-pagination');
+
+        // Add more styling as needed...
+    }
+    
 </script>

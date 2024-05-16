@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shop_Api.Repository.IRepository;
+using Shop_Api.Services.IServices;
+using Shop_Models.Dto;
 using Shop_Models.Entities;
 using System;
 using System.Security.Principal;
@@ -13,13 +15,15 @@ namespace Shop_Api.Controllers
     public class SanPhamYeuThichController : ControllerBase
     {
         private readonly ISanPhamYeuThichRepository res;
-        public SanPhamYeuThichController(ISanPhamYeuThichRepository repository)
+        private readonly ISanPhamYeuThichServices _services;
+        public SanPhamYeuThichController(ISanPhamYeuThichRepository repository, ISanPhamYeuThichServices service)
         {
             res = repository;
+            _services = service;
         }
-        // GET: api/<SanPhamYeuThichController>
+
         [HttpGet("get-spyt")]
-        public async Task<IActionResult> GetSPYTAsync(int? status,int page = 1)
+        public async Task<IActionResult> GetSPYTAsync(int? status, int page)
         {
             try
             {
@@ -32,9 +36,8 @@ namespace Shop_Api.Controllers
             }
         }
 
-        // POST api/<SanPhamYeuThichController>
         [HttpPost("post-spyt")]
-        public async Task<IActionResult> PostSPYTAsync(Guid id,Guid nguoidungid,Guid chitietsanphamid,int trangthai)
+        public async Task<IActionResult> PostSPYTAsync(Guid id, Guid nguoidungid, Guid chitietsanphamid, int trangthai)
         {
             var obj = new SanPhamYeuThich();
             obj.Id = id;
@@ -56,7 +59,6 @@ namespace Shop_Api.Controllers
             }
         }
 
-        // PUT api/<SanPhamYeuThichController>/5
         [HttpPut("put-spyt")]
         public async Task<IActionResult> PutSPYTAsync(Guid id, Guid nguoidungid, Guid chitietsanphamid, int trangthai)
         {
@@ -71,13 +73,49 @@ namespace Shop_Api.Controllers
             return NoContent();
         }
 
-        // DELETE api/<SanPhamYeuThichController>/5
-        [HttpDelete("delete-spyt")]
+        [HttpGet("Xoa-mot-san-pham-khoi-danh-sach-yeu-thich")]
         public async Task<IActionResult> DeleteSPYTAsync(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
             await res.DeleteSPYT(id);
             return NoContent();
         }
+
+        [HttpGet("Xoa-mot-san-pham-khoi-danh-sach-yeu-thich-cua-nguoi-dung")]
+        public async Task<IActionResult> DeleteSPYTAsync(Guid userId, Guid productId)
+        {
+            if (userId == Guid.Empty || productId == Guid.Empty) return NotFound();
+            await res.DeleteSPYT(productId);
+            return NoContent();
+        }
+
+        [HttpGet("Nguoi-dung-xem-danh-sach-san-pham-yeu-thich")]
+        public async Task<IActionResult> GetFavoriteProductsAsync(Guid userId)
+        {
+            try
+            {
+                var favoriteProducts = await _services.GetFavoriteProductsForUser(userId);
+                return Ok(favoriteProducts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("Them-mot-san-pham-vao-danh-sach-yeu-thich-cua-nguoi-dung")]
+        public async Task<IActionResult> AddToFavoriteAsync(Guid userId, Guid productId)
+        {
+            try
+            {
+                var response = await _services.AddToFavoriteBus(userId, productId);
+                return StatusCode(response.Code, response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 }

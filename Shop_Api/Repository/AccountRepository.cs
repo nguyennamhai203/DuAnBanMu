@@ -21,6 +21,7 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using System;
 using SmtpClient = System.Net.Mail.SmtpClient;
+using Microsoft.VisualBasic;
 
 namespace Shop_Api.Repository
 {
@@ -50,6 +51,7 @@ namespace Shop_Api.Repository
 
             return new ProfileOfUserDto
             {
+                Id = user.Id,
                 TenTaiKhoan = user.UserName,
                 TenNguoiDung = user.TenNguoiDung,
                 soDienThoai = user.SoDienThoai,
@@ -373,7 +375,8 @@ namespace Shop_Api.Repository
             var regex = new Regex(@"^(0\d{9,10})$");
 
             // Kiểm tra xem số điện thoại có khớp với biểu thức chính quy không
-            return regex.IsMatch(phoneNumber);
+            var res = regex.IsMatch(phoneNumber);
+            return res;
         }
 
 
@@ -474,8 +477,38 @@ namespace Shop_Api.Repository
                 TenNguoiDung = model.TenNguoiDung,
                 UserName = model.UserName,
                 Email = model.Email,
-                SoDienThoai = model.SDT
+                SoDienThoai = model.SDT,
+                DiaChi = model.DiaChi,
+                GioiTinh=model.GioiTinh,
             };
+            // Kiểm tra mật khẩu
+            if (!model.PassWord.Any(char.IsUpper))
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Mật khẩu phải chứa ít nhất một ký tự in hoa."
+                };
+            }
+            if (!model.PassWord.Any(char.IsDigit))
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Mật khẩu phải chứa ít nhất một chữ số."
+                };
+            }
+            if (!model.PassWord.Any(char.IsSymbol) && !model.PassWord.Any(char.IsPunctuation))
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Mật khẩu phải chứa ít nhất một ký tự đặc biệt."
+                };
+            }
 
             var result = await _userManager.CreateAsync(user, model.PassWord);
             if (result.Succeeded)
@@ -626,8 +659,36 @@ namespace Shop_Api.Repository
 
             //var user = await _userManager.FindByEmailAsync(emailAdmin);
             var user1 = _context.NguoiDungs.FirstOrDefault(x => x.Email == emailAdmin);
+            if (user1 == null)
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Bạn không có quyền."
+                };
+            }
 
-            if (user1 != null)
+
+            // Kiểm tra role "NhanVien" đã tồn tại chưa
+            if (!await _roleManager.RoleExistsAsync("Admin"))
+            {
+                // Nếu chưa tồn tại, tạo mới chức vụ "NhanVien"
+                var newRole = new ChucVu
+                {
+                    Name = "Admin",
+                    MaChucVu = "1" + Guid.NewGuid(),
+                    TenChucVu = "Quản trị viên",
+                    TrangThai = 1 // Set trạng thái mặc định cho chức vụ
+                };
+                await _roleManager.CreateAsync(newRole);
+            }
+
+            // Lấy danh sách những người dùng có role là "NhanVien"
+            var nhanVienRole = await _roleManager.FindByNameAsync("Admin");
+            var usersWithNhanVienRole = _userManager.GetUsersInRoleAsync(nhanVienRole.Name).Result.FirstOrDefault(x => x.Id == user1.Id);
+
+            if (usersWithNhanVienRole != null)
             {
                 if (user1.VerificationCode == maxacnhan && user1.VerificationCodeExpiry > DateTime.Now)
                 {
@@ -706,15 +767,25 @@ namespace Shop_Api.Repository
                     //    };
                     //}
 
-                    user1.VerificationCode = "";
-                    _context.NguoiDungs.Update(user1);
-                    await _context.SaveChangesAsync();
 
-                    return new ResponseDto
+
+                    if (taotknhanvien.IsSuccess)
                     {
-                        IsSuccess = true,
-                        Code = 200,
-                        Message = "Thành công"
+                        user1.VerificationCode = "";
+                        _context.NguoiDungs.Update(user1);
+                        await _context.SaveChangesAsync();
+                        return new ResponseDto
+                        {
+                            IsSuccess = true,
+                            Code = 200,
+                            Message = "Thành công"
+                        };
+                    }
+                    else return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Code = 400,
+                        Message = "Không thành công !"
                     };
                 }
                 else return new ResponseDto
@@ -729,7 +800,7 @@ namespace Shop_Api.Repository
             {
                 IsSuccess = false,
                 Code = 400,
-                Message = "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin.2"
+                Message = "Bạn không có quyền"
             };
 
 
@@ -760,7 +831,7 @@ namespace Shop_Api.Repository
                         Message = "Thành công"
                     };
                 }
-                else if (user1.VerificationCode!=maxacnhan)
+                else if (user1.VerificationCode != maxacnhan)
                 {
                     return new ResponseDto
                     {
@@ -932,6 +1003,86 @@ namespace Shop_Api.Repository
             }
         }
 
+        public async Task<List<NguoiDung>> GetAllNguoiDungAsync(int? status, int page)
+        {
+            try
+            {
+                var list = _context.NguoiDungs.AsQueryable();
+                if (status.HasValue)
+                {
+                    list = list.Where(x => x.TrangThai == status);
+                }
+                var result = list.Select(x => new NguoiDung
+                {
+                    Id = x.Id,
+                    MaNguoiDung = x.MaNguoiDung,
+                    TenNguoiDung = x.TenNguoiDung,
+                    SoDienThoai = x.SoDienThoai,
+                    DiaChi = x.DiaChi,
+                    GioiTinh = x.GioiTinh,
+                    TrangThai = x.TrangThai,
+                    VerificationCode = x.VerificationCode,
+                    VerificationCodeExpiry = x.VerificationCodeExpiry
+                });
+                return result.ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<NguoiDung>> DanhSachNhanVien()
+        {
+            try
+            {
+                // Kiểm tra role "NhanVien" đã tồn tại chưa
+                if (!await _roleManager.RoleExistsAsync("NhanVien"))
+                {
+                    // Nếu chưa tồn tại, tạo mới chức vụ "NhanVien"
+                    var newRole = new ChucVu
+                    {
+                        Name = "NhanVien",
+                        MaChucVu = "1" + Guid.NewGuid(),
+                        TenChucVu = "Nhân Viên",
+                        TrangThai = 1 // Set trạng thái mặc định cho chức vụ
+                    };
+                    await _roleManager.CreateAsync(newRole);
+                }
+
+                // Lấy danh sách những người dùng có role là "NhanVien"
+                var nhanVienRole = await _roleManager.FindByNameAsync("NhanVien");
+                if (nhanVienRole == null)
+                {
+                    // Nếu không tìm thấy role "NhanVien", trả về danh sách rỗng
+                    return new List<NguoiDung>();
+                }
+
+                var usersWithNhanVienRole = await _userManager.GetUsersInRoleAsync(nhanVienRole.Name);
+
+                // Chuyển danh sách người dùng sang định dạng NguoiDung
+                var result = usersWithNhanVienRole.Select(x => new NguoiDung
+                {
+                    Id = x.Id,
+                    MaNguoiDung = x.MaNguoiDung,
+                    TenNguoiDung = x.TenNguoiDung,
+                    SoDienThoai = x.SoDienThoai,
+                    UserName = x.UserName,
+                    DiaChi = x.DiaChi,
+                    GioiTinh = x.GioiTinh,
+                    TrangThai = x.TrangThai,
+                    Email = x.Email,
+                    //VerificationCode = x.VerificationCode,
+                    //VerificationCodeExpiry = x.VerificationCodeExpiry
+                }).ToList();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
     }
 }

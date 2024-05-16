@@ -1,0 +1,149 @@
+﻿@model IEnumerable<Shop_Models.Entities.HoaDon>
+@using static Shop_Models.Heplers.TrangThai;
+@{
+    var selectedValue = ViewBag.SelectedStatus;
+
+}
+@if (Model != null && Model.Count() > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mã Hóa Đơn</th>
+                <th>Ngày Tạo</th>
+                <th>Ngày Thanh Toán</th>
+                <th>Ngày Ship</th>
+                <th>Ngày Nhận</th>
+                <th>Mô Tả</th>
+                <th>Tiền Giảm</th>
+                <th>Tiền Ship</th>
+                <th>Tổng Tiền</th>
+                <th>Trạng Thái Thanh Toán</th>
+                <th>Trạng Thái Giao Hàng</th>
+                <th>Lý Do Hủy</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var hoaDon in Model)
+            {
+                <tr>
+                    <td>@hoaDon.MaHoaDon</td>
+                    <td>@hoaDon.NgayTao</td>
+                    <td>@hoaDon.NgayThanhToan</td>
+                    <td>@hoaDon.NgayShip</td>
+                    <td>@hoaDon.NgayNhan</td>
+                    <td>@hoaDon.MoTa</td>
+                    <td>@hoaDon.TienGiam</td>
+                    <td>@hoaDon.TienShip</td>
+                    <td>@hoaDon.TongTien</td>
+                    <td>
+                        @if (@hoaDon.TrangThaiThanhToan == (int)TrangThaiThanhToan.Chuathanhtoan)
+                        {
+                            <span class="text-black">
+                                <i class="bi bi-x-circle" style="color: red;"></i> Chưa Thanh Toán
+                            </span>
+                        }
+                        else if (@hoaDon.TrangThaiThanhToan == (int)TrangThaiThanhToan.Dathanhtoan)
+                        {
+                            <span class="text-black">
+                                <i class="bi bi-check-circle" style="color: green;"></i> Đã Thanh Toán
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-black">Trạng thái không xác định</span>
+                        }
+                    </td>
+
+
+
+
+                    <!-- Button thay đổi trạng thái giao hàng -->
+                    <td>
+                        @if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DaGiaoHang)
+                        {
+                            <span class="text-black"><i class="fas fa-check-circle" style="color: green;"></i> Đã giao hàng</span>
+                        }
+                        else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang)
+                        {
+                            <span class="text-black"><i class="fas fa-truck-moving" style="color: orange;"></i> Đang giao hàng</span>
+                        }
+                        else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoGiaoHang)
+                        {
+                            <span class="text-black"><i class="fas fa-shipping-fast" style="color: blue;"></i> Chờ giao hàng</span>
+                        }
+                        else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoXacNhan)
+                        {
+                            <span class="text-black"><i class="fas fa-clock" style="color: yellow;"></i> Chờ xác nhận</span>
+                        }
+                        else
+                        {
+                            <span class="text-black"><i class="fas fa-times-circle" style="color: red;"></i> Đã hủy</span>
+                        }
+                    </td>
+                    <td>@hoaDon.LiDoHuy</td>
+                    <td>
+                        <a href="#" onclick="updateStatus('@hoaDon.Id',@hoaDon.TrangThaiGiaoHang)" class="btn btn-primary" title="Cập nhật trạng thái"><i class="bx bx-refresh"></i></a>
+                        <a href="/HoaDon/CancelOrder?id=@hoaDon.Id" class="btn btn-danger" title="Hủy đơn hàng"><i class="bx bxs-trash-alt"></i></a>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (selectedValue == null || !(selectedValue is int)) // Thêm selectedValue === undefined để xử lý trường hợp không có trạng thái được chọn
+{
+    <p>Không có đơn hàng nào ở trạng thái này.</p>
+}
+else
+{
+    <p>Không có đơn hàng nào phù hợp với yêu cầu lọc.</p>
+}
+@section scripts{
+    <script>
+        //function updateStatus(id) {
+        //    // Gọi API để cập nhật trạng thái
+        //    fetch(`/HoaDon/UpdateHoaDonStatus?id=${id}`)
+        //        .then(response => {
+        //            if (!response.ok) {
+        //                throw new Error('Cập nhật trạng thái không thành công');
+        //            }
+        //            return response.json();
+        //        })
+        //        .then(data => {
+        //            // Hiển thị thông báo khi cập nhật thành công
+        //            alert('Cập nhật trạng thái thành công');
+        //            // Sau khi nhấn oke, chuyển hướng trang hoặc thực hiện hành động tiếp theo tùy ý
+        //            window.location.href = '/HoaDon'; // Ví dụ: chuyển hướng về trang danh sách hóa đơn
+        //        })
+        //        .catch(error => {
+        //            console.error('Có lỗi xảy ra:', error);
+        //            alert('Đã xảy ra lỗi khi cập nhật trạng thái');
+        //        });
+        //}
+
+        function updateStatus(id, status) {
+            debugger
+            // Gọi API để cập nhật trạng thái
+            fetch(`/HoaDon/UpdateHoaDonStatus?id=${id}&hoaDonStatus=${status}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Cập nhật trạng thái không thành công');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hiển thị thông báo khi cập nhật thành công
+                    alert('Cập nhật trạng thái thành công');
+                    // Sau khi nhấn oke, chuyển hướng trang hoặc thực hiện hành động tiếp theo tùy ý
+                    window.location.href = '/HoaDon'; // Ví dụ: chuyển hướng về trang danh sách hóa đơn
+                })
+                .catch(error => {
+                    console.error('Có lỗi xảy ra:', error);
+                    alert('Đã xảy ra lỗi khi cập nhật trạng thái');
+                });
+        }
+    </script>
+}

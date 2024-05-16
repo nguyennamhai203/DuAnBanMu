@@ -23,7 +23,12 @@ namespace Shop_Models.Dto
         [Required]
         public string? PassWord { get; set; } 
         public string? SDT { get; set; } 
+        public bool? GioiTinh { get; set; } 
+        public string? DiaChi { get; set; }
+
+
+
         [Required]
-        public string? ConfirmPassWord { get; set; } 
+        public string? ConfirmPassWord { get; set; }
     }
 }

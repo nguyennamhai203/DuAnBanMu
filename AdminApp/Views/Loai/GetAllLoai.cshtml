@@ -1,0 +1,142 @@
+﻿@model IEnumerable<Shop_Models.Entities.Loai>
+@using static Shop_Models.Heplers.TrangThai;
+@{
+    ViewData["Title"] = "GetAllLoai";
+}
+
+
+<style>
+    .card {
+        border: 1px solid #ddd; /* Màu viền khung */
+        border-radius: 5px; /* Đường cong viền */
+        padding: 10px; /* Khoảng cách bên trong khung */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+        overflow: auto; /* Cho phép cuộn nếu bảng quá lớn */
+
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <h1>Quản Lý Loại</h1>
+        <div class="col-md-8">
+            <div class="card" style="height: 430px;">
+                <div class="card-body">
+                    <div class="table-responsive" id="tableContainer">
+                        <table class="table" id="loaiTable">
+                            <thead>
+                                <tr>
+                                    <th>Mã Loại</th>
+                                    <th>Tên Loại</th>
+                                    <th>Trạng Thái</th>
+                                    <hr />
+                                    <th></th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.MaLoai)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.TenLoai)</td>
+                                        <td>
+                                            @if (item.TrangThai == (int)TrangThaiCoBan.HoatDong)
+                                            {
+                                                <span class="text-black">Hoạt Động</span>
+                                            }
+                                            else if (item.TrangThai == (int)TrangThaiCoBan.KhongHoatDong)
+                                            {
+                                                <span class="text-black">Không Hoạt Động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-black">Trạng thái không xác định</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-area="" asp-controller="Loai" asp-action="EditLoai" asp-route-id="@item.Id" class="btn btn-primary" title="Sửa"><i class="bx bxs-edit"></i></a>
+                                            <a asp-area="" asp-controller="Loai" asp-action="DetailLoai" asp-route-id="@item.Id" class="btn btn-success" title="Chi tiết"><i class="bx bxs-detail"></i></a>
+                                            <a asp-area="" asp-controller="Loai" asp-action="DeleteLoai" asp-route-id="@item.Id" class="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa?')" title="Xóa"><i class="bx bxs-trash-alt"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Thêm loại mới</h2>
+                    <form id="createloaiForm" asp-action="CreateLoai" method="post" >
+                        <div class="form-group">
+                            <label for="maLoai">Mã loại:</label>
+                            <input type="text" class="form-control" id="maLoai" name="MaLoai" />
+                        </div>
+                        <div class="form-group">
+                            <label for="tenLoai">Tên loại:</label>
+                            <input type="text" class="form-control" id="tenLoai" name="TenLoai" />
+                        </div>
+                        <div class="form-group">
+                            <label for="Trangthai">Trạng Thái :</label>
+                            <input type="text" class="form-control" id="Trangthai" name="Trangthai" />
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="button" onclick="kiemTraTrungMa()" class="btn btn-success">Thêm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thư viện DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+<!-- Thư viện jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Thư viện DataTables JavaScript -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+<!-- Thư viện No Pagination UI -->
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.jqueryui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.jqueryui.min.css">
+<script>
+    // Định nghĩa hàm kiemTraTrungMa ở ngoài phạm vi của $(document).ready()
+    function kiemTraTrungMa() {
+        var maLoai = document.getElementById("maLoai").value;
+        var maLoaiDaHienThi = [];
+
+        // Lấy danh sách các mã đã hiển thị trên giao diện
+        $("#loaiTable tbody tr").each(function () {
+            maLoaiDaHienThi.push($(this).find("td:first").text().trim());
+        });
+
+        // Kiểm tra trùng mã với danh sách các mã đã hiển thị
+        if (maLoaiDaHienThi.includes(maLoai)) {
+            alert("Mã đã tồn tại trong dữ liệu. Vui lòng chọn mã khác.");
+        } else {
+            $("#createloaiForm").submit(); // Sử dụng jQuery để submit form
+        }
+    }
+
+    $(document).ready(function () {
+        var table = $('#loaiTable').DataTable();
+        if (!table || !$.fn.DataTable.isDataTable('#loaiTable')) {
+            $('#loaiTable').DataTable({
+               "scrollY": "250px", // Chiều cao của khu vực lướt
+            "paging": true, // Hiển thị chia trang
+            "pagingType": "simple_numbers", // Loại chia trang (không có ô vuông nhỏ)
+            "lengthMenu": [5, 15, 25, 50], // Lựa chọn số lượng hàng trên mỗi trang
+            "renderer": "jqueryui" // Sử dụng renderer của jQuery UI
+            });
+        }
+
+        // Gắn sự kiện onclick cho nút "Thêm" bên trong phạm vi của $(document).ready()
+        $("#createloaiForm button").click(kiemTraTrungMa);
+    });
+</script>

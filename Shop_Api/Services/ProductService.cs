@@ -73,7 +73,7 @@ namespace Shop_Api.Services
 
             // 2. Cập nhật giá sản phẩm
             var productsToUpdate = _context.ChiTietSanPhams
-                .Where(p =>/* p.TrangThai == 1 &&*/ p.TrangThaiKhuyenMai == (int)TrangThaiSaleInProductDetail.DaApDungSale)
+                .Where(p => p.TrangThai == 1 && p.TrangThaiKhuyenMai == (int)TrangThaiSaleInProductDetail.DaApDungSale)
                 .ToList();
 
             foreach (var product in productsToUpdate)
@@ -125,6 +125,27 @@ namespace Shop_Api.Services
             }
 
             _context.SaveChanges(); // Lưu tất cả các thay đổi sau khi đã cập nhật trạng thái và giá của sản phẩm
+
+            // 3. Kiểm tra và cập nhật trạng thái của khuyến mãi
+            var vouchers = _context.Vouchers.ToList();
+
+            foreach (var promotion in vouchers)
+            {
+                if (promotion.TrangThai != (int)TrangThai.TrangThaiSale.BuocDung)
+                {
+                    if (promotion.NgayHetHan < DateTime.Now)
+                    {
+                        // Nếu thời gian hiện tại đã vượt quá thời gian kết thúc của khuyến mãi, cập nhật trạng thái của khuyến mãi
+                        promotion.TrangThai = 1;
+                    }
+                    else if (promotion.NgayBatDau <= DateTime.Now && promotion.NgayHetHan >= DateTime.Now)
+                    {
+                        // Nếu thời gian hiện tại nằm trong khoảng thời gian của khuyến mãi, cập nhật trạng thái của khuyến mãi
+                        promotion.TrangThai = 0;
+                    }
+                    _context.SaveChanges(); // Lưu thay đổi trạng thái của khuyến mãi
+                }
+            }
         }
 
 

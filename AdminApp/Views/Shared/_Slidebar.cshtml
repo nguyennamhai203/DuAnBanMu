@@ -12,9 +12,9 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
         <li class="nav-item">
-            <a class="nav-link " href="/Home">
+            <a class="nav-link " href="/BanHangTaiQuay/DanhSachHoaDonCho">
                 <i class="bi bi-grid"></i>
-                <span>Dashboard</span>
+                <span>Bán Hàng Tại Quầy</span>
             </a>
         </li><!-- End Dashboard Nav -->
 
@@ -26,12 +26,17 @@
             <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 <li>
                     <a href="/SanPhamChiTiet">
+                        <i class="bi bi-circle"></i><span>Tổng Quan Danh Sách Sản Phẩm Chi Tiết</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/SanPham">
                         <i class="bi bi-circle"></i><span>Danh Sách Sản Phẩm</span>
                     </a>
                 </li>
                 <li>
-                    <a href="components-tooltips.html">
-                        <i class="bi bi-circle"></i><span>Danh Sách Thuộc Tính</span>
+                    <a href="/XuatXu/GetAllXuatXu">
+                        <i class="bi bi-circle"></i><span>Danh Sách Xuất Xứ</span>
                     </a>
                 </li>
                 <li>
@@ -42,6 +47,18 @@
                 <li>
                     <a href="/MauSac/GetAllMauSac">
                         <i class="bi bi-circle"></i><span>Danh Sách Màu Sắc</span>
+                    </a>
+
+                </li>
+                <li>
+                    <a href="/Loai/GetAllLoai">
+                        <i class="bi bi-circle"></i><span>Danh Sách Loại</span>
+                    </a>
+
+                </li>
+                <li>
+                    <a href="/ThuongHieu/GetAllTH">
+                        <i class="bi bi-circle"></i><span>Danh Sách Thương Hiệu</span>
                     </a>
                 </li>
             </ul>
@@ -56,7 +73,7 @@
 
 
         <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-toggle="collapse" href="#">
+            <a class="nav-link collapsed"  href="/QuanLyTaiKhoanNhanVien">
                 <i class="bi bi-menu-button-wide"></i><span>Danh Sách Nhân Viên</span>@* <i class="bi bi-chevron-down ms-auto"></i> *@
             </a>
         </li><!-- End NhanVien Nav -->
@@ -68,17 +85,12 @@
             <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 <li>
                     <a asp-controller="ThongKe" asp-action="Index">
-                        <i class="bi bi-circle"></i><span>Theo ngày</span>
+                        <i class="bi bi-circle"></i><span>Thống kê doanh thu</span>
                     </a>
                 </li>
                 <li>
                     <a asp-controller="ThongKe" asp-action="IndexMain">
-                        <i class="bi bi-circle"></i><span>Theo tháng</span>
-                    </a>
-                </li>
-                <li>
-                    <a asp-controller="ThongKe" asp-action="">
-                        <i class="bi bi-circle"></i><span>Theo năm</span>
+                        <i class="bi bi-circle"></i><span>Thống kê sản phẩm</span>
                     </a>
                 </li>
             </ul>
@@ -99,13 +111,13 @@
 
 
         <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#forms-nav" href="#">
+            <a class="nav-link collapsed" data-bs-target="#forms-nav" href="/HoaDon/DanhSachHoaDon">
                 <i class="fas fa-file-invoice"></i><span>Quản Lí Hóa Đơn</span>
             </a>
         </li><!-- End Quản Lí Hóa Đơn Nav -->
 
         <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#forms-nav" href="#">
+            <a class="nav-link collapsed" data-bs-target="#forms-nav" href="/HoaDon/DanhSachPhanTrangThai">
                 <i class="fas fa-truck"></i><span>Quản Lí Trạng Thái Giao Hàng</span>
             </a>
         </li><!-- End Quản Lí Trạng Thái Giao Hàng Nav -->

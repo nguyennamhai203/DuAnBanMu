@@ -1,4 +1,5 @@
-﻿using Shop_Api.AppDbContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
@@ -83,7 +84,7 @@ namespace Shop_Api.Repository
             }
         }
 
-        public async Task<List<SanPhamYeuThich>> GetListSPYT(int? status, int page = 1)
+        public async Task<List<SanPhamYeuThich>> GetListSPYT(int? status, int page)
         {
             var list = contextSPYT.SanPhamYeuThichs.AsQueryable();
             if (status.HasValue)

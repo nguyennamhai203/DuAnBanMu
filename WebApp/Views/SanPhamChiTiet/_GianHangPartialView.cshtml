@@ -44,14 +44,18 @@
                 <div class="price">
                     @* <h6>$150.00</h6>
                 <h6 class="l-through">$210.00</h6> *@
-                    @if (item.GiaMin == item.GiaMax)
+                    @if (item.GiaBan == item.GiaGoc)
                     {
-                        <div class="product-m__price" style="color: red">Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMin)</div>
+                        <div class="product-m__price" style="color: red">Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</div>
 
                     }
                     else
                     {
-                        <div class="product-m__price" style="color: red">Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMin)  -  @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaMax)</div>
+                        <div class="product-m__price" style="color: red">
+                            Giá:
+                            <span style="font-weight: bold">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)</span>
+                            <del>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaGoc)</del>
+                        </div>
                     }
                     <a href="@Url.Action("Details","SanPhamChiTiet", new {  sumguid=item.IdChiTietSp })" class="dropdown-item" style="color: orange;">Xem Mũ</a>
 
@@ -63,9 +67,10 @@
                         <span class="ti-bag"></span>
                         <p class="hover-text">add to bag</p>
                     </a>
-                    <a href="" class="social-info">
+                    @* // Thêm sản phẩm vào danh sách sản phẩm yêu thích*@
+                    <a href="#" class="social-info" onclick="addToFavoriteBtn('@User.Identity.Name', '@item.IdChiTietSp')">
                         <span class="lnr lnr-heart"></span>
-                        <p class="hover-text">Wishlist</p>
+                        <p class="hover-text">Thêm vào yêu thích</p>
                     </a>
                     <a href="" class="social-info">
                         <span class="lnr lnr-sync"></span>
@@ -79,7 +84,6 @@
             </div>
         </div>
     </div>
-
 }
 
 
@@ -151,6 +155,38 @@
             }
         });
     }
+    
+    function addToFarvoriteBtn(userID,productID) {
+        // var quantity = document.getElementById('sst').value;
+        event.preventDefault(); // Chặn hành vi mặc định của form
+        $.ajax({
+            url: '/SanPhamYeuThich/UserAddProduct',
+            type: 'POST',
+            data: { userID: userID , productID: productID },
+            // contentType: false,
+            // processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                // Hiển thị thông báo thêm vào thành công và ngược lại
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "success");
+
+                } else {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "error");
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
 
     // Function hiển thị thông báo
     function showNotification(message, type) {
@@ -182,15 +218,9 @@
 
 
     $(document).ready(function () {
-       
+
     });
 
 
 </script>
 }
-
-
-
-
-
-

@@ -2,8 +2,11 @@
 using Newtonsoft.Json;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
+using Shop_Models.ViewModels.VNPay;
 using System.Net.Http;
+using System.Text;
 using WebApp.Services;
+using WebApp.Services.IServices;
 
 namespace WebApp.Controllers
 {
@@ -12,12 +15,14 @@ namespace WebApp.Controllers
         private readonly ILogger<CartController> _logger;
         private readonly IConfiguration _config;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IVNPayService _vnpayService;
 
-        public CartController(ILogger<CartController> logger, IConfiguration config, IHttpClientFactory httpClientFactory)
+        public CartController(ILogger<CartController> logger, IConfiguration config, IHttpClientFactory httpClientFactory, IVNPayService vNPayService)
         {
             _logger = logger;
             _config = config;
             _httpClientFactory = httpClientFactory;
+            _vnpayService = vNPayService;
         }
 
         public async Task<IActionResult> Index()
@@ -85,7 +90,7 @@ namespace WebApp.Controllers
             {
                 var resultString = await responseVoucher.Content.ReadAsStringAsync();
                 // var resultResponse = JsonConvert.DeserializeObject<ResponseDto>(resultString);
-                ViewBag.listVoucher = JsonConvert.DeserializeObject<IEnumerable<Voucher>>(resultString).Where(x=>x.TrangThai!=0);
+                ViewBag.listVoucher = JsonConvert.DeserializeObject<IEnumerable<Voucher>>(resultString).Where(x => x.TrangThai != 0);
             }
 
             if (!string.IsNullOrEmpty(userName))
@@ -171,6 +176,11 @@ namespace WebApp.Controllers
                     var product = JsonConvert.DeserializeObject<List<SanPhamChiTietDto>>(resultString.ToString()).FirstOrDefault(x => x.MaSanPhamChiTiet == codeProductDetail);
                     var Cart = SessionService.GetObjFromSession(HttpContext.Session, "Cart");
                     GioHangChiTietViewModel s = new GioHangChiTietViewModel();
+
+                    if (product.SoLuongTon == 0)
+                    {
+                        return Json(new { code = 400, message = "Sản phẩm hiện đang hết hàng" });
+                    }
 
                     if (SessionService.CheckObjInList(codeProductDetail, Cart))
                     {
@@ -441,8 +451,24 @@ namespace WebApp.Controllers
                     request.CartItem = new List<GioHangChiTietViewModel>();
                     request.Usename = HttpContext.Session.GetString("username");
                     var cartSession = SessionService.GetObjFromSession(HttpContext.Session, "Cart");
+                    SessionService.SetObjToSession(HttpContext.Session, "PaymentRequest", request);
+                    if (request.MaPTTT == "VNPay")
+                    {
+                        var vnPayModel = new VNPaymentRequestModel()
+                        {
+                            Amount = (double)request.Payment,
+                            CreatedDate = DateTime.Now,
+                            Description = $"{request.FullName} {request.PhoneNumber}",
+                            FullName = request.FullName,
+                            OrderId = "Bill" + GenerateRandomString(10),
+                            //OrderId = new Random().Next(1000, 10000),
+                        };
+                        // Lưu request vào session trước khi redirect
 
-                  
+                        return Redirect(_vnpayService.CreatePaymentUrl(HttpContext, vnPayModel));
+                    }
+
+
                     foreach (var i in cartSession)
                     {
                         request.CartItem.Add(i);
@@ -458,7 +484,7 @@ namespace WebApp.Controllers
                         //await client.PutAsJsonAsync($"/api/Voucher/UpdateSL?codeVoucher={request.CodeVoucher}", String.Empty);
                         await client.DeleteAsync($"api/Cart/Delete?username={request.Usename}");
                         HttpContext.Session.Remove("Cart");
-                        return RedirectToAction("ShowBill","HoaDon", new { invoiceCode = $"{deserHoaDon.MaHoaDon}" });
+                        return RedirectToAction("ShowBill", "HoaDon", new { invoiceCode = $"{deserHoaDon.MaHoaDon}" });
                     }
                     return View();
                 }
@@ -468,6 +494,75 @@ namespace WebApp.Controllers
 
                 return View("Error");
             }
+        }
+        public IActionResult PaymentFail()
+        {
+            if (TempData.ContainsKey("Message"))
+            {
+                ViewBag.Message = TempData["Message"]; var message = TempData["Message"]; // Lấy giá trị từ TempData
+                TempData.Remove("Message"); // Xóa TempData sau khi được sử dụng
+                ViewBag.Message = message; // Truyền giá trị sang ViewBag để sử dụng trong view
+                return View();
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> PaymentCallBackAsync()
+        {
+            var responseVNPay = _vnpayService.PaymentExcute(Request.Query);
+            var cartSession = SessionService.GetObjFromSession(HttpContext.Session, "Cart");
+            var request = SessionService.GetObjFromSessionRequestBillDto(HttpContext.Session, "PaymentRequest");
+
+
+            if (responseVNPay == null || responseVNPay.VnPayResponseCode != "00")
+            {
+                TempData["Message"] = $"Loi thanh toan VnPay:{responseVNPay.VnPayResponseCode}";
+                return RedirectToAction("PaymentFail");
+            }
+            //return View();
+            var invoiceCode = "";/*= deserHoaDon.MaHoaDon;*/
+            using (var client = _httpClientFactory.CreateClient("BeHat"))
+            {
+                foreach (var i in cartSession)
+                {
+                    request.CartItem.Add(i);
+                }
+                request.trangthaithanhtoan = 1; // trang thasi thanh toan
+                request.MaHoaDon = responseVNPay.OrderId;
+                HttpResponseMessage response = await client.PostAsJsonAsync($"/CreateBill", request);
+                if (response.IsSuccessStatusCode)
+                {
+
+                    var result = await response.Content.ReadAsStringAsync();
+                    var deserResponseDto = JsonConvert.DeserializeObject<ResponseDto>(result);
+                    var deserHoaDon = JsonConvert.DeserializeObject<HoaDon>(deserResponseDto.Content.ToString());
+                    //await client.PutAsJsonAsync($"/api/Voucher/UpdateSL?codeVoucher={request.CodeVoucher}", String.Empty);
+                    await client.DeleteAsync($"api/Cart/Delete?username={request.Usename}");
+                    HttpContext.Session.Remove("Cart");
+                    //return RedirectToAction("ShowBill", "HoaDon", new { invoiceCode = $"{deserHoaDon.MaHoaDon}" });
+
+                    // Lấy invoiceCode từ HoaDon
+                    invoiceCode = deserHoaDon.MaHoaDon;
+                }
+            }
+
+            return RedirectToAction("ShowBill", "HoaDon", new { invoiceCode = $"{invoiceCode}" });
+
+        }
+
+        public static string GenerateRandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder randomString = new StringBuilder();
+
+            Random random = new Random();
+            for (int i = 0; i < length; i++)
+            {
+                int index = random.Next(chars.Length);
+                randomString.Append(chars[index]);
+            }
+
+            return randomString.ToString();
         }
     }
 }

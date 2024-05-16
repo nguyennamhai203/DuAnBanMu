@@ -1,0 +1,153 @@
+﻿@model IEnumerable<Shop_Models.Entities.ThuongHieu>
+@using static Shop_Models.Heplers.TrangThai;
+@{
+    ViewData["Title"] = "GetAllTH";
+}
+<style>
+    .table-container {
+        border: 1px solid #ddd; /* Màu viền khung */
+        border-radius: 5px; /* Đường cong viền */
+        padding: 10px; /* Khoảng cách bên trong khung */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+        overflow: auto; /* Cho phép cuộn nếu bảng quá lớn */
+    }
+
+    .card{
+        border: 1px solid #ddd; /* Màu viền khung */
+        border-radius: 5px; /* Đường cong viền */
+        padding: 10px; /* Khoảng cách bên trong khung */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+        overflow: auto; /* Cho phép cuộn nếu bảng quá lớn */
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="container-fluid">
+            <div class="row">
+				<h1>Quản Lý Thương Hiệu</h1>
+                <div class="col-md-8">
+                    <div class="table-container" style="height: 430px;">
+                        <div class="table-responsive" id="tableContainer">
+                            <table class="table" id="THTable">
+                                <thead>
+                                    <tr>
+                                        <th>Mã</th>
+                                        <th>Tên Thương Hiệu</th>
+                                        <th>Trạng Thái</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@Html.DisplayFor(modelItem => item.MaThuongHieu)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.TenThuongHieu)</td>
+                                            <td>
+                                                @if (item.TrangThai == (int)TrangThaiCoBan.HoatDong)
+                                                {
+                                                    <span class="text-black">Hoạt Động</span>
+                                                }
+                                                else if (item.TrangThai == (int)TrangThaiCoBan.KhongHoatDong)
+                                                {
+                                                    <span class="text-black">Không Hoạt Động</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-black">Trạng thái không xác định</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-area="" asp-controller="Thuonghieu" asp-action="EditTH" asp-route-id="@item.Guid" class="btn btn-primary" title="Sửa"><i class="bx bxs-edit"></i></a>
+                                                <a asp-area="" asp-controller="Thuonghieu" asp-action="DetailTH" asp-route-id="@item.Guid" class="btn btn-success" title="Chi tiết"><i class="bx bxs-detail"></i></a>
+                                                <a asp-area="" asp-controller="Thuonghieu" asp-action="DeleteTH" asp-route-id="@item.Guid" class="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa??')" title="Xóa"><i class="bx bxs-trash-alt"></i></a>
+                                               
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card" >
+                        <div class="card-body">
+                            <h2 class="card-title">Thêm Thương Hiệu mới</h2>
+                            <form id="createTHForm" asp-action="CreateTH" method="post">
+                                <div class="form-group">
+                                    <label for="maTH">Mã Thương Hiệu:</label>
+                                    <input type="text" class="form-control" id="maTH" name="MaThuongHieu" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="tenTH">Tên Thương Hiệu:</label>
+                                    <input type="text" class="form-control" id="tenTH" name="TenThuongHieu" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Trangthai">Trạng Thái :</label>
+                                    <input type="text" class="form-control" id="Trangthai" name="Trangthai" />
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button type="button" onclick="kiemTraTrungMa()" class="btn btn-success">Thêm</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Thư viện DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+<!-- Thư viện jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Thư viện DataTables JavaScript -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+<!-- Thư viện No Pagination UI -->
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.jqueryui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.jqueryui.min.css">
+<script>
+    function kiemTraTrungMa() {
+        var maTH = document.getElementById("maTH").value;
+        var maTHDaHienThi = [];
+
+        // Lấy danh sách các mã đã hiển thị trên giao diện
+        $("#THTable tbody tr").each(function () {
+            maTHDaHienThi.push($(this).find("td:first").text().trim());
+        });
+
+        // Kiểm tra trùng mã với danh sách các mã đã hiển thị
+        if (maTHDaHienThi.includes(maTH)) {
+            alert("Mã đã tồn tại trong dữ liệu. Vui lòng chọn mã khác.");
+        } else {
+            $("#createTHForm").submit(); // Sử dụng jQuery để submit form
+        }
+    }
+
+    $(document).ready(function () {
+        var table = $('#THTable').DataTable();
+        if (!table || !$.fn.DataTable.isDataTable('#THTable')) {
+            // Nếu bảng chưa được khởi tạo DataTables thì khởi tạo nó
+            $('#THTable').DataTable({
+                "scrollY": "250px", // Chiều cao của khu vực lướt
+                "paging": true, // Hiển thị chia trang
+                "pagingType": "simple_numbers", // Loại chia trang (không có ô vuông nhỏ)
+                "lengthMenu": [5, 15, 25, 50], // Lựa chọn số lượng hàng trên mỗi trang
+                "renderer": "jqueryui" // Sử dụng renderer của jQuery UI
+            });
+        }
+
+        // Gắn sự kiện onclick cho nút "Thêm"
+        $("#createTHForm button").click(kiemTraTrungMa);
+    });
+</script>
+
+
+
