@@ -67,9 +67,10 @@
                         <span class="ti-bag"></span>
                         <p class="hover-text">add to bag</p>
                     </a>
-                    <a href="" class="social-info">
+                    @* // Thêm sản phẩm vào danh sách sản phẩm yêu thích*@
+                    <a href="#" class="social-info" onclick="addToFavoriteBtn('@User.Identity.Name', '@item.IdChiTietSp')">
                         <span class="lnr lnr-heart"></span>
-                        <p class="hover-text">Wishlist</p>
+                        <p class="hover-text">Thêm vào yêu thích</p>
                     </a>
                     <a href="" class="social-info">
                         <span class="lnr lnr-sync"></span>
@@ -83,7 +84,6 @@
             </div>
         </div>
     </div>
-
 }
 
 
@@ -155,6 +155,38 @@
             }
         });
     }
+    
+    function addToFarvoriteBtn(userID,productID) {
+        // var quantity = document.getElementById('sst').value;
+        event.preventDefault(); // Chặn hành vi mặc định của form
+        $.ajax({
+            url: '/SanPhamYeuThich/UserAddProduct',
+            type: 'POST',
+            data: { userID: userID , productID: productID },
+            // contentType: false,
+            // processData: false,
+            success: function (results) {
+                debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                // Hiển thị thông báo thêm vào thành công và ngược lại
+                if (results.code === 200) {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "success");
+
+                } else {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "error");
+
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
 
     // Function hiển thị thông báo
     function showNotification(message, type) {
@@ -192,9 +224,3 @@
 
 </script>
 }
-
-
-
-
-
-
