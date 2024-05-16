@@ -1,10 +1,33 @@
-﻿@{
+﻿@using static Shop_Models.Heplers.TrangThai;
+
+@{
+	var httpContext = ViewContext.HttpContext;
     float thanhTien = 0;
     float total = 0;
     float phaiTra = 0;
+    var username = httpContext.Session.GetString("UserName");
 }
 
+<style>
+	.custom-label {
+		background-color: indianred; /* Màu nền */
+		border: none; /* Không có viền */
+		color: white; /* Màu chữ */
+		padding: 15px 32px; /* Đệm trong */
+		text-align: center; /* Canh giữa chữ */
+		text-decoration: none; /* Không gạch chân */
+		display: inline-block; /* Hiển thị như một khối nội tuyến */
+		font-size: 16px; /* Kích thước chữ */
+		margin: 4px 2px; /* Khoảng cách bên ngoài */
+		cursor: pointer; /* Con trỏ chuột khi hover */
+		border-radius: 4px; /* Bo góc */
+	}
 
+		.custom-label:hover {
+			background-color: #45a049; /* Màu nền khi hover */
+		}
+
+</style>
 
 <!-- Start Banner Area -->
 <section class="banner-area organic-breadcrumb">
@@ -24,7 +47,14 @@
 <!--================Order Details Area =================-->
 <section class="order_details section_gap">
     <div class="container">
+        @if (username != null)
+        {
+            <a asp-controller="HoaDon" asp-action="GetCustomerPurchaseHistory" asp-route-customerId="@username" class="custom-label ">Lịch sử mua hàng</a>
 
+        }
+
+        <br />
+        <br />
         <form asp-controller="HoaDon" asp-action="ShowBill" class="d-flex">
             <input class="form-control find-bill" name="invoiceCode" type="search" placeholder="Nhập mã hóa đơn để tìm kiếm" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">

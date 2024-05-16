@@ -1,0 +1,49 @@
+﻿@model Shop_Models.Entities.ThuongHieu
+@using static Shop_Models.Heplers.TrangThai;
+@{
+    ViewData["Title"] = "DetailTH";
+}
+
+<div class="container">
+    <h4>Thương Hiệu</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            <strong>Mã Thương Hiệu:</strong>
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MaThuongHieu)
+        </dd>
+        <dt class="col-sm-2">
+            <strong>Tên Thương Hiệu:</strong>
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TenThuongHieu)
+        </dd>
+        <dt class="col-sm-2">
+            <strong>Trạng Thái:</strong>
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.TrangThai == (int)TrangThaiCoBan.HoatDong)
+            {
+                <text>Hoạt động</text>
+            }
+            else if (Model.TrangThai == (int)TrangThaiCoBan.KhongHoatDong)
+            {
+                <text>Không hoạt động</text>
+            } else
+            {
+                <text>Không xác định trạng thái</text>
+            }
+        </dd>
+    </dl>
+</div>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <a asp-action="EditTH" asp-route-id="@Model.Guid" class="btn btn-primary">Chỉnh Sửa</a> |
+            <a asp-action="GetAllTH" class="btn btn-secondary">Quay lại Danh Sách</a>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shop_Models.Dto;
+using Shop_Models.Entities;
 using System.Net.Http;
 
 namespace WebApp.Controllers
@@ -59,6 +60,26 @@ namespace WebApp.Controllers
             {
 
                 return View("Error");
+            }
+        }
+        public async Task<ActionResult<List<HoaDon>>> GetCustomerPurchaseHistory(string customerId)
+        {
+            // Tạo một HTTP client từ factory
+            var client = _httpClientFactory.CreateClient();
+
+            // Gọi endpoint của controller MVC
+            var response = await client.GetAsync($"https://localhost:7050/GetPurchaseHistory?customerId={customerId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var purchaseHistory = await response.Content.ReadAsStringAsync(); // Sử dụng phương thức mở rộng ReadFromJsonAsync()
+
+                var jsondata = JsonConvert.DeserializeObject<List<HoaDon>>(purchaseHistory.ToString());
+                return View(jsondata);
+            }
+            else
+            {
+                return StatusCode((int)response.StatusCode, "Không thể lấy dữ liệu lịch sử mua hàng.");
             }
         }
     }

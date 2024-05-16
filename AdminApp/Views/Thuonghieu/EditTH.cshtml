@@ -1,0 +1,51 @@
+﻿@model Shop_Models.Entities.ThuongHieu
+@using static Shop_Models.Heplers.TrangThai;
+
+
+@{
+    ViewData["Title"] = "EditTH";
+}
+
+<h1>EditTH</h1>
+
+<h4>ThuongHieu</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditTH" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Hidden field to store GUID -->
+            <input type="hidden" asp-for="Guid" />
+            <div class="form-group">
+                <label asp-for="MaThuongHieu" class="control-label"></label>
+                <input asp-for="MaThuongHieu" class="form-control" />
+                <span asp-validation-for="MaThuongHieu" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TenThuongHieu" class="control-label"></label>
+                <input asp-for="TenThuongHieu" class="form-control" />
+                <span asp-validation-for="TenThuongHieu" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                    <label asp-for="TrangThai" class="control-label">Trạng Thái Thanh Toán:</label>
+                    <select asp-for="TrangThai" class="form-control">
+                        <option value="@((int)TrangThaiCoBan.HoatDong)">Hoạt Động</option>
+                        <option value="@((int)TrangThaiCoBan.KhongHoatDong)">Không Hoạt Động</option>
+                    </select>
+                    <span asp-validation-for="TrangThai" class="text-danger"></span>
+                </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,49 @@
+﻿@model Shop_Models.Entities.Loai
+@using static Shop_Models.Heplers.TrangThai;
+@{
+    ViewData["Title"] = "EditLoai";
+}
+
+<h1>EditLoai</h1>
+
+<h4>Loai</h4>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-4" style="overflow-y: auto; max-height: 430px;">
+        <form asp-action="EditLoai">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="MaLoai" class="control-label"></label>
+                <input asp-for="MaLoai" class="form-control" />
+                <span asp-validation-for="MaLoai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TenLoai" class="control-label"></label>
+                <input asp-for="TenLoai" class="form-control" />
+                <span asp-validation-for="TenLoai" class="text-danger"></span>
+            </div>
+                <div class="form-group">
+                    <label asp-for="TrangThai" class="control-label">Trạng Thái Thanh Toán:</label>
+                    <select asp-for="TrangThai" class="form-control">
+                        <option value="@((int)TrangThaiCoBan.HoatDong)">Hoạt Động</option>
+                        <option value="@((int)TrangThaiCoBan.KhongHoatDong)">Không Hoạt Động</option>
+                    </select>
+                    <span asp-validation-for="TrangThai" class="text-danger"></span>
+                </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="GetAllLoai">Quay Lại</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

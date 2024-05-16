@@ -1,0 +1,136 @@
+﻿@model Tuple<Shop_Models.Entities.HoaDon, List<Shop_Models.Entities.HoaDonChiTiet>>
+@using static Shop_Models.Heplers.TrangThai;
+@{
+    ViewData["Title"] = "Chi Tiết Hóa Đơn";
+    var chiTietHoaDonPhuHop = Model.Item2.Where(item => item.HoaDonId == Model.Item1.Id).ToList();
+}
+
+<style>
+    /* Định dạng cho section */
+    section {
+        margin-bottom: 20px;
+    }
+
+    /* Định dạng cho phần tử h3 */
+    h3 {
+        color: #333;
+    }
+
+    /* Định dạng cho bảng */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        table th, table td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+    /* Định dạng cho các dòng chẵn và lẻ trong bảng */
+    tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+<div id="pdf-content">
+    <div style="display: flex; align-items: center;">
+        <h3 style="flex: 1;">Chi Tiết hóa đơn</h3>
+       
+    </div>
+    <br />
+
+    <div>
+        <div style="border: 1px solid black; padding: 10px; border-radius: 10px;">
+            <p style="font-size: larger; font-weight: bold; color: lawngreen;">Thông Tin Khách Hàng</p>
+        <section>
+            <p>Khách hàng: @Model.Item1.TenKhachHang</p>
+            <p>Địa Chỉ: @Model.Item1.DiaChiGiaoHang</p>
+            <p>Số Điện Thoại: @Model.Item1.SoDienThoai</p>
+            <!-- Các thông tin khách hàng khác -->
+        </section>
+        </div>
+    </div>
+    <br />
+    <div style="border: 1px solid black; padding: 10px; border-radius: 10px;">
+        <p style="color: cornflowerblue; font-size: larger; font-weight: bold;">Thông Tin Hóa Đơn</p>
+        <section style="display: flex;">
+            <div style="width: 50%;">
+                <p>Mã Hóa Đơn: @Model.Item1.MaHoaDon</p>
+                <p>Ngày Tạo: @Model.Item1.NgayTao</p>
+                <p>Ngày Thanh Toán: @Model.Item1.NgayThanhToan</p>
+                <p>Ngày Ship: @Model.Item1.NgayShip</p>
+                <p>Ngày Nhận Hàng: @Model.Item1.NgayNhan</p>
+                <p>Mô Tả: @Model.Item1.MoTa</p>
+                @if (chiTietHoaDonPhuHop != null && chiTietHoaDonPhuHop.Any())
+                {
+                    @foreach (var chiTiet in chiTietHoaDonPhuHop)
+                    {
+                        <p>Số lượng: @chiTiet.SoLuong</p>
+                        <p>Giá Bán: @chiTiet.GiaBan</p>
+                    }
+                }
+                else
+                {
+                    <p>Danh sách chi tiết hóa đơn trống hoặc không tồn tại.</p>
+                }
+            </div>
+            <div style="width: 50%;">
+                <p>Tiền Giảm: @Model.Item1.TienGiam</p>
+                <p>Tiền Ship: @Model.Item1.TienShip</p>
+                <p>Tổng Tiền: @Model.Item1.TongTien</p>
+                <p> Trạng Thái Thanh Toán:
+                    @if (@Model.Item1.TrangThaiThanhToan == (int)TrangThaiThanhToan.Chuathanhtoan)
+                    {
+                        <span class="text-black">
+                            <i class="bi bi-x-circle" style="color: red;"></i> Chưa Thanh Toán
+                        </span>
+                    }
+                    else if (@Model.Item1.TrangThaiThanhToan == (int)TrangThaiThanhToan.Dathanhtoan)
+                    {
+                        <span class="text-black">
+                            <i class="bi bi-check-circle" style="color: green;"></i> Đã Thanh Toán
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="text-black">Trạng thái không xác định</span>
+                    }
+                </p>
+                <p>Trạng Thái Giao Hàng: 
+                    @if (@Model.Item1.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DaGiaoHang)
+                    {
+                        <span class="text-black"><i class="fas fa-check-circle" style="color: green;"></i> Đã giao hàng</span>
+                    }
+                    else if (@Model.Item1.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang)
+                    {
+                        <span hoaDon="text-black"><i class="fas fa-truck-moving" style="color: orange;"></i> Đang giao hàng</span>
+                    }
+                    else if (@Model.Item1.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoGiaoHang)
+                    {
+                        <span class="text-black"><i class="fas fa-hourglass-half" style="color: blue;"></i> Chờ giao hàng</span>
+                    }
+                    else if (@Model.Item1.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoXacNhan)
+                    {
+                        <span class="text-black"><i class="fas fa-clock" style="color: yellow;"></i> Chờ xác nhận</span>
+                    }
+                    else
+                    {
+                        <span class="text-black"><i class="fas fa-times-circle" style="color: red;"></i> Đã hủy</span>
+                    }
+                </p>
+                <p>Ngày Giao Hàng Dự Kiến: @Model.Item1.NgayGiaoDuKien</p>
+                <p>Lý Do Hủy: @Model.Item1.LiDoHuy</p>
+            </div>
+        </section>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="~/css/site.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+

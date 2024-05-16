@@ -1,0 +1,219 @@
+﻿@model IEnumerable<Shop_Models.Entities.HoaDon>
+@using static Shop_Models.Heplers.TrangThai;
+
+@{
+	ViewData["Title"] = "Danh sách đơn hàng theo trạng thái";
+	var selectedValue = ViewBag.SelectedStatus;
+}
+<h3>Trạng Thái Hóa Đơn</h3>
+<div class="row">
+	<div class="col-md-12">
+		<div class="select-wrapper">
+			<div id="trangThaiOptions">
+				<div class="option" data-value="5"><i class="fas fa-cash-register" style="color: tomato;"></i> <span style="color: tomato;">Tại Quầy</span></div>
+				<div class="option" data-value="0"><i class="fas fa-clock" style="color: yellow;"></i> <span style="color: yellow;">Chờ xác nhận</span></div>
+				<div class="option" data-value="1"><i class="fas fa-shipping-fast" style="color: blue;"></i> <span style="color: blue;">Chờ giao hàng</span></div>
+				<div class="option" data-value="2"><i class="fas fa-truck-moving" style="color: orange;"></i> <span style="color: orange;">Đang giao hàng</span></div>
+				<div class="option" data-value="3"><i class="fas fa-check-circle" style="color: green;"></i> <span style="color: green;">Đã giao hàng</span></div>
+				<div class="option" data-value="4"><i class="fas fa-times-circle" style="color: red;"></i> <span style="color: red;">Đã hủy</span></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.option {
+		border: 1px solid transparent; /* Tạo viền trắng nhỏ ban đầu */
+		padding: 5px 10px;
+		margin: 5px;
+		cursor: pointer;
+		display: inline-block; /* Hiển thị các phần tử ngang nhau */
+	}
+
+		.option:hover {
+			border: 1px solid #ccc; /* Hiển thị viền trắng nhỏ khi trỏ chuột vào */
+		}
+
+	
+
+	.option:hover {
+		border: 1px solid #ccc; /* Hiển thị viền trắng nhỏ khi trỏ chuột vào */
+	}
+
+	.option i, .option span {
+		vertical-align: middle; /* Canh chỉnh đồng trục theo chiều dọc */
+	}
+
+	.option span {
+		margin-left: 5px; /* Khoảng cách giữa biểu tượng và văn bản */
+	}
+</style>
+
+
+<div id="hoaDonContainer">
+	@if (Model != null && Model.Count() > 0)
+	{
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Mã Hóa Đơn</th>
+					<th>Ngày Tạo</th>
+					<th>Ngày Thanh Toán</th>
+					<th>Ngày Ship</th>
+					<th>Ngày Nhận</th>
+					<th>Mô Tả</th>
+					<th>Tiền Giảm</th>
+					<th>Tiền Ship</th>
+					<th>Tổng Tiền</th>
+					<th>Trạng Thái Thanh Toán</th>
+					<th>Trạng Thái Giao Hàng</th>
+					<th>Lí Do Hủy</th>
+					<th>Thao tác</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var hoaDon in Model)
+				{
+					<tr>
+						<td>@hoaDon.MaHoaDon</td>
+						<td>@hoaDon.NgayTao</td>
+						<td>@hoaDon.NgayThanhToan</td>
+						<td>@hoaDon.NgayShip</td>
+						<td>@hoaDon.NgayNhan</td>
+						<td>@hoaDon.MoTa</td>
+						<td>@hoaDon.TienGiam</td>
+						<td>@hoaDon.TienShip</td>
+						<td>@hoaDon.TongTien</td>
+						<td>
+							@if (@hoaDon.TrangThaiThanhToan == (int)TrangThaiThanhToan.Chuathanhtoan)
+							{
+								<span class="text-black">
+									<i class="bi bi-x-circle" style="color: red;"></i> Chưa Thanh Toán
+								</span>
+							}
+							else if (@hoaDon.TrangThaiThanhToan == (int)TrangThaiThanhToan.Dathanhtoan)
+							{
+								<span class="text-black">
+									<i class="bi bi-check-circle" style="color: green;"></i> Đã Thanh Toán
+								</span>
+							}
+							else
+							{
+								<span class="text-black">Trạng thái không xác định</span>
+							}
+						</td>
+
+
+
+
+						<!-- Button thay đổi trạng thái giao hàng -->
+						<td>
+							@if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DaGiaoHang)
+							{
+								<span class="text-black"><i class="fas fa-check-circle" style="color: green;"></i> Đã giao hàng</span>
+							}
+							else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang)
+							{
+								<span hoaDon="text-black"><i class="fas fa-truck-moving" style="color: orange;"></i> Đang giao hàng</span>
+							}
+							else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoGiaoHang)
+							{
+								<span class="text-black"><i class="fas fa-shipping-fast" style="color: blue;"></i> Chờ giao hàng</span>
+							}
+							else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoXacNhan)
+							{
+								<span class="text-black"><i class="fas fa-clock" style="color: yellow;"></i> Chờ xác nhận</span>
+							}
+							else
+							{
+								<span class="text-black"><i class="fas fa-times-circle" style="color: red;"></i> Đã hủy</span>
+							}
+						</td>
+						<td>@hoaDon.LiDoHuy</td>
+						<td>
+							<a href="#" onclick="updateStatus('@hoaDon.Id',@hoaDon.TrangThaiGiaoHang)" class="btn btn-primary" title="Cập nhật trạng thái"><i class="bx bx-refresh"></i></a>
+							<a href="/HoaDon/CancelOrder?id=@hoaDon.Id" class="btn btn-danger" title="Hủy đơn hàng"><i class="bx bxs-trash-alt"></i></a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+	else if (selectedValue == null || !(selectedValue is int)) // Thêm selectedValue === undefined để xử lý trường hợp không có trạng thái được chọn
+	{
+		<p>Không có đơn hàng nào ở trạng thái này.</p>
+	}
+	else
+	{
+		<p>Không có đơn hàng nào phù hợp với yêu cầu lọc.</p>
+	}
+</div>
+
+
+@section scripts {
+	<script>
+		$(document).ready(function () {
+			$('.option').click(function () {
+				var selectedValue = $(this).data('value');
+				$.ajax({
+					url: '/HoaDon/DanhSachPhanTrangThai2',
+					type: 'GET',
+					data: { trangThaigiaohang: selectedValue },
+					success: function (data) {
+						if (data == null) {
+							$('#hoaDonContainer').html('<p>Không có đơn hàng nào phù hợp với yêu cầu lọc.</p>');
+						} else {
+							$('#hoaDonContainer').html(data);
+						}
+						// Gán giá trị selectedValue vào ViewBag.SelectedStatus
+						ViewBag.SelectedStatus = selectedValue;
+					},
+					error: function (xhr, status, error) {
+						console.error(error);
+					}
+				});
+			});
+		});
+		function updateStatus(id, status) {
+			debugger
+			// Gọi API để cập nhật trạng thái
+			fetch(`/HoaDon/UpdateHoaDonStatus?id=${id}&hoaDonStatus=${status}`)
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Cập nhật trạng thái không thành công');
+					}
+					return response.json();
+				})
+				.then(data => {
+					
+					if (data.success) {
+						// Hiển thị thông báo khi cập nhật thành công
+						alert('Cập nhật trạng thái thành công');
+						// Sau khi nhấn oke, chuyển hướng trang hoặc thực hiện hành động tiếp theo tùy ý
+						window.location.href = '/HoaDon/DanhSachPhanTrangThai'; // Ví dụ: chuyển hướng về trang danh sách hóa đơn
+					}
+					//else if(!data.success) {
+					//	// Hiển thị thông báo khi cập nhật thành công
+					//	alert('Cập nhật trạng thái thành công');
+					//} 
+					else
+					{
+						alert('Cập nhật thất bại. Lỗi: ' + data.message);
+					}
+				})
+				.catch(error => {
+					console.error('Có lỗi xảy ra:', error);
+					alert('Đã xảy ra lỗi khi cập nhật trạng thái');
+				});
+		}
+				
+
+	</script>
+}
+
+
+
+
+
+
+

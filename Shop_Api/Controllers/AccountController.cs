@@ -85,7 +85,7 @@ namespace Shop_Api.Controllers
 
 
         [HttpPost("XacNhan")]
-        public async Task<IActionResult> Xac(SignUpDto model, string mail, string codeconfirm)
+        public async Task<IActionResult> XacNhan(SignUpDto model, string mail, string codeconfirm)
         {
             var result = await _accountRepository.XacNhanTaoTkChoNhanVienAsync(model, codeconfirm, mail);
             if (result != null)
@@ -132,6 +132,17 @@ namespace Shop_Api.Controllers
         public async Task<IActionResult> GetNguoiDung(int? status,int page)
         {
             var result = await _accountRepository.GetAllNguoiDungAsync(status,page);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        } 
+        
+        [HttpGet("DanhSachNhanVien")]
+        public async Task<IActionResult> DanhSachNhanVien()
+        {
+            var result = await _accountRepository.DanhSachNhanVien();
             if (result != null)
             {
                 return Ok(result);
