@@ -125,75 +125,89 @@ namespace Shop_Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Shop_Models.Dto.ThongKeViewModel", b =>
+            modelBuilder.Entity("Shop_Models.Dto.SanPhamYeuThichViewModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("GiaBan")
+                    b.Property<string>("AnhSanPham")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ChiTietSanPhamId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DiaChi")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("GiaBan")
                         .HasColumnType("float");
 
-                    b.Property<double>("GiaNhap")
+                    b.Property<double?>("GiaNhap")
                         .HasColumnType("float");
 
-                    b.Property<string>("MaHoaDon")
-                        .IsRequired()
+                    b.Property<double?>("GiaThucTe")
+                        .HasColumnType("float");
+
+                    b.Property<bool?>("GioiTinh")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MaAnh")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MaNguoiDung")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MaSanPham")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NamThongKe")
+                    b.Property<string>("MaSanPhamCT")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mota")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SoDienThoai")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SoLuongDaBan")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("NgayNhan")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("NgayShip")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("NgayTao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("NgayThanhToan")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("NgayThongKe")
+                    b.Property<int?>("SoLuongTon")
                         .HasColumnType("int");
 
-                    b.Property<double>("PhanTramLo")
-                        .HasColumnType("float");
-
-                    b.Property<double>("PhanTramLoiNhuan")
-                        .HasColumnType("float");
-
-                    b.Property<int>("SoLuongDaBan")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SoLuongTon")
-                        .HasColumnType("int");
+                    b.Property<string>("TenNguoiDung")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenSanPham")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ThangThongKe")
+                    b.Property<int>("TrangThai")
                         .HasColumnType("int");
 
-                    b.Property<double>("TienGiam")
-                        .HasColumnType("float");
+                    b.Property<int?>("TrangThaiCTSP")
+                        .HasColumnType("int");
 
-                    b.Property<double>("TienShip")
-                        .HasColumnType("float");
+                    b.Property<int?>("TrangThaiKhuyenMai")
+                        .HasColumnType("int");
 
-                    b.Property<double>("TongTienThongKe")
-                        .HasColumnType("float");
+                    b.Property<int>("TrangThaiND")
+                        .HasColumnType("int");
+
+                    b.Property<string>("URL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("VerificationCodeExpiry")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ThongKeViewModels");
+                    b.ToTable("SanPhamYeuThichViewModels");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.Anh", b =>
@@ -216,6 +230,8 @@ namespace Shop_Api.Migrations
                     b.HasIndex("ChiTietSanPhamId");
 
                     b.ToTable("Anh");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ChatLieu", b =>
@@ -236,6 +252,8 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("ChatLieu");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ChiTietKhuyenMai", b =>
@@ -263,6 +281,8 @@ namespace Shop_Api.Migrations
                     b.HasIndex("KhuyenMaiId");
 
                     b.ToTable("ChiTietKhuyenMai");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ChiTietSanPham", b =>
@@ -331,6 +351,8 @@ namespace Shop_Api.Migrations
                     b.HasIndex("XuatXuId");
 
                     b.ToTable("ChiTietSanPham");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ChucVu", b =>
@@ -372,8 +394,11 @@ namespace Shop_Api.Migrations
 
             modelBuilder.Entity("Shop_Models.Entities.GioHang", b =>
                 {
-                    b.Property<Guid>("IdNguoiDung")
+                    b.Property<Guid>("IdGh")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("IdNguoiDung")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("NguoiDungId")
@@ -382,11 +407,13 @@ namespace Shop_Api.Migrations
                     b.Property<int>("TrangThai")
                         .HasColumnType("int");
 
-                    b.HasKey("IdNguoiDung");
+                    b.HasKey("IdGh");
 
                     b.HasIndex("NguoiDungId");
 
                     b.ToTable("GioHang");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.GioHangChiTiet", b =>
@@ -489,6 +516,8 @@ namespace Shop_Api.Migrations
                     b.HasIndex("VoucherId");
 
                     b.ToTable("HoaDon");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.HoaDonChiTiet", b =>
@@ -516,6 +545,8 @@ namespace Shop_Api.Migrations
                     b.HasIndex("HoaDonId");
 
                     b.ToTable("HoaDonChiTiet");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.Khuyenmai", b =>
@@ -548,6 +579,8 @@ namespace Shop_Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Khuyenmai");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.Loai", b =>
@@ -568,6 +601,8 @@ namespace Shop_Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Loai");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.MauSac", b =>
@@ -588,6 +623,8 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("MauSac");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.NguoiDung", b =>
@@ -678,6 +715,8 @@ namespace Shop_Api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.PhuongThucThanhToan", b =>
@@ -701,6 +740,8 @@ namespace Shop_Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PhuongThucThanhToan");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.PhuongThucTTChiTiet", b =>
@@ -731,6 +772,8 @@ namespace Shop_Api.Migrations
                     b.HasIndex("PhuongThucThanhToanId");
 
                     b.ToTable("PhuongThucTTChiTiet");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.SanPham", b =>
@@ -751,6 +794,8 @@ namespace Shop_Api.Migrations
                     b.HasKey("IdSanPham");
 
                     b.ToTable("SanPham");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.SanPhamYeuThich", b =>
@@ -775,6 +820,8 @@ namespace Shop_Api.Migrations
                     b.HasIndex("NguoiDungId");
 
                     b.ToTable("SanPhamYeuThich");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ThongKe", b =>
@@ -831,6 +878,8 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("ThuongHieu");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.Voucher", b =>
@@ -863,6 +912,8 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("Voucher");
+
+                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.XuatXu", b =>
@@ -883,6 +934,8 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("XuatXu");
+
+                    
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

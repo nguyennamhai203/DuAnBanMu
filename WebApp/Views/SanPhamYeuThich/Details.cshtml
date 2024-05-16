@@ -1,0 +1,116 @@
+﻿@model IEnumerable<Shop_Models.Dto.SanPhamYeuThichViewModel>
+
+@{
+    ViewData["Title"] = "Danh sách sản phẩm yêu thích";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/themify-icons/0.1.2/css/themify-icons.css" rel="stylesheet"> <!-- Add this for the heart icon -->
+
+<style>
+    #traitim {
+        font-size: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: red; /* Change color to red */
+    }
+</style>
+
+<div class="container">
+    <div class="text-center mb-4">
+        <span class="ti-heart" id="traitim"></span>
+    </div>
+    <h1 class="display-4 text-center mb-5">Danh sách sản phẩm yêu thích</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert">
+            Không có sản phẩm yêu thích nào.
+        </div>
+        <div class="text-center mt-4">
+            <a href="/Home/Index" class="btn btn-primary">Trở về trang chủ</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Mã sản phẩm</th>
+                        <th scope="col">Giá bán</th>
+                        <th scope="col">Trạng thái khuyến mãi</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.MaSanPham ?? "N/A"</td>
+                            <td>@item.GiaBan.HasValue ? string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan.Value) : "N/A"</td>
+                            <td>@item.TrangThaiKhuyenMai == 0 ? "Khuyến mãi" : "Không khuyến mãi"</td>
+                            <td>
+                                <a href="@Url.Action("Details", "SanPhamChiTiet", new { id = item.Id })" class="btn btn-primary btn-sm mr-2">Chi tiết</a>
+                                <button onclick="deleteFavorite('@item.Id')" class="btn btn-danger btn-sm">Xóa</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function deleteFavorite(spytId) {
+            event.preventDefault();
+            $.ajax({
+                url: '/SanPhamYeuThich/UserDeleteSPYT',
+                type: 'GET',
+                data: { spytId: spytId },
+                success: function (response) {
+                    if (response.status === 200) {
+                        showNotification("Xóa thành công!", "success");
+                        location.reload(); // Refresh the page to show updated favorites list
+                    } else {
+                        showNotification("Không thể xóa!", "error");
+                    }
+                },
+                error: function () {
+                    showNotification("Lỗi hệ thống", "error");
+                }
+            });
+        }
+
+        function showNotification(message, type) {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-bottom-right",
+                "preventDuplicates": true,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            if (type === "success") {
+                toastr.success(message);
+            } else {
+                toastr.error(message);
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+}

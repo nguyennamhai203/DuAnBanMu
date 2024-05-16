@@ -73,7 +73,7 @@ namespace Shop_Api.Services
 
             // 2. Cập nhật giá sản phẩm
             var productsToUpdate = _context.ChiTietSanPhams
-                .Where(p =>/* p.TrangThai == 1 &&*/ p.TrangThaiKhuyenMai == (int)TrangThaiSaleInProductDetail.DaApDungSale)
+                .Where(p => p.TrangThai == 1 && p.TrangThaiKhuyenMai == (int)TrangThaiSaleInProductDetail.DaApDungSale)
                 .ToList();
 
             foreach (var product in productsToUpdate)

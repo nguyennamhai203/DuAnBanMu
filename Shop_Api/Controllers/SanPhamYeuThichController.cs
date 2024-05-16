@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shop_Api.Repository.IRepository;
+using Shop_Api.Services.IServices;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
 using System;
@@ -14,13 +15,15 @@ namespace Shop_Api.Controllers
     public class SanPhamYeuThichController : ControllerBase
     {
         private readonly ISanPhamYeuThichRepository res;
-        public SanPhamYeuThichController(ISanPhamYeuThichRepository repository)
+        private readonly ISanPhamYeuThichServices _services;
+        public SanPhamYeuThichController(ISanPhamYeuThichRepository repository, ISanPhamYeuThichServices service)
         {
             res = repository;
+            _services = service;
         }
-        
+
         [HttpGet("get-spyt")]
-        public async Task<IActionResult> GetSPYTAsync(int? status,int page)
+        public async Task<IActionResult> GetSPYTAsync(int? status, int page)
         {
             try
             {
@@ -34,7 +37,7 @@ namespace Shop_Api.Controllers
         }
 
         [HttpPost("post-spyt")]
-        public async Task<IActionResult> PostSPYTAsync(Guid id,Guid nguoidungid,Guid chitietsanphamid,int trangthai)
+        public async Task<IActionResult> PostSPYTAsync(Guid id, Guid nguoidungid, Guid chitietsanphamid, int trangthai)
         {
             var obj = new SanPhamYeuThich();
             obj.Id = id;
@@ -70,7 +73,7 @@ namespace Shop_Api.Controllers
             return NoContent();
         }
 
-        [HttpDelete("delete-spyt")]
+        [HttpGet("Xoa-mot-san-pham-khoi-danh-sach-yeu-thich")]
         public async Task<IActionResult> DeleteSPYTAsync(Guid id)
         {
             if (id == Guid.Empty) return NotFound();
@@ -78,54 +81,20 @@ namespace Shop_Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("Thêm một sản phẩm vào danh sách yêu thích của người dùng")]
-        public async Task<IActionResult> AddToFavoriteAsync(Guid userId, Guid productId)
+        [HttpGet("Xoa-mot-san-pham-khoi-danh-sach-yeu-thich-cua-nguoi-dung")]
+        public async Task<IActionResult> DeleteSPYTAsync(Guid userId, Guid productId)
         {
-            try
-            {
-                var response = await res.AddToFavoriteAsync(userId, productId);
-                return StatusCode(response.Code, response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            if (userId == Guid.Empty || productId == Guid.Empty) return NotFound();
+            await res.DeleteSPYT(productId);
+            return NoContent();
         }
 
-        [HttpDelete("Xóa một sản phẩm khỏi danh sách yêu thích của người dùng")]
-        public async Task<IActionResult> RemoveFromFavoriteAsync(Guid userId, Guid productId)
-        {
-            try
-            {
-                var response = await res.RemoveFromFavoriteAsync(userId, productId);
-                return StatusCode(response.Code, response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("Kiểm tra xem một sản phẩm có trong danh sách yêu thích của người dùng hay không")]
-        public async Task<IActionResult> IsInFavoriteAsync(Guid userId, Guid productId)
-        {
-            try
-            {
-                var isFavorite = await res.IsInFavoriteAsync(userId, productId);
-                return Ok(isFavorite);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("Lấy danh sách các sản phẩm yêu thích của người dùng")]
+        [HttpGet("Nguoi-dung-xem-danh-sach-san-pham-yeu-thich")]
         public async Task<IActionResult> GetFavoriteProductsAsync(Guid userId)
         {
             try
             {
-                var favoriteProducts = await res.GetFavoriteProductsAsync(userId);
+                var favoriteProducts = await _services.GetFavoriteProductsForUser(userId);
                 return Ok(favoriteProducts);
             }
             catch (Exception ex)
@@ -134,55 +103,13 @@ namespace Shop_Api.Controllers
             }
         }
 
-        [HttpGet("Kiểm tra xem một sản phẩm có trong danh sách yêu thích hay không")]
-        public async Task<IActionResult> IsFavoriteProductAsync(Guid productId)
+        [HttpPost("Them-mot-san-pham-vao-danh-sach-yeu-thich-cua-nguoi-dung")]
+        public async Task<IActionResult> AddToFavoriteAsync(Guid userId, Guid productId)
         {
             try
             {
-                var isFavoriteProduct = await res.IsFavoriteProductAsync(productId);
-                return Ok(isFavoriteProduct);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("Đếm số lượng sản phẩm yêu thích của người dùng")]
-        public async Task<IActionResult> CountFavoriteProductsAsync(Guid userId)
-        {
-            try
-            {
-                var count = await res.CountFavoriteProductsAsync(userId);
-                return Ok(count);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpDelete("Xóa toàn bộ sản phẩm trong danh sách yêu thích của người dùng")]
-        public async Task<IActionResult> ClearFavoriteProductsAsync(Guid userId)
-        {
-            try
-            {
-                var response = await res.ClearFavoriteProductsAsync(userId);
+                var response = await _services.AddToFavoriteBus(userId, productId);
                 return StatusCode(response.Code, response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpGet("Lấy trạng thái yêu thích của một sản phẩm")]
-        public async Task<IActionResult> GetFavoriteStatusAsync(Guid userId, Guid productId)
-        {
-            try
-            {
-                var favoriteStatus = await res.GetFavoriteStatusAsync(userId, productId);
-                return Ok(favoriteStatus);
             }
             catch (Exception ex)
             {

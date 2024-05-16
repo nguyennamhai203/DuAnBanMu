@@ -9,36 +9,36 @@ namespace Shop_Api.Services
 {
     public class SanPhamYeuThichServices : ISanPhamYeuThichServices
     {
-        public readonly ApplicationDbContext contextSPYT;
+        public readonly ApplicationDbContext context;
         public SanPhamYeuThichServices(ApplicationDbContext ct)
         {
-            contextSPYT = ct;
+            context = ct;
         }
 
-        public async Task<List<SanPhamYeuThich>> GetFavoriteProductsForUser(Guid userId)
+        // Thêm 1 sản phẩm vào danh sách yêu thích của người dùng
+        public async Task<ResponseDto> AddToFavoriteBus(Guid userId, Guid productId)
         {
             try
             {
-                return await contextSPYT.SanPhamYeuThichs.Where(x => x.NguoiDungId == userId).ToListAsync();
-            }
-            catch (Exception)
-            {
-                throw new NotImplementedException();
-            }
-        }
+                // Lấy thông tin sản phẩm chi tiết từ cơ sở dữ liệu
+                var productDetail = await context.ChiTietSanPhams.FirstOrDefaultAsync(x => x.Id == productId);
+                if (productDetail == null)
+                {
+                    return new ResponseDto { Code = 404, Message = "Product not found." };
+                }
 
-        public async Task<ResponseDto> AddToFavorite(Guid userId, Guid productId)
-        {
-            try
-            {
+                // Tạo một đối tượng SanPhamYeuThich để thêm vào danh sách yêu thích
                 var favorite = new SanPhamYeuThich
                 {
-                    NguoiDungId = userId,
+                    Id = Guid.NewGuid(), // Tạo một ID mới
                     ChiTietSanPhamId = productId,
-                    TrangThai = 1 // Set TrangThai to indicate the product is favorited
+                    NguoiDungId = userId,
+                    TrangThai = 1
                 };
-                await contextSPYT.SanPhamYeuThichs.AddAsync(favorite);
-                await contextSPYT.SaveChangesAsync();
+
+                // Thêm vào danh sách yêu thích và lưu vào cơ sở dữ liệu
+                await context.SanPhamYeuThichs.AddAsync(favorite);
+                await context.SaveChangesAsync();
                 return new ResponseDto { Code = 200, Message = "Product added to favorites successfully." };
             }
             catch (Exception ex)
@@ -51,11 +51,11 @@ namespace Shop_Api.Services
         {
             try
             {
-                var favorite = await contextSPYT.SanPhamYeuThichs.FirstOrDefaultAsync(x => x.NguoiDungId == userId && x.ChiTietSanPhamId == productId);
+                var favorite = await context.SanPhamYeuThichs.FirstOrDefaultAsync(x => x.NguoiDungId == userId && x.ChiTietSanPhamId == productId);
                 if (favorite != null)
                 {
-                    contextSPYT.SanPhamYeuThichs.Remove(favorite);
-                    await contextSPYT.SaveChangesAsync();
+                    context.SanPhamYeuThichs.Remove(favorite);
+                    await context.SaveChangesAsync();
                     return new ResponseDto { Code = 200, Message = "Product removed from favorites successfully." };
                 }
                 else
@@ -69,93 +69,29 @@ namespace Shop_Api.Services
             }
         }
 
-        public async Task<ResponseDto> ToggleFavoriteStatus(Guid userId, Guid productId)
+        public async Task<List<SanPhamYeuThichViewModel>> GetFavoriteProductsForUser(Guid userId)
         {
             try
             {
-                var favorite = await contextSPYT.SanPhamYeuThichs.FirstOrDefaultAsync(x => x.NguoiDungId == userId && x.ChiTietSanPhamId == productId);
-                if (favorite == null)
-                {
-                    return await AddToFavorite(userId, productId);
-                }
-                else
-                {
-                    return await RemoveFromFavorite(userId, productId);
-                }
+                var getforusers = (
+                    from spyt in context.SanPhamYeuThichs.AsQueryable().Where(a => a.NguoiDungId == userId)
+                    join ctsp in context.ChiTietSanPhams.AsQueryable() on spyt.ChiTietSanPhamId equals ctsp.Id
+                    join anh in context.Anhs.AsQueryable() on ctsp.Id equals anh.ChiTietSanPhamId
+                    where spyt.NguoiDungId == userId && anh.MaAnh.Equals(anh.MaAnh)
+                    select new SanPhamYeuThichViewModel
+                    {
+                        Id = spyt.Id,
+                        ChiTietSanPhamId = spyt.ChiTietSanPhamId,
+                        AnhSanPham = anh.URL, // Giả sử URL là thuộc tính chứa đường dẫn đến ảnh
+                        MaSanPham = spyt.ChiTietSanPham.MaSanPham,
+                        GiaBan = spyt.ChiTietSanPham.GiaBan,
+                        TrangThaiKhuyenMai = spyt.ChiTietSanPham.TrangThaiKhuyenMai
+                    }).AsEnumerable();
+                return getforusers.ToList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new ResponseDto { Code = 500, Message = $"Error toggling favorite status: {ex.Message}" };
-            }
-        }
-
-        public async Task<ResponseDto> UpdateInterfaceOnFavoriteChange(Guid userId, Guid productId)
-        {
-            try
-            {
-                return new ResponseDto
-                {
-                    Code = 200,
-                    Message = "Thanh cong"
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDto
-                {
-                    Code = 500,
-                    Message = $"Error: {ex.Message}"
-                };
-            }
-        }
-
-        public async Task<ResponseDto> RedirectToFavoritePage()
-        {
-            try
-            {
-                return new ResponseDto { Code = 200, Message = "Redirected to favorite products page successfully." };
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDto
-                {
-                    Code = 500,
-                    Message = $"Error: {ex.Message}"
-                };
-            }
-        }
-
-        public async Task<ResponseDto> ShowNotification(string message)
-        {
-            try
-            {
-                return new ResponseDto { Code = 200, Message = "Notification shown successfully." };
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDto
-                {
-                    Code = 500,
-                    Message = $"Error: {ex.Message}"
-                };
-            }
-        }
-
-        public async Task<ResponseDto> StoreFavoriteProductInformation(Guid userId, List<SanPhamYeuThich> favoriteProducts)
-        {
-            try
-            {
-                var favoriteProductService = new FavoriteProductService();
-                favoriteProductService.SaveFavoriteProducts(userId, favoriteProducts);
-                return new ResponseDto { Code = 200, Message = "Favorite product information stored successfully." };
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDto
-                {
-                    Code = 500,
-                    Message = $"Error: {ex.Message}"
-                };
+                return null;
             }
         }
     }
