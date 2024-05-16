@@ -90,16 +90,25 @@
 
                                         <span>Giới tính: </span>
                                     </p>
-                                    <p class="col font-weight-semibold">@gioiTinh</p>
+                                    <p class="col font-weight-semibold">@if (gioiTinh == "True")
+                                        {
+                                            <text>Nam</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Nữ</text>
+                                        }
+                                    </p>
+
                                 </li>
-                                <li class="row">
+                              @*   <li class="row">
                                     <p class="col-sm-4 col-5 font-weight-semibold text-dark m-b-5">
                                         <i class="m-r-10 text-primary anticon anticon-profile"></i>
 
                                         <span>Ngày sinh: </span>
                                     </p>
-                                    @* <p class="col font-weight-semibold">@Model.NgaySinh</p> *@
-                                </li>
+                                    <p class="col font-weight-semibold">@Model.NgaySinh</p> //
+                                </li> *@
                                 <li class="row">
                                     <p class="col-sm-4 col-5 font-weight-semibold text-dark m-b-5">
                                         <i class="m-r-10 text-primary anticon anticon-environment"></i>

@@ -1,0 +1,175 @@
+﻿@* @model Shop_Models.Entities.NguoiDung *@
+@model Shop_Models.Dto.SignUpDto
+
+@{
+    ViewData["Title"] = "CreateNhanVien";
+}
+
+<h1>CreateNhanVien</h1>
+
+<h4>NguoiDung</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        @*         <form asp-action="CreateNhanVien">*@
+        <form method="post" name="login" class="row login_form" id="contactForm" novalidate="novalidate">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+           @*  <div class="form-group">
+                <label asp-for="MaNguoiDung" class="control-label"></label>
+                <input asp-for="MaNguoiDung" class="form-control" required />
+                <span asp-validation-for="MaNguoiDung" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TrangThai" class="control-label"></label>
+                <input asp-for="TrangThai" id="trangthai" class="form-control" required />
+                <span asp-validation-for="TrangThai" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="TenNguoiDung" class="control-label"></label>
+                <input asp-for="TenNguoiDung" id="tennguoidung" class="form-control" required />
+                <span asp-validation-for="TenNguoiDung" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SDT" class="control-label"></label>
+                <input asp-for="SDT" id="sodienthoai" class="form-control" required />
+                <span asp-validation-for="SDT" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DiaChi" class="control-label"></label>
+                <input asp-for="DiaChi" id="diachi" class="form-control" required />
+                <span asp-validation-for="DiaChi"  class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Giới tính:</label>
+                <div class="form-check">
+                    <input asp-for="GioiTinh" class="form-check-input" type="radio" value="true" checked />
+                    <label class="form-check-label">Nam</label>
+                </div>
+                <div class="form-check">
+                    <input asp-for="GioiTinh" class="form-check-input" type="radio" value="false" />
+                    <label class="form-check-label">Nữ</label>
+                </div>
+                <span asp-validation-for="GioiTinh" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <input asp-for="UserName" id="username" class="form-control" required />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Password</label>
+                <input asp-for="PassWord" id="password" class="form-control" required />
+                @* <span asp-validation-for="UserName" class="text-danger"></span> *@
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" id="mail" class="form-control" required />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Mã Xác Nhận</label>
+                <input name="code" id="code" class="form-control" required />
+            </div>
+            <div class="col-md-12 form-group">
+                <button id="guiMAIL" class="primary-btn" onclick="postToMail()">Gủi Mã Xác Nhận Đến Mail</button>
+            </div>
+
+            <div class="form-group">
+               @*  <input type="submit" value="submit" class="btn btn-primary" /> *@
+                <button type="submit" value="submit" onclick="CreateNhanVien()" class="primary-btn">Tạo Nhân Viên</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+
+<script>
+
+    var isMailSent = false;
+
+    function postToMail() {
+        debugger
+        event.preventDefault();
+        if (isMailSent) {
+            return;
+        }
+        $.ajax({
+            url: '/QuanLyTaiKhoanNhanVien/GuiMaXacNhan',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                console.log(results);
+                if (results.code === 200) {
+                    alert(results.message);
+                    // isMailSent = true;
+                } else {
+                    alert(results.message);
+                }
+            },
+            error: function () {
+                alert("Lỗi hệ thống");
+            }
+        });
+    }
+
+
+    function CreateNhanVien() {
+        event.preventDefault();
+
+        var mail = document.getElementById("mail").value;
+        var tennguoidung = document.getElementById("tennguoidung").value;
+        var code = document.getElementById("code").value;
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+        var sodienthoai = document.getElementById("sodienthoai").value;
+        var diachi = document.getElementById("diachi").value;
+
+        // Kiểm tra xem các trường dữ liệu có trống không
+        if (!mail || !tennguoidung || !code || !username || !password) {
+            alert("Vui lòng điền đầy đủ thông tin.");
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append("model.Email", mail);
+        formData.append("model.TenNguoiDung", tennguoidung);
+        formData.append("model.UserName", username);
+        formData.append("model.Password", password);
+        formData.append("model.SDT", sodienthoai);
+        formData.append("model.DiaChi", diachi);
+        formData.append("code", code);
+
+        $.ajax({
+            url: '/QuanLyTaiKhoanNhanVien/CreateNhanVien',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) {
+                console.log(results);
+                if (results.code === 200) {
+                    alert(results.message);
+                } else {
+                    alert(results.message);
+                }
+            },
+            error: function () {
+                alert("Lỗi hệ thống");
+            }
+        });
+    }
+
+
+</script>
+@* @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} *@
