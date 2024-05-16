@@ -45,5 +45,27 @@ namespace Shop_Models.Heplers
             [Description("Đã áp dụng sale")]
             DaApDungSale = 2
         }
+        public enum TrangThaiGiaoHang
+        {
+            [Description("Chờ xác nhận")]
+            ChoXacNhan = 0,
+            [Description("Chờ giao hàng")]
+            ChoGiaoHang = 1,
+            [Description("Đang giao hàng")]
+            DangGiaoHang = 2,
+            [Description("Đã giao hàng")]
+            DaGiaoHang = 3,
+            [Description("Đã Hủy")]
+            DaHuy = 4,
+            [Description("Tại Quầy")]
+            TaiQuay = 5,
+        }
+        public enum TrangThaiThanhToan
+        {
+            [Description("Chưa Thanh Toán")]
+            Chuathanhtoan = 0,
+            [Description("Đã Thanh Toán")]
+            Dathanhtoan = 1,
+        }
     }
 }

@@ -16,10 +16,10 @@ namespace Shop_Api.Repository
 
         public async Task<ResponseDto> CreateAsync(Loai loai)
         {
-            
+
             try
             {
-                dbcontext.Set<Loai>().Add(loai);
+                dbcontext.Loais.Add(loai);
                 await dbcontext.SaveChangesAsync();
                 return new ResponseDto { IsSuccess = true, Code = 200, Message = "Thành Công" };
             }
@@ -39,31 +39,44 @@ namespace Shop_Api.Repository
 
             try
             {
-                dbcontext.Set<Loai>().Remove(entity);
+                // Xóa các bản ghi tham chiếu trong ChiTietSanPham
+                //var relatedEntities = dbcontext.ChiTietSanPhams.Where(c => c.LoaiId == id);
+                //dbcontext.ChiTietSanPhams.RemoveRange(relatedEntities);
+
+                // Xóa bản ghi trong Loai
+                dbcontext.Loais.Remove(entity);
                 await dbcontext.SaveChangesAsync();
                 return new ResponseDto { IsSuccess = true, Code = 200, Message = "Xóa Thành Công" };
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
+                // Ghi lại chi tiết của inner exception
+                Console.WriteLine($"DbUpdateException error: {ex.InnerException?.Message}");
+                return new ResponseDto { IsSuccess = false, Code = 500, Message = $"Lỗi Hệ Thống: {ex.InnerException?.Message}" };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception error: {ex.Message}");
                 return new ResponseDto { IsSuccess = false, Code = 500, Message = "Lỗi Hệ Thống" };
             }
         }
 
+
         public async Task<List<Loai>> GetAllAsync()
         {
-            return await dbcontext.Set<Loai>().ToListAsync();
+            return await dbcontext.Loais.ToListAsync();
         }
 
         public async Task<Loai> GetByIdAsync(Guid id)
         {
-            return await dbcontext.Set<Loai>().FindAsync(id);
+            return await dbcontext.Loais.FindAsync(id);
         }
 
         public async Task<ResponseDto> UpdateAsync(Guid id, Loai loai)
         {
             try
             {
-                dbcontext.Set<Loai>().Update(loai);
+                dbcontext.Loais.Update(loai);
                 await dbcontext.SaveChangesAsync();
                 return new ResponseDto { IsSuccess = true, Code = 200, Message = "Thành Công" };
             }
