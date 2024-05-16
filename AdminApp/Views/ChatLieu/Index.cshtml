@@ -437,6 +437,18 @@
                 $('#dataTable').DataTable({
                     // Các cài đặt DataTables, bao gồm cài đặt phân trang
                     "paging": true,
+                    "lengthMenu": [5, 10, 15, 20, 25], // Define options for the number of records per page
+                    "pageLength": 10, // Initial records per page
+                    "searching": true, // Enable search feature
+                    "language": {
+                        "searchPlaceholder": "Search.."
+                    },
+                    "initComplete": function (settings, json) {
+                        setTimeout(function () {
+                            $('.dt-search label').remove();
+                            applyCustomStyles();
+                        }, 100);
+                    }
                     // Các cài đặt khác...
                 });
                 $('.datatable-top').remove();
@@ -448,6 +460,19 @@
                 showNotification("Lỗi khi tải dữ liệu bảng", "error");
             }
         });
+    }
+
+    function applyCustomStyles() {
+        // Add your custom CSS styling here
+        // For example:
+        $('#dataTable').addClass('datatable');
+        $('.dt-layout-row').addClass('datatable-top');
+        $('.dt-layout-table').addClass('datatable-container');
+        $('#dt-length-0').addClass('datatable-selector');
+        $('#dt-search-0').addClass('datatable-input');
+        $('.dt-paging').addClass('datatable-pagination');
+
+        // Add more styling as needed...
     }
     
 </script>

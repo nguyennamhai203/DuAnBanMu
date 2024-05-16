@@ -122,44 +122,44 @@
                                     <div class="mb-3 row">
                                         <label class="col-sm-4 col-form-label">Mã</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="@voucher.First().MaVoucher" type="text" class="form-control" />
+                                            <input asp-for="@voucher.First().MaVoucher" id="UpdateMaVoucher" type="text" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
                                         <label class="col-sm-4 col-form-label">Tên</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="@voucher.First().TenVoucher" type="text" class="form-control" />
+                                            <input asp-for="@voucher.First().TenVoucher" id="UpdateTenVoucher" type="text" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
                                         <label class="col-sm-4 col-form-label">Tỉ Lệ</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="@voucher.First().PhanTramGiam" type="text" class="form-control" />
+                                            <input asp-for="@voucher.First().PhanTramGiam" id="UpdatePhanTramGiam" type="number" class="form-control" max="100" />
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
                                         <label class="col-sm-4 col-form-label">Số Lượng</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="@voucher.First().SoLuong" type="text" class="form-control" />
+                                            <input asp-for="@voucher.First().SoLuong" id="UpdateSoLuong" type="text" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
                                         <label class="col-sm-4 col-form-label">Ngày Bắt Đầu</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="@voucher.First().NgayBatDau" type="text" class="form-control" />
+                                            <input asp-for="@voucher.First().NgayBatDau" id="UpdateNgayBatDau" type="datetime-local" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
                                         <label class="col-sm-4 col-form-label">Ngày Kết Thúc</label>
                                         <div class="col-sm-8">
-                                            <input asp-for="@voucher.First().NgayHetHan" type="text" class="form-control" />
+                                            <input asp-for="@voucher.First().NgayHetHan" id="UpdateNgayHetHan" type="datetime-local" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
                                         <label class="col-sm-4 col-form-label">Trạng Thái</label>
                                         <div class="col-sm-8">
 
-                                            <select asp-for="@voucher.First().TrangThai" class="form-select" aria-label="Default select example">
+                                            <select asp-for="@voucher.First().TrangThai" id="UpdateTrangThai" class="form-select" aria-label="Default select example">
                                                 @if (voucher.First().TrangThai == 0)
                                                 {
                                                     <option value="0" selected>Đang Hoạt Động</option>
@@ -197,7 +197,7 @@
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Tỉ Lệ</label>
                                     <div class="col-sm-8">
-                                        <input id="PhanTramGiam" name="PhanTramGiam" type="text" class="form-control" />
+                                        <input id="PhanTramGiam" name="PhanTramGiam" type="number" class="form-control" max="100" />
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
@@ -209,13 +209,13 @@
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Ngày Bắt Đầu</label>
                                     <div class="col-sm-8">
-                                        <input id="NgayBatDau" name="NgayBatDau" type="date" class="form-control" />
+                                        <input id="NgayBatDau" name="NgayBatDau" type="datetime-local" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-4 col-form-label">Ngày Kết Thúc</label>
                                     <div class="col-sm-8">
-                                        <input id="NgayHetHan" name="NgayHetHan" type="date" class="form-control" />
+                                        <input id="NgayHetHan" name="NgayHetHan" type="datetime-local" class="form-control" />
                                     </div>
                                 </div>
 
@@ -370,6 +370,31 @@
     document.getElementById('createProfileForm').addEventListener('submit', saveForm);
 
     function updateForm() {
+        // Ngăn chặn hành động mặc định của nút submit
+        event.preventDefault();
+
+        // Lấy ra các giá trị từ các trường trong form
+        var parentElement = document.getElementById('updateProfileForm');
+        var maVoucher = parentElement.querySelector('#UpdateMaVoucher').value;
+        var tenVoucher = parentElement.querySelector('#UpdateTenVoucher').value;
+        var phanTramGiam = parentElement.querySelector('#UpdatePhanTramGiam').value;
+        var soLuong = parentElement.querySelector('#UpdateSoLuong').value;
+        var ngayBatDau = parentElement.querySelector('#UpdateNgayBatDau').value;
+        var ngayHetHan = parentElement.querySelector('#UpdateNgayHetHan').value;
+
+        // Kiểm tra xem các trường có bị bỏ trống không
+        if (!maVoucher || !tenVoucher || !phanTramGiam || !soLuong || !ngayBatDau || !ngayHetHan) {
+            // Hiển thị thông báo lỗi nếu có trường nào bị bỏ trống
+            showNotification("Vui lòng điền đầy đủ thông tin vào các trường", "warning");
+            return; // Ngăn không cho tiếp tục thực hiện lưu form
+        }
+
+        // Kiểm tra ngày hết hạn phải sau ngày bắt đầu
+        if (new Date(ngayHetHan) <= new Date(ngayBatDau)) {
+            showNotification("Ngày hết hạn phải sau ngày bắt đầu", "warning");
+            return;
+        }
+
         var formData = new FormData(document.getElementById('updateProfileForm'));
 
         Swal.fire({
@@ -518,6 +543,18 @@
                 $('#dataTable').DataTable({
                     // Các cài đặt DataTables, bao gồm cài đặt phân trang
                     "paging": true,
+                    "lengthMenu": [5, 10, 15, 20, 25], // Define options for the number of records per page
+                    "pageLength": 10, // Initial records per page
+                    "searching": true, // Enable search feature
+                    "language": {
+                        "searchPlaceholder": "Search.."
+                    },
+                    "initComplete": function (settings, json) {
+                        setTimeout(function () {
+                            $('.dt-search label').remove();
+                            applyCustomStyles();
+                        }, 100);
+                    }
                     // Các cài đặt khác...
                 });
                 $('.datatable-top').remove();
@@ -529,6 +566,19 @@
                 showNotification("Lỗi khi tải dữ liệu bảng", "error");
             }
         });
+    }
+
+    function applyCustomStyles() {
+        // Add your custom CSS styling here
+        // For example:
+        $('#dataTable').addClass('datatable');
+        $('.dt-layout-row').addClass('datatable-top');
+        $('.dt-layout-table').addClass('datatable-container');
+        $('#dt-length-0').addClass('datatable-selector');
+        $('#dt-search-0').addClass('datatable-input');
+        $('.dt-paging').addClass('datatable-pagination');
+
+        // Add more styling as needed...
     }
 
 </script>
