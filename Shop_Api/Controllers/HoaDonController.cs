@@ -91,7 +91,7 @@ namespace Shop_Api.Controllers
                 return StatusCode(500, $"Lỗi server nội bộ: {ex.Message}");
             }
         }
-        [HttpPost("Update-HD")]
+        [HttpPut("Update-HD")]
         public async Task<IActionResult> UpdateHD(Guid id, HoaDon a)
         {
             var obj = await _db.GetById(id);

@@ -178,6 +178,15 @@ namespace Shop_Api.Repository
                 {
                     return new ResponseDto { Code = 400, Message = "Không tìm thấy hóa đơn." };
                 }
+                // Kiểm tra nếu trạng thái hiện tại là Đang giao hàng thì không thể hủy
+                if ((TrangThaiGiaoHang)hoaDon.TrangThaiGiaoHang == TrangThaiGiaoHang.DangGiaoHang)
+            
+                {
+                    return new ResponseDto { Code = 500, Message = "Không thể hủy đơn hàng khi đang giao hàng ." };
+                } else if ((TrangThaiGiaoHang) hoaDon.TrangThaiGiaoHang == TrangThaiGiaoHang.DaGiaoHang)
+                {
+                    return new ResponseDto { Code = 500, Message = "Không thể hủy đơn hàng khi đã giao hàng." };
+                }
                 // Lấy ra chi tiết hóa đơn để hoàn lại số lượng
                 var chiTietHoaDon = await _db.HoaDonChiTiets
                     .Include(ct => ct.ChiTietSanPham)
@@ -350,6 +359,11 @@ namespace Shop_Api.Repository
                 // Hủy đơn hàng
                 else if (HoaDonStatus == (int)TrangThaiGiaoHang.DaGiaoHang)
                 {
+                    if (hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang)
+                    {
+                        // Không thể hủy đơn hàng nếu đang giao hàng
+                        return new ResponseDto { IsSuccess = false, Message = "Không thể hủy đơn hàng khi đang giao hàng", Code = 400 };
+                    }
                     if (hoaDon != null)
                     {
                         foreach (var chiTiet in chiTietHoaDon)
