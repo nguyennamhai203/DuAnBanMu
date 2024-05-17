@@ -825,7 +825,7 @@
             url: '/BanHangTaiQuay/XoaSanPhamKhoiHoaDon?maHD=' + maHoaDon + '&idSanPham=' + idSanPham,
             type: 'DELETE',
             success: function (result) {
-                alert(result.soLuongConLai);
+                // alert(result.soLuongConLai);
                 element.textContent = result.soLuongConLai;
                 var tongTien = parseInt($("#TongTienHoaDon").val().replace(/\D/g, ''), 10) + result.tongTienThayDoi;
                 var tienPhaiTra = parseInt($("#SoTienPhaiTra").val().replace(/\D/g, ''), 10) + result.soTienTraLaiThayDoi;

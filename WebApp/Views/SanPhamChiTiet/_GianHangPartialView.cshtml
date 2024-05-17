@@ -68,7 +68,7 @@
                         <p class="hover-text">add to bag</p>
                     </a>
                     @* // Thêm sản phẩm vào danh sách sản phẩm yêu thích*@
-                    <a href="#" class="social-info" onclick="addToFavoriteBtn('@User.Identity.Name', '@item.IdChiTietSp')">
+                    <a href="#" class="social-info" onclick="addToFavoriteBtn('@item.IdChiTietSp')">
                         <span class="lnr lnr-heart"></span>
                         <p class="hover-text">Thêm vào yêu thích</p>
                     </a>
@@ -125,6 +125,36 @@
 
 
 <script>
+    // function addToCartBtn(codeProductDetail) {
+    //     // var quantity = document.getElementById('sst').value;
+    //     event.preventDefault(); // Chặn hành vi mặc định của form
+    //     $.ajax({
+    //         url: '/Cart/AddProductToCart',
+    //         type: 'POST',
+    //         data: { codeProductDetail: codeProductDetail },
+    //         // contentType: false,
+    //         // processData: false,
+    //         success: function (results) {
+    //             debugger
+    //             console.log(results);
+    //             // Hiển thị thông báo dựa trên kết quả từ server
+    //             if (results.code === 200) {
+    //                 debugger
+    //                 console.log(results.message);
+    //                 showNotification(results.message, "success");
+
+    //             } else {
+    //                 debugger
+    //                 console.log(results.message);
+    //                 showNotification(results.message, "error");
+
+    //             }
+    //         },
+    //         error: function () {
+    //             showNotification("Lỗi hệ thống", "error");
+    //         }
+    //     });
+    // }
     function addToCartBtn(codeProductDetail) {
         // var quantity = document.getElementById('sst').value;
         event.preventDefault(); // Chặn hành vi mặc định của form
@@ -155,14 +185,14 @@
             }
         });
     }
-    
-    function addToFarvoriteBtn(userID,productID) {
+    function addToFavoriteBtn(productID) {
         // var quantity = document.getElementById('sst').value;
+        debugger
         event.preventDefault(); // Chặn hành vi mặc định của form
         $.ajax({
             url: '/SanPhamYeuThich/UserAddProduct',
             type: 'POST',
-            data: { userID: userID , productID: productID },
+            data: { productID: productID },
             // contentType: false,
             // processData: false,
             success: function (results) {

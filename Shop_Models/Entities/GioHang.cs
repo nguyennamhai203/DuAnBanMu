@@ -12,7 +12,7 @@ namespace Shop_Models.Entities
     public class GioHang
     {
         [Key]
-        public Guid IdGh {  get; set; }
+        //public Guid IdGh {  get; set; }
         public Guid IdNguoiDung{ get; set; }
         public int TrangThai{ get; set; }
         public virtual NguoiDung? NguoiDung { get; set; }

@@ -39,8 +39,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">Mã sản phẩm</th>
-                        <th scope="col">Giá bán</th>
+                        <th scope="col">Mã sản phẩm</th>                     
                         <th scope="col">Trạng thái khuyến mãi</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -49,11 +48,25 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@item.MaSanPham ?? "N/A"</td>
-                            <td>@item.GiaBan.HasValue ? string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan.Value) : "N/A"</td>
-                            <td>@item.TrangThaiKhuyenMai == 0 ? "Khuyến mãi" : "Không khuyến mãi"</td>
+                            <td>@(item.MaSanPham ?? "N/A")</td>
+                            @if (item.GiaBan == item.GiaNhap)
+                            {
+                                <td>@(item.GiaBan.HasValue ? string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan.Value) : "N/A")</td>
+                            }
+                            else
+                            {
+                                <td>@(item.GiaNhap.HasValue ? string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaNhap.Value) : "N/A")</td>
+                            }
+
+
+                            <td>@(item.TrangThaiKhuyenMai == 2 ? "Đang Khuyến mãi" : "Chưa Được áp dụng khuyến mại khuyến mãi")</td>
                             <td>
-                                <a href="@Url.Action("Details", "SanPhamChiTiet", new { id = item.Id })" class="btn btn-primary btn-sm mr-2">Chi tiết</a>
+                                @* <a href="@Url.Action("AddProductToCart", "Cart", new { codeProductDetail = item.MaSanPham,soluong=1 })" class="btn btn-primary btn-sm mr-2">Thêm Vào Giỏ Hàng</a> *@
+                                <button href="#" class="class=" btn btn-primary" onclick="addToCartBtn('@item.MaSanPham')">
+
+                                    
+                                    <p class="hover-text">add to bag</p>
+                                </button>
                                 <button onclick="deleteFavorite('@item.Id')" class="btn btn-danger btn-sm">Xóa</button>
                             </td>
                         </tr>
@@ -66,14 +79,48 @@
 
 @section Scripts {
     <script>
+
+        function addToCartBtn(codeProductDetail) {
+            // var quantity = document.getElementById('sst').value;
+            event.preventDefault(); // Chặn hành vi mặc định của form
+            $.ajax({
+                url: '/Cart/AddProductToCart',
+                type: 'POST',
+                data: { codeProductDetail: codeProductDetail },
+                // contentType: false,
+                // processData: false,
+                success: function (results) {
+                    debugger
+                    console.log(results);
+                    // Hiển thị thông báo dựa trên kết quả từ server
+                    if (results.code === 200) {
+                        debugger
+                        console.log(results.message);
+                        showNotification(results.message, "success");
+
+                    } else {
+                        debugger
+                        console.log(results.message);
+                        showNotification(results.message, "error");
+
+                    }
+                },
+                error: function () {
+                    showNotification("Lỗi hệ thống", "error");
+                }
+            });
+        }
+
+
         function deleteFavorite(spytId) {
+            debugger
             event.preventDefault();
             $.ajax({
-                url: '/SanPhamYeuThich/UserDeleteSPYT',
+                url: '/SanPhamYeuThich/UserDeleteSPYT?spytId=' + spytId,
                 type: 'GET',
-                data: { spytId: spytId },
+                // data: { spytId: spytId },
                 success: function (response) {
-                    if (response.status === 200) {
+                    if (response.code === 200) {
                         showNotification("Xóa thành công!", "success");
                         location.reload(); // Refresh the page to show updated favorites list
                     } else {

@@ -71,6 +71,11 @@ namespace WebApp.Controllers
                     if (profileUserJson.TenNguoiDung != null)
                     {
                         HttpContext.Session.SetString("TenNguoiDung", profileUserJson.TenNguoiDung);
+                    } 
+                    
+                    if (profileUserJson.Id!= Guid.NewGuid())
+                    {
+                        HttpContext.Session.SetString("IdNguoiDung", profileUserJson.Id.ToString());
                     }
 
                     if (profileUserJson.TenTaiKhoan != null)

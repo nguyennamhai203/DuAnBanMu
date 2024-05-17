@@ -26,7 +26,11 @@ namespace Shop_Api.Services
                 {
                     return new ResponseDto { Code = 404, Message = "Product not found." };
                 }
-
+                var checkproducinyeuthichlist = await context.SanPhamYeuThichs.AnyAsync(x => x.ChiTietSanPhamId == productId && x.NguoiDungId == userId);
+                if (checkproducinyeuthichlist)
+                {
+                    return new ResponseDto { Code = 400, Message = "Sản phẩm đã tồn tại trong list sản phẩm yêu thích của bạn" };
+                }
                 // Tạo một đối tượng SanPhamYeuThich để thêm vào danh sách yêu thích
                 var favorite = new SanPhamYeuThich
                 {
@@ -84,8 +88,10 @@ namespace Shop_Api.Services
                         ChiTietSanPhamId = spyt.ChiTietSanPhamId,
                         AnhSanPham = anh.URL, // Giả sử URL là thuộc tính chứa đường dẫn đến ảnh
                         MaSanPham = spyt.ChiTietSanPham.MaSanPham,
-                        GiaBan = spyt.ChiTietSanPham.GiaBan,
+                        GiaNhap = ctsp.GiaBan,  // giá bán khi giảm giá 
+                        GiaBan = ctsp.GiaThucTe,// giá bán khi chưa giảm giá (nếu đc giảm giá sẽ bằng giá thực tế sau giảm giá)
                         TrangThaiKhuyenMai = spyt.ChiTietSanPham.TrangThaiKhuyenMai
+
                     }).AsEnumerable();
                 return getforusers.ToList();
             }

@@ -76,9 +76,21 @@ namespace Shop_Api.Controllers
         [HttpGet("Xoa-mot-san-pham-khoi-danh-sach-yeu-thich")]
         public async Task<IActionResult> DeleteSPYTAsync(Guid id)
         {
-            if (id == Guid.Empty) return NotFound();
-            await res.DeleteSPYT(id);
-            return NoContent();
+            //if (id == Guid.Empty) return NotFound();
+            //await res.DeleteSPYT(id);
+            //return NoContent();
+
+            try
+            {
+                var response = await res.DeleteSPYT(id);
+                //return StatusCode(response.Code, response);
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpGet("Xoa-mot-san-pham-khoi-danh-sach-yeu-thich-cua-nguoi-dung")]
