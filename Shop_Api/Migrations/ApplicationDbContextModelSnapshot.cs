@@ -206,8 +206,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SanPhamYeuThichViewModels");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.Anh", b =>
@@ -230,8 +228,6 @@ namespace Shop_Api.Migrations
                     b.HasIndex("ChiTietSanPhamId");
 
                     b.ToTable("Anh");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ChatLieu", b =>
@@ -252,8 +248,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("ChatLieu");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ChiTietKhuyenMai", b =>
@@ -281,8 +275,6 @@ namespace Shop_Api.Migrations
                     b.HasIndex("KhuyenMaiId");
 
                     b.ToTable("ChiTietKhuyenMai");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ChiTietSanPham", b =>
@@ -351,8 +343,6 @@ namespace Shop_Api.Migrations
                     b.HasIndex("XuatXuId");
 
                     b.ToTable("ChiTietSanPham");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ChucVu", b =>
@@ -394,11 +384,8 @@ namespace Shop_Api.Migrations
 
             modelBuilder.Entity("Shop_Models.Entities.GioHang", b =>
                 {
-                    b.Property<Guid>("IdGh")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("IdNguoiDung")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("NguoiDungId")
@@ -407,13 +394,11 @@ namespace Shop_Api.Migrations
                     b.Property<int>("TrangThai")
                         .HasColumnType("int");
 
-                    b.HasKey("IdGh");
+                    b.HasKey("IdNguoiDung");
 
                     b.HasIndex("NguoiDungId");
 
                     b.ToTable("GioHang");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.GioHangChiTiet", b =>
@@ -516,8 +501,6 @@ namespace Shop_Api.Migrations
                     b.HasIndex("VoucherId");
 
                     b.ToTable("HoaDon");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.HoaDonChiTiet", b =>
@@ -545,8 +528,6 @@ namespace Shop_Api.Migrations
                     b.HasIndex("HoaDonId");
 
                     b.ToTable("HoaDonChiTiet");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.Khuyenmai", b =>
@@ -579,8 +560,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Khuyenmai");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.Loai", b =>
@@ -601,8 +580,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Loai");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.MauSac", b =>
@@ -623,8 +600,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("MauSac");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.NguoiDung", b =>
@@ -715,8 +690,6 @@ namespace Shop_Api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.PhuongThucThanhToan", b =>
@@ -740,8 +713,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PhuongThucThanhToan");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.PhuongThucTTChiTiet", b =>
@@ -772,8 +743,6 @@ namespace Shop_Api.Migrations
                     b.HasIndex("PhuongThucThanhToanId");
 
                     b.ToTable("PhuongThucTTChiTiet");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.SanPham", b =>
@@ -794,8 +763,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("IdSanPham");
 
                     b.ToTable("SanPham");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.SanPhamYeuThich", b =>
@@ -820,8 +787,6 @@ namespace Shop_Api.Migrations
                     b.HasIndex("NguoiDungId");
 
                     b.ToTable("SanPhamYeuThich");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.ThongKe", b =>
@@ -878,8 +843,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("ThuongHieu");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.Voucher", b =>
@@ -912,8 +875,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("Voucher");
-
-                    
                 });
 
             modelBuilder.Entity("Shop_Models.Entities.XuatXu", b =>
@@ -934,8 +895,6 @@ namespace Shop_Api.Migrations
                     b.HasKey("Guid");
 
                     b.ToTable("XuatXu");
-
-                    
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

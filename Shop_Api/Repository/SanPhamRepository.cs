@@ -4,6 +4,7 @@ using Shop_Api.Repository.IRepository;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
 
+
 namespace Shop_Api.Repository
 {
     public class SanPhamRepository : ISanPhamRepository
@@ -120,42 +121,37 @@ namespace Shop_Api.Repository
         }
 
 
-        public async Task<ResponseDto> DeleteAsync(Guid Id)
+        public async Task<ResponseDto> DeleteAsync(Guid id)
         {
-            var sanPham = await _dbContext.SanPhams.FindAsync(Id);
-            if (sanPham == null)
+            var entity = await GetByIdAsync(id);
+            if (entity == null)
             {
-                return new ResponseDto
-                {
-                    Content = null,
-                    IsSuccess = false,
-                    Code = 404,
-                    Message = "Không Tim Thấy Bản Ghi",
-                };
+                return new ResponseDto { IsSuccess = false, Code = 404, Message = "Không tìm thấy bản ghi" };
             }
+
             try
             {
-                _dbContext.SanPhams.Remove(sanPham);
+                _dbContext.SanPhams.Remove(entity);
                 await _dbContext.SaveChangesAsync();
-                return new ResponseDto
-                {
-                    Content = null,
-                    IsSuccess = true,
-                    Code = 200,
-                    Message = "Xóa Thành Công",
-                };
+                return new ResponseDto { IsSuccess = true, Code = 200, Message = "Xóa thành công" };
             }
-            catch (Exception)
+            catch (DbUpdateException dbEx)
             {
-                return new ResponseDto
-                {
-                    Content = null,
-                    IsSuccess = false,
-                    Code = 500,
-                    Message = "Lỗi Hệ Thống",
-                };
+                // Log lỗi cơ sở dữ liệu
+                Console.WriteLine($"Database error: {dbEx.Message}");
+                return new ResponseDto { IsSuccess = false, Code = 500, Message = "Lỗi cơ sở dữ liệu" };
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi hệ thống
+                Console.WriteLine($"System error: {ex.Message}");
+                return new ResponseDto { IsSuccess = false, Code = 500, Message = "Lỗi hệ thống" };
             }
         }
 
+        public async Task<SanPham> GetByIdAsync(Guid id)
+        {
+            return await _dbContext.SanPhams.FindAsync(id);
+        }
     }
 }
