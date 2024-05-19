@@ -88,10 +88,10 @@ namespace Shop_Api.Services
                         ChiTietSanPhamId = spyt.ChiTietSanPhamId,
                         AnhSanPham = anh.URL, // Giả sử URL là thuộc tính chứa đường dẫn đến ảnh
                         MaSanPham = spyt.ChiTietSanPham.MaSanPham,
-                        GiaNhap = ctsp.GiaBan,  // giá bán khi giảm giá 
-                        GiaBan = ctsp.GiaThucTe,// giá bán khi chưa giảm giá (nếu đc giảm giá sẽ bằng giá thực tế sau giảm giá)
-                        TrangThaiKhuyenMai = spyt.ChiTietSanPham.TrangThaiKhuyenMai
-
+                        GiaNhap = ctsp.GiaThucTe, // giá gốc
+                        GiaBan = ctsp.GiaBan, // giá bán sẽ thay đổi nếu được giảm giá 
+                        TrangThaiKhuyenMai = spyt.ChiTietSanPham.TrangThaiKhuyenMai,
+                        SoLuongTon = ctsp.SoLuongTon,
                     }).AsEnumerable();
                 return getforusers.ToList();
             }

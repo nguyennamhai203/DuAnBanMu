@@ -18,6 +18,23 @@
     }
 </style>
 
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1>Product Details Page</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="#">Shop<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="single-product.html">product-details</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- End Banner Area -->
 <div class="container">
     <div class="text-center mb-4">
         <span class="ti-heart" id="traitim"></span>
@@ -40,6 +57,8 @@
                 <thead>
                     <tr>
                         <th scope="col">Mã sản phẩm</th>                     
+                        <th scope="col">Số lượng đang bán</th>                     
+                        <th scope="col">Giá Bán</th>                     
                         <th scope="col">Trạng thái khuyến mãi</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -49,6 +68,7 @@
                     {
                         <tr>
                             <td>@(item.MaSanPham ?? "N/A")</td>
+                            <td>@(item.SoLuongTon.HasValue ? item.SoLuongTon :"Hết Hàng" )</td>
                             @if (item.GiaBan == item.GiaNhap)
                             {
                                 <td>@(item.GiaBan.HasValue ? string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan.Value) : "N/A")</td>
