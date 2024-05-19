@@ -55,7 +55,7 @@
                                 @(item.ChiTietSanPham != null && item.ChiTietSanPham.TrangThaiKhuyenMai == null ? "Not Error" : "Error")
                             </td>
                             <td>
-                                @Html.ActionLink("Chi tiết", "Details", new { id = item.Id }, new { @class = "btn btn-primary btn-sm mr-2" })
+                                @Html.ActionLink("Chi tiết", "Details", new { id = item.ChiTietSanPhamId }, new { @class = "btn btn-primary btn-sm mr-2" })
                                 @Html.ActionLink("Xóa", "DeleteSPYT", new { id = item.Id }, new { @class = "btn btn-danger btn-sm" })
                             </td>
                         </tr>

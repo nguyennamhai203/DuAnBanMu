@@ -13,6 +13,7 @@ namespace Shop_Models.Dto
 		[Key]
 		public Guid Id { get; set; }
 		public string? MaSanPhamChiTiet { get; set; }
+		public string? TenSanPhamChiTiet { get; set; }
 		public double? GiaNhap { get; set; }
 		public double? GiaBan { get; set; }
 		public double? GiaThucTe { get; set; }

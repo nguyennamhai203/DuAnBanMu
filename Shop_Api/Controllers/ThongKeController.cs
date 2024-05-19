@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
+using Shop_Api.Services.IServices;
 using Shop_Models.Entities;
 using Shop_Models.Heplers;
 
@@ -13,11 +14,12 @@ namespace Shop_Api.Controllers
     public class ThongKeController : ControllerBase
     {
         private readonly IThongKeRepository _repository;
-        private readonly IChiTietSanPhamRepository chiTietSanPhamRepository;
+        private readonly IThongKeSanPhamServices _services;
         private readonly ApplicationDbContext _context;
-        public ThongKeController(IThongKeRepository repository,ApplicationDbContext context)
+        public ThongKeController(ApplicationDbContext context, IThongKeRepository repository,IThongKeSanPhamServices service)
         {
             _repository = repository;
+            _services = service;
             _context = context;
         }
 
@@ -71,6 +73,19 @@ namespace Shop_Api.Controllers
             else return BadRequest(respon);
         }
 
-        
+        [HttpGet("thong-ke-san-pham-theo-chat-lieu")]
+        public async Task<IActionResult> TkTheoChatLieu(string maChatLieu)
+        {
+            try
+            {
+                var result = await _services.FilterProductsTheoChatLieu(maChatLieu);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
     }
 }

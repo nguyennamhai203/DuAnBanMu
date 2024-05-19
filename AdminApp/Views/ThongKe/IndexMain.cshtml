@@ -1,20 +1,36 @@
-﻿@using Newtonsoft.Json
-@using Shop_Models.Entities
-@model IEnumerable<Shop_Models.Entities.ChiTietSanPham>
+﻿@model IEnumerable<Shop_Models.Dto.SanPhamChiTietDto>
 
 @{
     ViewData["Title"] = "IndexMain";
 }
 
+<!-- Include Highcharts libraries -->
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
+<!-- Highcharts container -->
+<div class="btn-group dropend">
+  <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+    Thống kê sản phẩm theo
+  </button>
+  <ul class="dropdown-menu">
+    <!-- Dropdown menu links -->
+    <li><a class="dropdown-item" href="#">Loại</a></li>
+    <li><a class="dropdown-item" href="#">Thương hiệu</a></li>
+    <li><a class="dropdown-item" href="#">Xuất xứ</a></li>
+    <li><a class="dropdown-item" href="#">Màu sắc</a></li>
+    <li><a class="dropdown-item" href="#">Chất liệu</a></li>
+  </ul>
+</div>
 <figure class="highcharts-figure">
-    <div id="container"></div>
+    <div id="container">
+        <!-- Default dropend button -->
+    </div>
 </figure>
 
+<!-- Custom styles for the chart -->
 <style>
     .highcharts-figure,
     .highcharts-data-table table {
@@ -60,49 +76,40 @@
     }
 </style>
 
+@* // Code lọc thống kê sản phẩm theo loại,thương hiệu,xuất xứ,màu sắc,chất liệu ở đây*@
 @{
-    var sldaban = Model.Sum(x => x.SoLuongDaBan);
-    var slton = Model.Sum(x => x.SoLuongTon);
-    var sott = Model.Sum(x => x.TrangThai);
-    var sottkm = Model.Sum(x => x.TrangThaiKhuyenMai);
+    
 }
 
 <script>
-    Highcharts.chart('container', {
-        chart: {
-            type: 'line'
-        },
-        title: {
-            text: 'Thống kê sản phẩm theo tháng'
-        },
-        xAxis: {
-            "" : ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12']
-        },
-        yAxis: {
+    document.addEventListener('DOMContentLoaded', function () {
+        Highcharts.chart('container', {
+            chart: {
+                type: 'line'
+            },
             title: {
-                text: 'Sản phẩm'
-            }
-        },
-        plotOptions: {
-            line: {
-                dataLabels: {
-                    enabled: true
-                },
-                enableMouseTracking: false
-            }
-        },
-        series: [{
-            name: 'Mũ bán chạy',
-            data: [16.0, 18.2, 23.1, 27.9, 32.2, 36.4, 39.8, 38.4, 35.5, 29.2,
-                22.0, 17.8]
-        }, {
-            name: 'Mũ nam',
-            data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 17.6, 16.5, 12.0, 6.5,
-                2.0, -0.9]
-        }, {
-            name: 'Mũ hot',
-            data: [@sldaban,@slton,@sott,@sottkm,@slton,@sott,@sldaban,@sottkm,@sottkm,@sott,
-                @slton,@sldaban]
-        }]
+                text: 'Thống kê sản phẩm bán chạy'
+            },
+            xAxis: {
+                categories: @Html.Raw(Json.Serialize(Model.Select(x => x.TenSanPhamChiTiet).ToList()))
+            },
+            yAxis: {
+                title: {
+                    text: 'Số lượng đã bán'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: false
+                }
+            },
+            series: [{
+                name: 'Sản phẩm',
+                data: @Html.Raw(Json.Serialize(Model.Select(x => x.SoLuongDaBan).ToList()))
+            }]
+        });
     });
 </script>

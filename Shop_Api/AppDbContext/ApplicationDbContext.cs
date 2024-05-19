@@ -277,9 +277,28 @@ namespace Shop_Api.AppDbContext
                     new SanPhamYeuThichViewModel
                     {
                         Id = spytvmid,
+                        MaNguoiDung = "ND" + random.Next(i, i + 1),
+                        TrangThaiND = random.Next(0, 1),
+                        TenNguoiDung = "TND" + random.Next(i, i + 1),
+                        SoDienThoai = "Null" + random.Next(i, i + 1),
+                        DiaChi = "DC" + random.Next(i, i + 1),
+                        GioiTinh = random.Next(0, 1) == 0,
+                        VerificationCode = "VC" + random.Next(i, i + 1),
+                        ChiTietSanPhamId = ctspid,
+                        MaAnh = "MA" + random.Next(i, i + 1),
+                        URL = randomImageUrl,
+                        MaSanPhamCT = "MSPCT" + random.Next(i, i + 1),
+                        GiaNhap = random.Next(100000, 1000000),
+                        GiaBan = random.Next(100000, 1000000),
+                        GiaThucTe = random.Next(100000, 1000000),
                         AnhSanPham = randomImageUrl,
+                        SoLuongTon = random.Next(i, i + 1),
+                        SoLuongDaBan = random.Next(i, i + 1),
+                        Mota = "mo ta" + random.Next(i, i + 1),
+                        TrangThaiKhuyenMai = random.Next(0, 2),
+                        MaSanPham = "MSP" + random.Next(i, i + 1),
                         TenSanPham = "TSP" + random.Next(i, i + 1),
-                        TrangThaiKhuyenMai = random.Next(0, 1),
+                        TrangThai = random.Next(0, 2),
                     });
             }
         }*/

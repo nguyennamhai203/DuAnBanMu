@@ -240,6 +240,7 @@ namespace Shop_Api.Repository
             {
                 Id = sp.Id,
                 MaSanPhamChiTiet = sp.MaSanPham,
+                TenSanPhamChiTiet = sp.SanPham.TenSanPham,
                 GiaBan = sp.GiaBan,
                 GiaNhap = sp.GiaNhap,
                 GiaThucTe = sp.GiaThucTe,

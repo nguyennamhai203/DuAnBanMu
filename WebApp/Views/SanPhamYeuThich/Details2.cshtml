@@ -1,0 +1,179 @@
+﻿@model IEnumerable<Shop_Models.Dto.SanPhamYeuThichViewModel>
+
+@{
+    ViewData["Title"] = "Details2";
+}
+
+<h1>Details2</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaNguoiDung)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TrangThaiND)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TenNguoiDung)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SoDienThoai)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiaChi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GioiTinh)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VerificationCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VerificationCodeExpiry)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ChiTietSanPhamId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaAnh)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AnhSanPham)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.URL)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaSanPhamCT)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GiaNhap)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GiaBan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GiaThucTe)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SoLuongTon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SoLuongDaBan)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TrangThaiCTSP)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mota)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TrangThaiKhuyenMai)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaSanPham)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TenSanPham)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TrangThai)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaNguoiDung)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrangThaiND)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenNguoiDung)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoDienThoai)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiaChi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GioiTinh)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VerificationCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VerificationCodeExpiry)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChiTietSanPhamId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaAnh)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AnhSanPham)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.URL)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaSanPhamCT)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GiaNhap)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GiaBan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GiaThucTe)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoLuongTon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoLuongDaBan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrangThaiCTSP)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mota)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrangThaiKhuyenMai)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaSanPham)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenSanPham)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrangThai)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

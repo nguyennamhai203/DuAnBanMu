@@ -34,7 +34,8 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.Al
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
-
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IViettelPostService, ViettelPostService>();
 
 builder.Services.AddScoped<UserManager<NguoiDung>>();
 builder.Services.AddScoped<SignInManager<NguoiDung>>();
@@ -48,6 +49,7 @@ builder.Services.AddScoped<IHoaDonChiTietRepository, HoaDonChiTietRepository>();
 builder.Services.AddScoped<IThuongHieuRepository, ThuongHieuRepository>();
 builder.Services.AddScoped<IChatLieuRepository, ChatLieuRepository>();
 builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
+builder.Services.AddScoped<IThongKeSanPhamServices, ThongKeSanPhamServices>();
 builder.Services.AddScoped<IChiTietKhuyenMaiRepository, ChiTietKhuyenMaiRepository>();
 builder.Services.AddScoped<IChiTietSanPhamRepository, ChiTietSanPhamRepository>();
 builder.Services.AddScoped<IXuatXuRepository, XuatXuRepository>();
