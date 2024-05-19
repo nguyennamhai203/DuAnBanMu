@@ -157,11 +157,12 @@ namespace Shop_Api.Services
                     }
                     else
                     {
+                        var ptttAfterCreate = _context.PhuongThucThanhToans.FirstOrDefault(x => x.MaPTThanhToan == requestBill.MaPTTT);
                         PhuongThucTTChiTiet phuongThucTTChiTiet = new PhuongThucTTChiTiet()
                         {
                             Id = Guid.NewGuid(),
                             HoaDonId = bill.Id,
-                            PTTToanId = pttt.Id,
+                            PTTToanId = ptttAfterCreate.Id,
                             TrangThai = 1, // trạng thái đã thanh toán
                             SoTien = bill.TongTien,
 
