@@ -14,6 +14,7 @@ namespace Shop_Models.Dto
         public string? Usename { get; set; }
         public string? CodeVoucher { get; set; }
         public int Payment { get; set; }
+        public int phiship2 { get; set; }
         public string? MaPTTT { get; set; }
         public int? trangthaithanhtoan { get; set; }
         public string? MaHoaDon { get; set; }

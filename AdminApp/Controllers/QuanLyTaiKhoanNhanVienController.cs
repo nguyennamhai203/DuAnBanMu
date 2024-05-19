@@ -35,7 +35,7 @@ namespace AdminApp.Controllers
 
                 return RedirectToAction("Login", "Home");
             }
-           
+
         }
 
         public IActionResult CreateNhanVien()
@@ -94,24 +94,33 @@ namespace AdminApp.Controllers
         [HttpPost]
         public async Task<IActionResult> GuiMaXacNhan()
         {
-            var httpClient = _httpClientFactory.CreateClient("BeHat");
-
-            string mail = HttpContext.Session.GetString("Email");
-
-            var url = $"/api/Account/MailToAdmin?mail={mail}";
-            var response = await httpClient.PostAsync(url, null); var trave = await response.Content.ReadAsStringAsync();
-            if (response.IsSuccessStatusCode)
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin")
             {
+                var httpClient = _httpClientFactory.CreateClient("BeHat");
 
-                var result = JsonConvert.DeserializeObject<ResponseDto>(trave);
+                string mail = HttpContext.Session.GetString("Email");
+
+                var url = $"/api/Account/MailToAdmin?mail={mail}";
+                var response = await httpClient.PostAsync(url, null); var trave = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+
+                    var result = JsonConvert.DeserializeObject<ResponseDto>(trave);
+
+                    return Content(trave, "application/json");
+
+                }
 
                 return Content(trave, "application/json");
-
             }
+            else
+            {
 
-            return Content(trave, "application/json");
-
-
+                //return RedirectToAction("Login", "Home");
+                return Json(new { Message = "Bạn không có quyền", Code = 400 });
+            }
 
         }
     }

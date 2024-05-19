@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
 using System.Data.SqlTypes;
+using System.Net.Http;
 using System.Text;
 
 namespace AdminApp.Controllers
@@ -34,7 +35,17 @@ namespace AdminApp.Controllers
 
         public IActionResult EditProfile()
         {
-            return View();
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
+                return View();
+            }
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         public async Task<IActionResult> CapNhatThongTin(string userName)
@@ -69,42 +80,53 @@ namespace AdminApp.Controllers
 
         [HttpPut]
         public async Task<IActionResult> CapNhatSDT_DiaChi(string username, string SDT, string diaChi)
-        {
-            userSDTDiaChi user = new userSDTDiaChi();
-            user.userName = username;
-            user.SDT = SDT;
-            user.DiaChi = diaChi;
-
-            var apiUrl = $"/api/Account/CapNhatSDTDiaChi";
-            var httpclient = _httpClientFactory.CreateClient("BeHat");
-            var requestdata = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-            var respone = await httpclient.PutAsync(apiUrl, requestdata);
-
-
-            if (respone.IsSuccessStatusCode)
+        {        
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                var jsonRespone = await respone.Content.ReadAsStringAsync();
-                var info = JsonConvert.DeserializeObject<ResponseDto>(jsonRespone);
+                userSDTDiaChi user = new userSDTDiaChi();
+                user.userName = username;
+                user.SDT = SDT;
+                user.DiaChi = diaChi;
 
-                //HttpContext.Session.SetString("AccessToken", jsonRespone);
-                //HttpContext.Session.SetString("TokenCheck", info.Token);
-                //HttpContext.Session.SetString("Result", info.Role);
+                var apiUrl = $"/api/Account/CapNhatSDTDiaChi";
+                var httpclient = _httpClientFactory.CreateClient("BeHat");
+                var requestdata = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
+                var respone = await httpclient.PutAsync(apiUrl, requestdata);
 
-                //HttpContext.Session.SetString("TenNguoiDung", profileUserJson.TenNguoiDung);
-                //HttpContext.Session.SetString("UserName", profileUserJson.TenTaiKhoan);
-                //HttpContext.Session.SetString("soDienThoai", profileUserJson.soDienThoai);
-                //HttpContext.Session.SetString("DiaChi", profileUserJson.DiaChi);
-                //HttpContext.Session.SetString("Email", profileUserJson.Email);
-                //HttpContext.Session.SetString("GioiTinh", profileUserJson.GioiTinh.ToString());
 
-                return Content(jsonRespone, "application/json");
+                if (respone.IsSuccessStatusCode)
+                {
+                    var jsonRespone = await respone.Content.ReadAsStringAsync();
+                    var info = JsonConvert.DeserializeObject<ResponseDto>(jsonRespone);
+
+                    //HttpContext.Session.SetString("AccessToken", jsonRespone);
+                    //HttpContext.Session.SetString("TokenCheck", info.Token);
+                    //HttpContext.Session.SetString("Result", info.Role);
+
+                    //HttpContext.Session.SetString("TenNguoiDung", profileUserJson.TenNguoiDung);
+                    //HttpContext.Session.SetString("UserName", profileUserJson.TenTaiKhoan);
+                    //HttpContext.Session.SetString("soDienThoai", profileUserJson.soDienThoai);
+                    //HttpContext.Session.SetString("DiaChi", profileUserJson.DiaChi);
+                    //HttpContext.Session.SetString("Email", profileUserJson.Email);
+                    //HttpContext.Session.SetString("GioiTinh", profileUserJson.GioiTinh.ToString());
+
+                    return Content(jsonRespone, "application/json");
+                }
+                else
+                {
+                    var jsonRespone = await respone.Content.ReadAsStringAsync();
+                    //var error = HttpContext.Session.GetString("ThongBao");
+                    return Content(jsonRespone, "application/json");
+                }
             }
             else
             {
-                var jsonRespone = await respone.Content.ReadAsStringAsync();
-                //var error = HttpContext.Session.GetString("ThongBao");
-                return Content(jsonRespone, "application/json");
+
+                return RedirectToAction("Login", "Home");
             }
+
         }
 
 
@@ -133,42 +155,53 @@ namespace AdminApp.Controllers
         [HttpPut]
         public async Task<IActionResult> CapNhatMatKhau(string userName, string oldPass, string newPass, string remindNewPass)
         {
-            DoiMatKhauDto doiMatKhauDto = new DoiMatKhauDto();
-            doiMatKhauDto.UserName = userName;
-            doiMatKhauDto.OldPass = oldPass;
-            doiMatKhauDto.NewPass = newPass;
-            doiMatKhauDto.RemindNewPass = remindNewPass;
-
-            var apiUrl = $"/api/Account/CapNhatMatKhau";
-            var httpclient = _httpClientFactory.CreateClient("BeHat");
-            var requestdata = new StringContent(JsonConvert.SerializeObject(doiMatKhauDto), Encoding.UTF8, "application/json");
-            var respone = await httpclient.PutAsync(apiUrl, requestdata);
-
-
-            if (respone.IsSuccessStatusCode)
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                var jsonRespone = await respone.Content.ReadAsStringAsync();
-                var info = JsonConvert.DeserializeObject<ResponseDto>(jsonRespone);
+                DoiMatKhauDto doiMatKhauDto = new DoiMatKhauDto();
+                doiMatKhauDto.UserName = userName;
+                doiMatKhauDto.OldPass = oldPass;
+                doiMatKhauDto.NewPass = newPass;
+                doiMatKhauDto.RemindNewPass = remindNewPass;
 
-                //HttpContext.Session.SetString("AccessToken", jsonRespone);
-                //HttpContext.Session.SetString("TokenCheck", info.Token);
-                //HttpContext.Session.SetString("Result", info.Role);
+                var apiUrl = $"/api/Account/CapNhatMatKhau";
+                var httpclient = _httpClientFactory.CreateClient("BeHat");
+                var requestdata = new StringContent(JsonConvert.SerializeObject(doiMatKhauDto), Encoding.UTF8, "application/json");
+                var respone = await httpclient.PutAsync(apiUrl, requestdata);
 
-                //HttpContext.Session.SetString("TenNguoiDung", profileUserJson.TenNguoiDung);
-                //HttpContext.Session.SetString("UserName", profileUserJson.TenTaiKhoan);
-                //HttpContext.Session.SetString("soDienThoai", profileUserJson.soDienThoai);
-                //HttpContext.Session.SetString("DiaChi", profileUserJson.DiaChi);
-                //HttpContext.Session.SetString("Email", profileUserJson.Email);
-                //HttpContext.Session.SetString("GioiTinh", profileUserJson.GioiTinh.ToString());
 
-                return Content(jsonRespone, "application/json");
+                if (respone.IsSuccessStatusCode)
+                {
+                    var jsonRespone = await respone.Content.ReadAsStringAsync();
+                    var info = JsonConvert.DeserializeObject<ResponseDto>(jsonRespone);
+
+                    //HttpContext.Session.SetString("AccessToken", jsonRespone);
+                    //HttpContext.Session.SetString("TokenCheck", info.Token);
+                    //HttpContext.Session.SetString("Result", info.Role);
+
+                    //HttpContext.Session.SetString("TenNguoiDung", profileUserJson.TenNguoiDung);
+                    //HttpContext.Session.SetString("UserName", profileUserJson.TenTaiKhoan);
+                    //HttpContext.Session.SetString("soDienThoai", profileUserJson.soDienThoai);
+                    //HttpContext.Session.SetString("DiaChi", profileUserJson.DiaChi);
+                    //HttpContext.Session.SetString("Email", profileUserJson.Email);
+                    //HttpContext.Session.SetString("GioiTinh", profileUserJson.GioiTinh.ToString());
+
+                    return Content(jsonRespone, "application/json");
+                }
+                else
+                {
+                    var jsonRespone = await respone.Content.ReadAsStringAsync();
+                    //var error = HttpContext.Session.GetString("ThongBao");
+                    return Content(jsonRespone, "application/json");
+                }
             }
             else
             {
-                var jsonRespone = await respone.Content.ReadAsStringAsync();
-                //var error = HttpContext.Session.GetString("ThongBao");
-                return Content(jsonRespone, "application/json");
+
+                return RedirectToAction("Login", "Home");
             }
+
         }
 
 

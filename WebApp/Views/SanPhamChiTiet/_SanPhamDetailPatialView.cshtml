@@ -8,17 +8,17 @@
     <div class="container">
         <div class="row s_product_inner">
             <div class="col-lg-6">
-            <div class="s_Product_carousel">
-                <div class="single-prd-item">
-                    <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
+                <div class="s_Product_carousel">
+                    <div class="single-prd-item">
+                        <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
+                    </div>
+                    <div class="single-prd-item">
+                        <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
+                    </div>
+                    <div class="single-prd-item">
+                        <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
+                    </div>
                 </div>
-                <div class="single-prd-item">
-                    <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
-                </div>
-                <div class="single-prd-item">
-                    <img class="img-fluid" src="https://th.bing.com/th?id=OIP.QSzoNh2kpWRSf6ZWgLiA_QHaE6&w=306&h=203&c=8&rs=1&qlt=90&o=6&dpr=1.1&pid=3.1&rm=2" alt="">
-                </div>
-            </div>
 
             </div>
             <div class="col-lg-5 offset-lg-1">
@@ -99,7 +99,9 @@
                     </p>
                     <div class="product_count">
                         <label for="qty">Quantity:</label>
-                        <input type="text" name="qty" id="sst" maxlength="12" value="@soluong" title="Quantity:" class="input-text qty">
+                        @* <input type="text" name="qty" id="sst" maxlength="12" value="@soluong" title="Quantity:" class="input-text qty" max="@soluong"> *@
+                        <input type="number" name="qty" id="sst" maxlength="12" value="1" title="Quantity:" class="input-text qty">
+
                         <button onclick="increaseQuantity()"
                                 class="increase items-count" type="button">
                             <i class="lnr lnr-chevron-up"></i>
@@ -124,45 +126,53 @@
         </div>
     </div>
 </div>
-    <script>
+<script>
+    // Lấy giá trị max từ mô hình
     const maxQuantity = parseInt("@Model.SoLuongTon", 10); // Chuyển đổi thành số nguyên
-    console.log("maxQuantity: ", maxQuantity);
-    console.log(typeof maxQuantity)
+
+    // Lấy phần tử input
+    var inputElement = document.getElementById('sst');
+
+    // Cập nhật thuộc tính max của input
+    inputElement.setAttribute('max', maxQuantity);
+
+    // Đảm bảo giá trị nhập vào không vượt quá maxQuantity
+    inputElement.addEventListener('input', function () {
+        var value = inputElement.value;
+
+        // Chỉ cho phép nhập số
+        value = value.replace(/[^0-9]/g, '');
+
+        // Chuyển giá trị thành số nguyên
+        var intValue = parseInt(value);
+
+        // Kiểm tra nếu giá trị nhập vào lớn hơn maxQuantity
+        if (intValue > maxQuantity) {
+            intValue = maxQuantity;
+        }
+
+        // Cập nhật lại giá trị input
+        inputElement.value = isNaN(intValue) ? '' : intValue;
+    });
+
     function increaseQuantity() {
-        var input = document.getElementById('sst');
-        var value = parseInt(input.value, 10);
-        console.log("value: ", value);
-        console.log(typeof value)
+        var value = parseInt(inputElement.value, 10);
         if (!isNaN(value)) {
             if (value < maxQuantity) {
-                input.value = value + 1;
+                inputElement.value = value + 1;
             } else {
-                debugger
-                console.log('dừng lại nhanh');
-                input.value = maxQuantity; // Nếu vượt quá số lượng tồn, giữ nguyên giá trị là số lượng tồn
+                inputElement.value = maxQuantity; // Nếu vượt quá số lượng tồn, giữ nguyên giá trị là số lượng tồn
             }
         }
     }
 
-
-
     function decreaseQuantity() {
-        var input = document.getElementById('sst');
-        var value = parseInt(input.value, 10);
-
+        var value = parseInt(inputElement.value, 10);
         if (!isNaN(value) && value > 0) {
-            input.value = value - 1;
+            inputElement.value = value - 1;
         }
     }
 
-
-    // document.getElementById('addToCartBtn').addEventListener('click', function () {
-    //     var quantity = document.getElementById('sst').value;
-    //     var codeProductDetail = '@Model.MaSanPham';
-    //     var url = '@Url.Action("AddProductToCart", "Cart")';
-    //     url += '?codeProductDetail=' + codeProductDetail + '&soluong=' + quantity;
-    //     window.location.href = url;
-    // });
     document.getElementById('addToCartBtn').addEventListener('click', function () {
         var quantity = document.getElementById('sst').value;
         var codeProductDetail = '@Model.MaSanPham';
@@ -171,7 +181,9 @@
         url += '?codeProductDetail=' + encodedCodeProductDetail + '&soluong=' + quantity;
         window.location.href = url;
     });
-                        </script>
+</script>
+
+
 
 
 <style>

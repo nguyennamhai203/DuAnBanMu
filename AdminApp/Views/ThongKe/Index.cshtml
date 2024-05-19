@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Shop_Models.Entities.ChiTietSanPham>
+﻿@model IEnumerable<Shop_Models.Dto.SanPhamChiTietDto>
 
 @{
     ViewData["Title"] = "Index";
@@ -24,25 +24,15 @@
             <th>
                 Tổng doanh thu
             </th>
-            <th>
-                Lãi
-            </th>
-            <th>
-                Lỗ
-            </th>
         </tr>
     </thead>
 
     @{
-        decimal totalRevenue = 0;
-        decimal totalProfit = 0;
-        decimal totalLoss = 0;
         decimal totalGiaNhap = Convert.ToDecimal(Model.Sum(x => x.GiaNhap));
         decimal totalGiaBan = Convert.ToDecimal(Model.Sum(x => x.GiaBan));
-        decimal totalGiaThucTe = Convert.ToDecimal(Model.Sum(x => x.GiaThucTe));
-        var totalSLT = Model.Sum(x => x.SoLuongTon);
         var totalSLDB = Model.Sum(x => x.SoLuongDaBan);
-    }   
+        decimal totalRevenue = 0;
+    }
 
     <tbody>
         @foreach (var item in Model)
@@ -67,31 +57,6 @@
                         @Html.DisplayFor(modelItem => revenue)
                     }
                 </td>
-                <td>
-                    @{
-                        decimal profit = Convert.ToDecimal((item.GiaBan - item.GiaNhap) * item.SoLuongDaBan);
-                        if (profit >= 0)
-                        {
-                            @Html.DisplayFor(modelItem => profit)
-                        }
-                        else
-                        {
-                            @:0
-                        }
-                    }
-                </td>
-                <td>
-                    @{
-                        if (profit < 0)
-                        {
-                            @Html.DisplayFor(modelItem => profit)
-                        }
-                        else
-                        {
-                            @:0
-                        }
-                    }
-                </td>
             </tr>
         }
         <tr>
@@ -100,25 +65,6 @@
             <td>@totalGiaBan</td>
             <td>@totalSLDB</td>
             <td>@totalRevenue</td>
-            <td>
-                @{
-                    var averageProfitPercentage = Model.Sum(item => (Convert.ToDecimal(item.GiaBan - item.GiaNhap)) * item.SoLuongDaBan);
-                    @Html.DisplayFor(x => averageProfitPercentage)
-                    /*var averageProfitPercentage = Model.Sum(item => (Convert.ToDecimal(item.GiaBan - item.GiaNhap)) * item.SoLuongDaBan / Convert.ToDecimal(totalRevenue) * 100);
-                    @Math.Round(Convert.ToDecimal(averageProfitPercentage), 2) @:%*/
-
-                }
-            </td>
-            <td>
-                @* @{
-                    var averageLossPercentage = Model.Average(item => (Convert.ToDecimal(item.GiaNhap - item.GiaBan)) * item.SoLuongDaBan / Convert.ToDecimal(totalRevenue) * 100);
-                    @Math.Round(Convert.ToDecimal(averageLossPercentage), 2) @:%
-                } *@
-                @{
-                    var averageLossPercentage = Model.Sum(item => (Convert.ToDecimal(item.GiaNhap - item.GiaBan)) * item.SoLuongDaBan);
-                    @Html.DisplayFor(modelItem => averageLossPercentage)
-                }
-            </td>
         </tr>
     </tbody>
 </table>

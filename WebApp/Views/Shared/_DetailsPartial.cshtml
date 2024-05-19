@@ -134,7 +134,7 @@
                 </p>
                 <div class="product_count">
                     <label for="qty">Quantity:</label>
-                    <input type="text" name="qty" id="sst" maxlength="12" value="@soluong" title="Quantity:" class="input-text qty" max="@Model.SoLuongTon" onblur="validateQuantity()">
+                    <input type="number" name="qty" id="sst" maxlength="12" title="Quantity:" class="input-text qty" max="@Model.SoLuongTon" value="1" oninput="this.value = this.value.replace(/[^0-9]/g, ''); validateQuantity()" onblur="validateQuantity2()">
 
                     <button onclick="increaseQuantity()"
                             class="increase items-count" type="button">
@@ -180,29 +180,43 @@
         }
     }
 
+    // function validateQuantity() {
+    //     var input = document.getElementById('sst');
+    //     var quantity = parseInt(input.value, 10);
+    //     var maxQuantity = parseInt(input.getAttribute('max'), 10);
+    //     console.log(maxQuantity);
+
+    //     if (!isNaN(quantity)) {
+    //         if (quantity <= 0) {
+    //             // alert('Số lượng nhập vào phải lớn hơn 0.');
+    //             showNotification('Số lượng nhập vào phải lớn hơn 0.', "error");
+    //             input.value = 1; // Đặt giá trị nhập vào thành 1
+    //         } else if (quantity > maxQuantity) {
+    //             // alert('Số lượng nhập vào vượt quá số lượng bán.');
+    //             showNotification('Số lượng nhập vào vượt quá số lượng bán.', "error");
+    //             input.value = maxQuantity; // Đặt giá trị nhập vào thành số lượng tối đa có thể
+    //         }
+    //     } else {
+    //         // alert('Vui lòng nhập một số hợp lệ.');
+    //         showNotification('Vui lòng nhập một số hợp lệ.', "error");
+    //         input.value = 1;
+    //     }
+    // }
+
+
     function validateQuantity() {
         var input = document.getElementById('sst');
-        var quantity = parseInt(input.value, 10);
+        var value = input.value.trim() === '' ? 1 : parseInt(input.value, 10);
         var maxQuantity = parseInt(input.getAttribute('max'), 10);
-        console.log(maxQuantity);
 
-        if (!isNaN(quantity)) {
-            if (quantity <= 0) {
-                // alert('Số lượng nhập vào phải lớn hơn 0.');
-                showNotification('Số lượng nhập vào phải lớn hơn 0.', "error");
-                input.value = 1; // Đặt giá trị nhập vào thành 1
-            } else if (quantity > maxQuantity) {
-                // alert('Số lượng nhập vào vượt quá số lượng bán.');
-                showNotification('Số lượng nhập vào vượt quá số lượng bán.', "error");
-                input.value = maxQuantity; // Đặt giá trị nhập vào thành số lượng tối đa có thể
-            }
-        } else {
-            // alert('Vui lòng nhập một số hợp lệ.');
-            showNotification('Vui lòng nhập một số hợp lệ.', "error");
-            input.value = 1;
+        if (value <= 0) {
+            showNotification('Số lượng nhập vào phải lớn hơn 0.', "error");
+            input.value = 1; // Đặt giá trị nhập vào thành 1
+        } else if (value > maxQuantity) {
+            showNotification('Số lượng nhập vào vượt quá số lượng bán.', "error");
+            input.value = maxQuantity; // Đặt giá trị nhập vào thành số lượng tối đa có thể
         }
     }
-
 
     function decreaseQuantity() {
         var input = document.getElementById('sst');
@@ -316,6 +330,35 @@
             toastr.error(message);
         }
     }
+
+
+    function validateQuantity2() {
+    var input = document.getElementById('sst');
+    var quantity = parseInt(input.value, 10);
+    var maxQuantity = parseInt(input.getAttribute('max'), 10);
+
+    // Nếu ô input trống, gán giá trị mặc định là 1 và hiển thị thông báo lỗi
+    if (input.value.trim() === '') {
+        input.value = 1;
+        showNotification('Số lượng không được để trống. Giá trị mặc định đã được đặt là 1.', "error");
+        return; // Dừng hàm ở đây để không thực hiện các kiểm tra tiếp theo
+    }
+
+    // Kiểm tra nếu giá trị nhập vào là số âm hoặc bằng 0, đặt giá trị là 1 và hiển thị thông báo lỗi
+    if (quantity <= 0) {
+        input.value = 1;
+        showNotification('Số lượng nhập vào phải lớn hơn 0.', "error");
+        return; // Dừng hàm ở đây để không thực hiện các kiểm tra tiếp theo
+    }
+
+    // Kiểm tra nếu giá trị nhập vào vượt quá số lượng tối đa, đặt giá trị là số lượng tối đa và hiển thị thông báo lỗi
+    if (quantity > maxQuantity) {
+        input.value = maxQuantity;
+        showNotification('Số lượng nhập vào vượt quá số lượng bán là: ' + maxQuantity + ".", "error");
+        return; // Dừng hàm ở đây để không thực hiện các kiểm tra tiếp theo
+    }
+}
+
 
 </script>
 

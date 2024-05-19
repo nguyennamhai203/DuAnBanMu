@@ -26,7 +26,12 @@ namespace AdminApp.Controllers
 
         public async Task<IActionResult> DanhSachHoaDon()
         {
-            var response = await _httpClient.GetAsync("https://localhost:7050/Get-All-HoaDon");
+           
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
+               var response = await _httpClient.GetAsync("https://localhost:7050/Get-All-HoaDon");
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
@@ -38,6 +43,13 @@ namespace AdminApp.Controllers
                 // Xử lý lỗi
                 return View(new List<HoaDon>());
             }
+            }
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
 
         }
 
@@ -111,53 +123,77 @@ namespace AdminApp.Controllers
 
 
         public async Task<IActionResult> Details(Guid id)
-        {
-            try
+        {           
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                var hoaDonResponse = await _httpClient.GetAsync($"https://localhost:7050/GetById?id={id}");
-                if (!hoaDonResponse.IsSuccessStatusCode)
+                try
                 {
+                    var hoaDonResponse = await _httpClient.GetAsync($"https://localhost:7050/GetById?id={id}");
+                    if (!hoaDonResponse.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("DanhSachHoaDon");
+                    }
+
+                    var hoaDonContent = await hoaDonResponse.Content.ReadAsStringAsync();
+                    var hoaDon = JsonConvert.DeserializeObject<HoaDon>(hoaDonContent);
+
+                    var chiTietResponse = await _httpClient.GetAsync($"https://localhost:7050/api/HoaDonCT?hoaDonId={id}");
+                    if (!chiTietResponse.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("DanhSachHoaDon");
+                    }
+
+                    var chiTietContent = await chiTietResponse.Content.ReadAsStringAsync();
+                    var chiTietHoaDon = JsonConvert.DeserializeObject<List<HoaDonChiTiet>>(chiTietContent);
+
+                    var viewModel = new Tuple<HoaDon, List<HoaDonChiTiet>>(hoaDon, chiTietHoaDon);
+
+
+                    return View(viewModel);
+                }
+                catch (Exception ex)
+                {
+                    // Handle exception
                     return RedirectToAction("DanhSachHoaDon");
                 }
-
-                var hoaDonContent = await hoaDonResponse.Content.ReadAsStringAsync();
-                var hoaDon = JsonConvert.DeserializeObject<HoaDon>(hoaDonContent);
-
-                var chiTietResponse = await _httpClient.GetAsync($"https://localhost:7050/api/HoaDonCT?hoaDonId={id}");
-                if (!chiTietResponse.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("DanhSachHoaDon");
-                }
-
-                var chiTietContent = await chiTietResponse.Content.ReadAsStringAsync();
-                var chiTietHoaDon = JsonConvert.DeserializeObject<List<HoaDonChiTiet>>(chiTietContent);
-
-                var viewModel = new Tuple<HoaDon, List<HoaDonChiTiet>>(hoaDon, chiTietHoaDon);
-
-
-                return View(viewModel);
             }
-            catch (Exception ex)
+            else
             {
-                // Handle exception
-                return RedirectToAction("DanhSachHoaDon");
+
+                return RedirectToAction("Login", "Home");
             }
+
+
+
         }
 
 
         public async Task<IActionResult> CancelOrder(Guid id)
         {
-            var url = $"https://localhost:7050/GetById?id={id}";
-            var response = await _httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<HoaDon>(jsonString);
+                var url = $"https://localhost:7050/GetById?id={id}";
+                var response = await _httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<HoaDon>(jsonString);
 
 
-                return View(result);
+                    return View(result);
+                }
+                else return View();
             }
-            else return View();
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
 
         }
 
@@ -165,24 +201,33 @@ namespace AdminApp.Controllers
         //[HttpPost("SendCancelOrderRequest")]
         public async Task<IActionResult> SendCancelOrderRequest(Guid id, string reason)
         {
-
-            // Gửi yêu cầu PUT đến API để hủy hóa đơn
-            var response = await _httpClient.PostAsync($"https://localhost:7050/CancelOrder?id={id}&reason={reason}", null);
-
-            var result = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
+                // Gửi yêu cầu PUT đến API để hủy hóa đơn
+                var response = await _httpClient.PostAsync($"https://localhost:7050/CancelOrder?id={id}&reason={reason}", null);
 
-                // Hủy hóa đơn thành công, trả về một thông điệp thành công
-                return Content(result, "application/json");
+                var result = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+
+                    // Hủy hóa đơn thành công, trả về một thông điệp thành công
+                    return Content(result, "application/json");
+                }
+                else
+                {
+                    // Yêu cầu không thành công, trả về một thông điệp lỗi
+                    //return Json(new { success = false,code=400, errorMessage = "Không thể hủy đơn hàng. Vui lòng thử lại sau." });
+                    return Content(result, "application/json");
+
+                }
             }
             else
             {
-                // Yêu cầu không thành công, trả về một thông điệp lỗi
-                //return Json(new { success = false,code=400, errorMessage = "Không thể hủy đơn hàng. Vui lòng thử lại sau." });
-                return Content(result, "application/json");
 
+                return RedirectToAction("Login", "Home");
             }
 
 
@@ -215,222 +260,287 @@ namespace AdminApp.Controllers
         }
         public async Task<IActionResult> DanhSachHoaDonTheoTrangThai(int trangThai)
         {
-            var url = $"https://localhost:7050/DanhSachTheoTrangThai?trangThai={trangThai}";
-            var response = await _httpClient.GetAsync(url);
-
-            if (response.IsSuccessStatusCode)
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-                var danhSachHoaDon = JsonConvert.DeserializeObject<List<HoaDon>>(jsonString);
-
-                return View(danhSachHoaDon);
-            }
-            else
-            {
-                // Handle error
-                return View("Error");
-            }
-        }
-
-        public async Task<IActionResult> UpdateTrangThaiGiaoHangHoaDon(Guid id, Guid? idNguoiDung, int TrangThaigiaohang, string? Lido, DateTime? ngayCapNhatGanNhat)
-        {
-            try
-            {
-                // Prepare data to be sent to the API
-                var data = new
-                {
-                    Id = id,
-                    IdNguoiDung = idNguoiDung,
-                    TrangThaiGiaoHang = TrangThaigiaohang,
-                    LiDoHuy = Lido,
-                    NgayCapNhatGanNhat = ngayCapNhatGanNhat
-                };
-
-                // Send the data to the API to update TrangThaiGiaoHangHoaDon
-                var json = System.Text.Json.JsonSerializer.Serialize(data);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync($"https://localhost:7050/UpdateTrangThaiGiaoHangHoaDon?id={id}&TrangThai={TrangThaigiaohang}&Lido={Lido}&ngayCapNhatGanNhat={ngayCapNhatGanNhat}", content);
+                var url = $"https://localhost:7050/DanhSachTheoTrangThai?trangThai={trangThai}";
+                var response = await _httpClient.GetAsync(url);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // TrangThaiGiaoHangHoaDon updated successfully
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var danhSachHoaDon = JsonConvert.DeserializeObject<List<HoaDon>>(jsonString);
 
-                    // Check if the TrangThai is DaGiaoHang, then update ThanhToan
-                    if (TrangThaigiaohang == (int)TrangThaiGiaoHang.DaGiaoHang)
-                    {
-                        // Prepare data to be sent to the API to update ThanhToan
-                        var thanhToanData = new
-                        {
-                            Id = id,
-                            TrangThaiThanhToan = 1 // Đánh dấu là đã thanh toán
-                        };
-
-                        var thanhToanJson = System.Text.Json.JsonSerializer.Serialize(thanhToanData);
-                        var thanhToanContent = new StringContent(thanhToanJson, Encoding.UTF8, "application/json");
-
-                        // Send the data to the API to update ThanhToan
-                        var thanhToanResponse = await _httpClient.PostAsync("https://localhost:7050/UpdateThanhToan", thanhToanContent);
-
-                        if (!thanhToanResponse.IsSuccessStatusCode)
-                        {
-                            // Handle error if updating ThanhToan fails
-                            return RedirectToAction("DanhSachHoaDon");
-                        }
-                    }
-
-                    return RedirectToAction("DanhSachHoaDon");
+                    return View(danhSachHoaDon);
                 }
                 else
                 {
                     // Handle error
-                    return RedirectToAction("DanhSachHoaDon");
+                    return View("Error");
                 }
-            }
-            catch (Exception ex)
-            {
-                // Handle exception
-                return StatusCode(500, $"Lỗi server nội bộ: {ex.Message}");
-            }
-        }
-        public async Task<IActionResult> DanhSachPhanTrangThai(int? trangThaigiaohang)
-        {
-            try
-            {
-                if (trangThaigiaohang == null)
-                {
-                    trangThaigiaohang = 0;
-                }
-                if (trangThaigiaohang.HasValue)
-                {
-                    var responseAll = await _httpClient.GetAsync("https://localhost:7050/HoaDonStatus");
-                    if (responseAll.IsSuccessStatusCode)
-                    {
-                        var contentAll = await responseAll.Content.ReadAsStringAsync();
-                        var hoaDons = JsonConvert.DeserializeObject<List<HoaDon>>(contentAll);
-                        return View(hoaDons);
-                    }
-                    else
-                    {
-                        _logger.LogError($"API returned error code: {responseAll.StatusCode}");
-                        var errorMessage = "Đã xảy ra lỗi khi gọi API. Không thể lấy dữ liệu.";
-                        return View();
-                    }
-                }
-                else
-                {
-                    var hoaDonStatus = (TrangThaiGiaoHang)trangThaigiaohang.Value;
-                    var baseUrl = "https://localhost:7050/HoaDonStatus";
-                    var url = new Uri($"{baseUrl}?HoaDonStatus={(int)hoaDonStatus}");
 
-                    var response = await _httpClient.GetAsync(url);
+            }
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+        }
+
+        public async Task<IActionResult> UpdateTrangThaiGiaoHangHoaDon(Guid id, Guid? idNguoiDung, int TrangThaigiaohang, string? Lido, DateTime? ngayCapNhatGanNhat)
+        {
+
+
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
+                try
+                {
+                    // Prepare data to be sent to the API
+                    var data = new
+                    {
+                        Id = id,
+                        IdNguoiDung = idNguoiDung,
+                        TrangThaiGiaoHang = TrangThaigiaohang,
+                        LiDoHuy = Lido,
+                        NgayCapNhatGanNhat = ngayCapNhatGanNhat
+                    };
+
+                    // Send the data to the API to update TrangThaiGiaoHangHoaDon
+                    var json = System.Text.Json.JsonSerializer.Serialize(data);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await _httpClient.PostAsync($"https://localhost:7050/UpdateTrangThaiGiaoHangHoaDon?id={id}&TrangThai={TrangThaigiaohang}&Lido={Lido}&ngayCapNhatGanNhat={ngayCapNhatGanNhat}", content);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var hoaDons = JsonConvert.DeserializeObject<List<HoaDon>>(content);
-                        return View(hoaDons);
+                        // TrangThaiGiaoHangHoaDon updated successfully
+
+                        // Check if the TrangThai is DaGiaoHang, then update ThanhToan
+                        if (TrangThaigiaohang == (int)TrangThaiGiaoHang.DaGiaoHang)
+                        {
+                            // Prepare data to be sent to the API to update ThanhToan
+                            var thanhToanData = new
+                            {
+                                Id = id,
+                                TrangThaiThanhToan = 1 // Đánh dấu là đã thanh toán
+                            };
+
+                            var thanhToanJson = System.Text.Json.JsonSerializer.Serialize(thanhToanData);
+                            var thanhToanContent = new StringContent(thanhToanJson, Encoding.UTF8, "application/json");
+
+                            // Send the data to the API to update ThanhToan
+                            var thanhToanResponse = await _httpClient.PostAsync("https://localhost:7050/UpdateThanhToan", thanhToanContent);
+
+                            if (!thanhToanResponse.IsSuccessStatusCode)
+                            {
+                                // Handle error if updating ThanhToan fails
+                                return RedirectToAction("DanhSachHoaDon");
+                            }
+                        }
+
+                        return RedirectToAction("DanhSachHoaDon");
                     }
                     else
                     {
-                        _logger.LogError($"API returned error code: {response.StatusCode}");
-                        var errorMessage = "Đã xảy ra lỗi khi gọi API. Không thể lấy dữ liệu.";
-                        return View("Error", new { error = errorMessage });
+                        // Handle error
+                        return RedirectToAction("DanhSachHoaDon");
                     }
                 }
+                catch (Exception ex)
+                {
+                    // Handle exception
+                    return StatusCode(500, $"Lỗi server nội bộ: {ex.Message}");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError($"Exception occurred: {ex.Message}");
-                var errorMessage = "Đã xảy ra lỗi khi xử lý yêu cầu.";
-                return View("Error", new { error = errorMessage });
+
+                return RedirectToAction("Login", "Home");
             }
+         
+        }
+        public async Task<IActionResult> DanhSachPhanTrangThai(int? trangThaigiaohang)
+        {
+
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
+                try
+                {
+                    if (trangThaigiaohang == null)
+                    {
+                        trangThaigiaohang = 0;
+                    }
+                    if (trangThaigiaohang.HasValue)
+                    {
+                        var responseAll = await _httpClient.GetAsync("https://localhost:7050/HoaDonStatus");
+                        if (responseAll.IsSuccessStatusCode)
+                        {
+                            var contentAll = await responseAll.Content.ReadAsStringAsync();
+                            var hoaDons = JsonConvert.DeserializeObject<List<HoaDon>>(contentAll);
+                            return View(hoaDons);
+                        }
+                        else
+                        {
+                            _logger.LogError($"API returned error code: {responseAll.StatusCode}");
+                            var errorMessage = "Đã xảy ra lỗi khi gọi API. Không thể lấy dữ liệu.";
+                            return View();
+                        }
+                    }
+                    else
+                    {
+                        var hoaDonStatus = (TrangThaiGiaoHang)trangThaigiaohang.Value;
+                        var baseUrl = "https://localhost:7050/HoaDonStatus";
+                        var url = new Uri($"{baseUrl}?HoaDonStatus={(int)hoaDonStatus}");
+
+                        var response = await _httpClient.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            var hoaDons = JsonConvert.DeserializeObject<List<HoaDon>>(content);
+                            return View(hoaDons);
+                        }
+                        else
+                        {
+                            _logger.LogError($"API returned error code: {response.StatusCode}");
+                            var errorMessage = "Đã xảy ra lỗi khi gọi API. Không thể lấy dữ liệu.";
+                            return View("Error", new { error = errorMessage });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Exception occurred: {ex.Message}");
+                    var errorMessage = "Đã xảy ra lỗi khi xử lý yêu cầu.";
+                    return View("Error", new { error = errorMessage });
+                }
+            }
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
+          
         }
 
 
 
         public async Task<IActionResult> DanhSachPhanTrangThai2(int? trangThaigiaohang)
         {
-            try
+
+
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                if (trangThaigiaohang == null)
+                try
                 {
-                    trangThaigiaohang = 1;
-                }
-                if (trangThaigiaohang.HasValue)
-                {
-                    int hoaDonStatus = trangThaigiaohang.Value;
-
-                    var baseUrl = "https://localhost:7050/HoaDonStatus";
-                    var url = new Uri($"{baseUrl}?HoaDonStatus={hoaDonStatus}");
-
-                    _logger.LogInformation($"Calling API with URL: {url}");
-
-                    var response = await _httpClient.GetAsync(url);
-
-                    if (response.IsSuccessStatusCode)
+                    if (trangThaigiaohang == null)
                     {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var hoaDons = JsonConvert.DeserializeObject<List<HoaDon>>(content);
+                        trangThaigiaohang = 1;
+                    }
+                    if (trangThaigiaohang.HasValue)
+                    {
+                        int hoaDonStatus = trangThaigiaohang.Value;
 
-                        return PartialView("_DanhSachPhanTrangThaiPartial", hoaDons); // Trả về dữ liệu dưới dạng JSON
+                        var baseUrl = "https://localhost:7050/HoaDonStatus";
+                        var url = new Uri($"{baseUrl}?HoaDonStatus={hoaDonStatus}");
+
+                        _logger.LogInformation($"Calling API with URL: {url}");
+
+                        var response = await _httpClient.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            var hoaDons = JsonConvert.DeserializeObject<List<HoaDon>>(content);
+
+                            return PartialView("_DanhSachPhanTrangThaiPartial", hoaDons); // Trả về dữ liệu dưới dạng JSON
+                        }
+                        else
+                        {
+                            _logger.LogError($"API returned error code: {response.StatusCode}");
+
+                            var errorMessage = "Đã xảy ra lỗi khi gọi API. Không thể lấy dữ liệu.";
+                            ViewData["ErrorMessage"] = errorMessage;
+                        }
                     }
                     else
                     {
-                        _logger.LogError($"API returned error code: {response.StatusCode}");
-
-                        var errorMessage = "Đã xảy ra lỗi khi gọi API. Không thể lấy dữ liệu.";
+                        var errorMessage = "Trạng thái không được chỉ định.";
                         ViewData["ErrorMessage"] = errorMessage;
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    var errorMessage = "Trạng thái không được chỉ định.";
+                    _logger.LogError(ex, "Lỗi xảy ra khi xử lý yêu cầu DanhSachPhanTrangThai");
+
+                    var errorMessage = "Đã xảy ra lỗi trong quá trình xử lý yêu cầu. Vui lòng thử lại sau.";
                     ViewData["ErrorMessage"] = errorMessage;
                 }
+
+                // Trả về view với danh sách hóa đơn trống
+                return Json(null); // Trả về dữ liệu dưới dạng JSON
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "Lỗi xảy ra khi xử lý yêu cầu DanhSachPhanTrangThai");
 
-                var errorMessage = "Đã xảy ra lỗi trong quá trình xử lý yêu cầu. Vui lòng thử lại sau.";
-                ViewData["ErrorMessage"] = errorMessage;
+                return RedirectToAction("Login", "Home");
             }
-
-            // Trả về view với danh sách hóa đơn trống
-            return Json(null); // Trả về dữ liệu dưới dạng JSON
         }
 
 
 
         public async Task<IActionResult> UpdateHoaDonStatus(Guid id, int hoaDonStatus)
         {
-            var apiUrl = $"https://localhost:7050/updateHoaDonStatus?id={id}&HoaDonStatus={hoaDonStatus}";
+           
 
-            // Tạo object chứa dữ liệu để gửi đến API
-            var model = new { Id = id, HoaDonStatus = hoaDonStatus };
 
-            // Chuyển object thành JSON string
-            var jsonModel = JsonConvert.SerializeObject(model);
 
-            // Tạo nội dung của yêu cầu
-            var content = new StringContent(jsonModel, Encoding.UTF8, "application/json");
-
-            // Gửi yêu cầu PUT đến API
-            var response = await _httpClient.PutAsync(apiUrl, null);
-            var readRespnse = response.Content.ReadAsStringAsync();
-
-			var result = JsonConvert.DeserializeObject<ResponseDto>(readRespnse.Result);
-            // Xử lý kết quả từ API
-            if (result.IsSuccess)
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                //return Ok(); // Trả về 200 OK nếu yêu cầu thành công
-                return Ok(new { success = true });
+                var apiUrl = $"https://localhost:7050/updateHoaDonStatus?id={id}&HoaDonStatus={hoaDonStatus}";
+
+                // Tạo object chứa dữ liệu để gửi đến API
+                var model = new { Id = id, HoaDonStatus = hoaDonStatus };
+
+                // Chuyển object thành JSON string
+                var jsonModel = JsonConvert.SerializeObject(model);
+
+                // Tạo nội dung của yêu cầu
+                var content = new StringContent(jsonModel, Encoding.UTF8, "application/json");
+
+                // Gửi yêu cầu PUT đến API
+                var response = await _httpClient.PutAsync(apiUrl, null);
+                var readRespnse = response.Content.ReadAsStringAsync();
+
+                var result = JsonConvert.DeserializeObject<ResponseDto>(readRespnse.Result);
+                // Xử lý kết quả từ API
+                if (result.IsSuccess)
+                {
+                    //return Ok(); // Trả về 200 OK nếu yêu cầu thành công
+                    return Ok(new { success = true });
+                }
+                else
+                {
+                    //return StatusCode((int)response.StatusCode); // Trả về mã lỗi từ API nếu yêu cầu gặp lỗi
+                    return Ok(new { success = false, message = result.Message });
+                }
             }
             else
             {
-				//return StatusCode((int)response.StatusCode); // Trả về mã lỗi từ API nếu yêu cầu gặp lỗi
-				return Ok(new { success = false, message = result.Message });
-			}
+
+                return RedirectToAction("Login", "Home");
+            }
+
         }
 
 

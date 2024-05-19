@@ -14,15 +14,28 @@ namespace AdminApp.Controllers
 
         public async Task<IActionResult> Index(Guid id)
         {
-            if (id != Guid.Empty)
+           
+
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                var chatLieu = await _httpClient.GetFromJsonAsync<ChatLieu>($"https://localhost:7050/api/ChatLieu/GetById/{id}");
-                List<ChatLieu> c = new List<ChatLieu>();
-                c.Add(chatLieu);
-                ViewData["ChatLieu"] = c;
+                if (id != Guid.Empty)
+                {
+                    var chatLieu = await _httpClient.GetFromJsonAsync<ChatLieu>($"https://localhost:7050/api/ChatLieu/GetById/{id}");
+                    List<ChatLieu> c = new List<ChatLieu>();
+                    c.Add(chatLieu);
+                    ViewData["ChatLieu"] = c;
+                }
+                var chatLieus = await _httpClient.GetFromJsonAsync<IEnumerable<ChatLieu>>("https://localhost:7050/api/ChatLieu/GetAll");
+                return View(chatLieus);
             }
-            var chatLieus = await _httpClient.GetFromJsonAsync<IEnumerable<ChatLieu>>("https://localhost:7050/api/ChatLieu/GetAll");
-            return View(chatLieus);
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+
         }
         public async Task<IActionResult> GetAllChatLieu()
         {

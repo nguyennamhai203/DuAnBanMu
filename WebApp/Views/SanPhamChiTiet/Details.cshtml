@@ -675,7 +675,9 @@
     function decreaseQuantity() {
         var input = document.getElementById('sst');
         var value = parseInt(input.value, 10);
-
+        console.log("value: ", value);
+        console.log(typeof value)
+        console.log(value);
         if (!isNaN(value) && value > 0) {
             input.value = value - 1;
         }
