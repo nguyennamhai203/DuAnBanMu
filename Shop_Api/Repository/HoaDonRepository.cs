@@ -365,6 +365,7 @@ namespace Shop_Api.Repository
                     //    // Không thể hủy đơn hàng nếu đang giao hàng
                     //    return new ResponseDto { IsSuccess = false, Message = "Không thể hủy đơn hàng khi đang giao hàng", Code = 400 };
                     //}
+
                     if (hoaDon != null)
                     {
                         foreach (var chiTiet in chiTietHoaDon)
