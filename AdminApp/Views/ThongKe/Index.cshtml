@@ -24,17 +24,14 @@
             <th>
                 Tổng doanh thu
             </th>
-            <th></th>
         </tr>
     </thead>
 
     @{
-        decimal totalRevenue = 0;
         decimal totalGiaNhap = Convert.ToInt32(Model.Sum(x => x.GiaNhap));
         decimal totalGiaBan = Convert.ToInt32(Model.Sum(x => x.GiaBan));
-        decimal totalGiaThucTe = Convert.ToInt32(Model.Sum(x => x.GiaThucTe));
-        var totalSLT = Model.Sum(x => x.SoLuongTon);
         var totalSLDB = Model.Sum(x => x.SoLuongDaBan);
+        decimal totalRevenue = 0;
     }
 
     <tbody>
@@ -60,7 +57,6 @@
                         @Html.DisplayFor(modelItem => revenue)
                     }
                 </td>
-                <td></td>
             </tr>
         }
         <tr>
