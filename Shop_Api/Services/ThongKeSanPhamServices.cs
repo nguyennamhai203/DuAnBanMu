@@ -16,10 +16,10 @@ namespace Shop_Api.Services
             _context = context;
         }
 
-        public async Task<List<SanPhamChiTietDto>> FilterProductsTheoChatLieu(Guid maChatlieu)
+        public async Task<List<SanPhamChiTietDto>> FilterProductsTheoChatLieu(string maChatlieu)
         {
             var query = _context.ChiTietSanPhams
-                .Where(sp => sp.ChatLieu.Guid == maChatlieu)
+                //.Where(sp => sp.ChatLieu.Guid == maChatlieu)
                 .Select(sp => new SanPhamChiTietDto
                 {
                     Id = sp.Id,
@@ -37,11 +37,6 @@ namespace Shop_Api.Services
                 });
             //return query.ToListAsync();
             return null;
-        }
-
-        public Task<List<SanPhamChiTietDto>> FilterProductsTheoChatLieu(string maChatlieu)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<List<SanPhamChiTietDto>> FilterProductsTheoLoai(string maLoai)
