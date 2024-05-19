@@ -85,13 +85,14 @@ namespace Shop_Api.Services
                     NguoiDungId = user != null ? user.Id : null,
                     TongTien = requestBill.Payment /*- tienGiam + 40000*/,
                     TienGiam = tienGiam,
-                    TienShip = 40000, // mặc định ship
+                    TienShip = requestBill.phiship2, // mặc định ship
                     VoucherId = voucherX != null ? voucherX.Guid : (Guid?)null
                 };
                 if (requestBill.trangthaithanhtoan == 1)
                 {
                     bill.NgayThanhToan = DateTime.Now;
                     bill.TrangThaiThanhToan = 1;
+                    bill.TrangThaiGiaoHang = 1;
                 }
                 var createHoaDon = await _hoaDonRepository.CreateHD(bill);
                 if (createHoaDon.IsSuccess == true)

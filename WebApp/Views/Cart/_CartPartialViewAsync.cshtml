@@ -4,11 +4,13 @@
 @{
     int stt = 0;
     double thanhTien = 0;
-    double tongTien = 0; var phiShip = 40000;
+    double tongTien = 0;
+    // var phiShip = 40000;
 
     int soluongsanpham = 0;
     string username = ViewContext.HttpContext.Session.GetString("username");
 }
+
 <!--================Cart Area =================-->
 <section class="cart_area">
     <div class="container">
@@ -64,7 +66,7 @@
                                         <div class="product_count">
                                             <input hidden id="codeproduct" type="text" value="@item.MaSPCT">
                                             <input hidden type="number" id="soLuongSPTon" name="soLuongSPTon" data-product-sl="@item.SoLuongBanSanPham" maxlength="3" value="@item.SoLuongBanSanPham" title="Quantity:" max="@item.SoLuongBanSanPham">
-                                            <input type="text" name="qty" data-product-detail="@item.MaSPCT" data-cartdetail-id="@item.Id" maxlength="3" value="@item.SoLuong" title="Quantity:" class="input-text qty" max="@item.SoLuongBanSanPham" onblur="validateQuantity(this)">
+                                            <input type="number" name="qty" data-product-detail="@item.MaSPCT" data-cartdetail-id="@item.Id" maxlength="3" value="@item.SoLuong" title="Quantity:" class="input-text qty" max="@item.SoLuongBanSanPham" onblur="validateQuantity(this)">
 
                                             <button onclick="increaseQuantity(this);" id="increase" class="increase items-count" data-cartdetail-id="@item.Id" type="button">
                                                 <i class="lnr lnr-chevron-up"></i>
@@ -139,7 +141,31 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Địa chỉ</label>
-                                        <input type="text" name="Address" class="form-control" @* value="@address" *@ required>
+                                        <input type="text" name="Address" class="form-control" hidden required>
+
+
+                                        <div class="u-s-m-b-30">
+
+                                            <label class="gl-label" for="city">THÀNH PHỐ *</label><select class="select-box select-box--primary-style" id="city" required>
+                                                <option selected>Chọn thành phố</option>
+                                            </select>
+                                        </div>
+                                        <div class="u-s-m-b-30">
+
+                                            <label class="gl-label" for="district">HUYỆN *</label><select class="select-box select-box--primary-style" id="district" required>
+                                                <option selected>Chọn huyện</option>
+                                            </select>
+                                        </div>
+                                        <div class="u-s-m-b-30">
+
+                                            <label class="gl-label" for="wards">PHƯỜNG/XÃ *</label><select class="select-box select-box--primary-style" id="wards" required>
+                                                <option selected>Chọn phường/xã</option>
+                                            </select>
+                                        </div>
+
+
+
+
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Số điện thoại (Việt Nam)</label>
@@ -158,8 +184,9 @@
                                     </div>
 
                                     <div class="d-flex justify-content-between" style="font-weight: 500;">
-                                        <p class="mb-0">Phí ship (Mặc định)</p>
-                                        <p class="mb-0">40000</p>
+                                        <p class="mb-0">Phí ship</p>
+                                        <p class="mb-0" id="phiship">0</p>
+                                        <input class="form-control" type="number" name="phiship2" id="phiship2" hidden />
                                     </div>
 
 
@@ -178,7 +205,7 @@
                                             <option value="null">Không có</option>
                                             @foreach (var voucher in ViewBag.listVoucher)
                                             {
-                                                <option value="@voucher.MaVoucher" data-percent="@voucher.PhanTramGiam">@voucher.MaVoucher</option>
+                                                <option value="@voucher.MaVoucher" data-percent="@voucher.PhanTramGiam">@voucher.MaVoucher: @voucher.PhanTramGiam</option>
                                             }
                                         </select>
 
@@ -187,10 +214,11 @@
 
                                     <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
                                         <p class="mb-2">Thành tiền phải thanh toán</p>
-                                        <p class="mb-2" id="thanhtien" data-thanhtien="@(tongTien + phiShip)">@(tongTien + phiShip)</p>
-                                        <p class="mb-2" id="tongtiensanpham" data-tongtiensanpham="@(tongTien)"></p>
+                                        <p class="mb-2" id="thanhtien" data-thanhtien="@(tongTien)">@(tongTien)</p>
+                                        <p class="mb-2" id="tongtiensanpham" data-tongtiensanpham="@(tongTien)" value="@(tongTien)"></p>
+                                        <input class="mb-2" id="tongtiensanphamgiohang" data-tongtiensanphamgiohang="@(tongTien)" value="@(tongTien)" hidden /> @* giá trị chỉ thay đổi theo voucher *@
                                     </div>
-                                    <input type="number" name="Payment" id="Payment" class="form-control" value="@(tongTien+phiShip)" hidden />
+                                    <input type="number" name="Payment" id="Payment" class="form-control" value="@(tongTien)" hidden />
                                     <button class="btn primary-btn btn-block btn-lg" style="max-width:200px; border-radius:10px;" type="submit" onclick="validateForm(event)">
                                         <div class="d-flex justify-content-between">
                                             <span>Đặt hàng</span>
@@ -206,12 +234,320 @@
             }
 
 
-
         </div>
     </div>
 </section>
 <!--================End Cart Area =================-->
+<!--tính phí ship-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
+    $(document).ready(function () {
+        const apiUrl = 'https://online-gateway.ghn.vn/shiip/public-api/master-data/province';
+        const token = '21040e7e-154d-11ef-80f1-d288e53168c3';
+
+        // Lấy dữ liệu thành phố và hiển thị trong dropdown
+        axios.get(apiUrl, {
+            headers: {
+                'Token': token
+            }
+        })
+            .then(response => {
+                var selectElement = $('#city');
+                selectElement.empty();
+                selectElement.append($('<option>').val('').text('Chọn thành phố'));
+                $.each(response.data.data, function (index, item) {
+                    selectElement.append($('<option>').val(item.ProvinceID).text(item.ProvinceName));
+                });
+                selectElement.val('').trigger('change');
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        // Sự kiện thay đổi khi chọn thành phố
+        $('#city').on('change', function () {
+
+            localStorage.setItem('phiship', 0);
+            $('#phiship').text(parseInt(0).toLocaleString("vi-VN").replace(/\./g, ',') + "đ");
+
+            // Cộng tiền ship vào giá trị của input "Payment"
+            var currentPaymentValue = parseInt($('#tongtiensanphamgiohang').val());
+            console.log("currentPaymentValue " + currentPaymentValue);
+            var shippingFee = parseInt(0);
+            $('#phiship').val(shippingFee);
+            var s = $('#phiship').val();
+            console.log("phiship " + s);
+            var shippingFee = parseInt(0);
+            var totalPayment = currentPaymentValue + shippingFee; // Tính tổng tổng tiền và phí ship
+            $('#Payment').val(totalPayment);
+            $('#thanhtien').text(parseInt(totalPayment).toLocaleString("vi-VN").replace(/\./g, ',') + "đ");
+
+            if ($('#city').val() === '') {
+                resetShippingFee();
+                return;
+            }
+
+            const apiUrl = 'https://online-gateway.ghn.vn/shiip/public-api/master-data/district';
+            axios.get(apiUrl, {
+                headers: {
+                    'Token': token
+                },
+                params: {
+                    province_id: $('#city').val()
+                }
+            })
+                .then(response => {
+                    var selectElement = $('#district');
+                    selectElement.empty();
+                    selectElement.append($('<option>').val('').text('Chọn huyện'));
+                    $.each(response.data.data, function (index, item) {
+                        selectElement.append($('<option>').val(item.DistrictID).text(item.DistrictName));
+                    });
+                    selectElement.val('').trigger('change');
+
+
+
+
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+
+        // Sự kiện thay đổi khi chọn huyện
+        $('#district').on('change', function () {
+            if ($('#district').val() === '') {
+                resetShippingFee();
+                return;
+            }
+
+            const apiUrl = 'https://online-gateway.ghn.vn/shiip/public-api/master-data/ward';
+            axios.get(apiUrl, {
+                headers: {
+                    'Token': token
+                },
+                params: {
+                    district_id: $('#district').val()
+                }
+            })
+                .then(response => {
+                    var selectElement = $('#wards');
+                    selectElement.empty();
+                    selectElement.append($('<option>').val('').text('Chọn phường/xã'));
+                    $.each(response.data.data, function (index, item) {
+                        selectElement.append($('<option>').val(item.WardCode).text(item.WardName));
+                    });
+                    selectElement.val('').trigger('change');
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+
+        // Sự kiện thay đổi khi chọn phường/xã và tính toán tiền ship
+        // $(document).ready(function () {
+        //     $('#voucherSelect').change(function () {
+        //         var selectedPercent = $(this).find(':selected').data('percent');
+        //         var totalAmount = $("#tongtiensanpham").data('tongtiensanpham');
+        //         if (selectedPercent == null) {
+        //             selectedPercent = 0;
+        //         }
+        //         var discountAmount = totalAmount * (selectedPercent / 100);
+        //         var finalAmount = Math.round(totalAmount - discountAmount);
+        //         console.log("Phần trăm giảm giá: " + selectedPercent);
+        //         console.log("Tổng tiền: " + totalAmount);
+
+        //         // Lấy giá trị phí ship
+        //         var shippingFee = parseInt($('#phiship').text().replace(/\D/g, ''));
+
+        //         // Tính tổng tiền với phí ship
+        //         var totalAmountWithShipping = finalAmount + shippingFee;
+
+        //         // Cập nhật giá trị tổng tiền trong input "Payment"
+        //         $('#Payment').val(totalAmountWithShipping);
+        //     });
+        // });
+
+        $(document).ready(function () {
+            // Sự kiện thay đổi khi chọn phường/xã và tính toán tiền ship
+            $('#wards').on('change', function () {
+                if ($('#wards').val() === '') {
+                    resetShippingFee();
+                    return;
+                }
+
+                var inputs = document.getElementsByClassName('input-text');
+                var sum = 0;
+                for (var i = 0; i < inputs.length - 1; i++) {
+                    var inputValue = parseInt(inputs[i].value);
+                    if (!isNaN(inputValue)) {
+                        sum += inputValue;
+                    }
+                }
+                var soLuongDonHang = sum;
+                var length = 20; // Giá trị mặc định cho chiều dài
+                var width = 15; // Giá trị mặc định cho chiều rộng
+                var height = 20;
+                var weight = parseInt((length * width * height) / 5000);
+                if ($('#wards').val() != null) {
+                    const apiUrl = 'https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee';
+                    const token = '21040e7e-154d-11ef-80f1-d288e53168c3';
+                    const shop_id = 4188664;
+                    axios.get(apiUrl, {
+                        headers: {
+                            'Token': token,
+                            'shop_id': shop_id
+                        },
+                        params: {
+                            service_type_id: 2,
+                            insurance_value: $('#tamtinh').text().replace(/\D/g, ''),
+                            coupon: null,
+                            to_ward_code: $('#wards').val(),
+                            to_district_id: $('#district').val(),
+                            from_district_id: 3440, // địa chỉ cửa hàng
+                            weight: 1,
+                            length: 1,
+                            width: 1,
+                            height: 1
+                        }
+                    })
+                        .then(response => {
+                            localStorage.setItem('phiship', response.data.data.service_fee);
+                            $('#phiship').text(parseInt(response.data.data.service_fee).toLocaleString("vi-VN").replace(/\./g, ',') + "đ");
+
+                            // Cộng tiền ship vào giá trị của input "Payment"
+                            var currentPaymentValue = parseInt($('#tongtiensanphamgiohang').val());
+                            console.log("currentPaymentValue " + currentPaymentValue);
+                            var shippingFee = parseInt(response.data.data.service_fee);
+                            $('#phiship2').val(shippingFee);
+                            var s = $('#phiship2').val();
+                            console.log("phiship2 " + s);
+                            var shippingFee = parseInt(response.data.data.service_fee);
+                            var totalPayment = currentPaymentValue + shippingFee; // Tính tổng tổng tiền và phí ship
+                            $('#Payment').val(totalPayment);
+                            $('#thanhtien').text(parseInt(totalPayment).toLocaleString("vi-VN").replace(/\./g, ',') + "đ");
+                            // // Lấy giá trị tổng tiền sau khi áp dụng voucher
+                            // var totalAmount = parseInt($('#tongtiensanphamgiohang').text().replace(/\D/g, ''));
+
+                            // console.log("totalAmount " + totalAmount);
+                            // // Tính lại tổng tiền sau khi áp dụng voucher và phí ship
+                            // var totalAmountWithShipping = totalAmount + shippingFee;
+
+                            // // Cập nhật giá trị tổng tiền trong input "Payment"
+                            // $('#Payment').val(totalAmountWithShipping);
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+            });
+        });
+
+
+
+        // Hàm đặt lại tiền ship về 0
+        function resetShippingFee() {
+            $('#phiship').text('0đ');
+            var totalAmountElement = document.getElementById("tongtien");
+            totalAmountElement.innerText = parseInt(document.getElementById("thanhtien").innerText.replace("đ", "").replace(/\,/g, "").replace(/\./g, "").trim()).toLocaleString("vi-VN").replace(/\./g, ',') + "đ";
+        }
+    });
+
+    $(document).ready(function () {
+        // Bắt sự kiện khi có thay đổi ở bất kỳ select box nào
+        $('#city, #district, #wards').on('change', function () {
+            // Kiểm tra xem tất cả các select box có giá trị được chọn không
+            var citySelected = $('#city').val();
+            var districtSelected = $('#district').val();
+            var wardsSelected = $('#wards').val();
+
+            localStorage.setItem('phiship', 0);
+            $('#phiship').text(parseInt(0).toLocaleString("vi-VN").replace(/\./g, ',') + "đ");
+
+            // Cộng tiền ship vào giá trị của input "Payment"
+            var currentPaymentValue = parseInt($('#tongtiensanphamgiohang').val());
+            console.log("currentPaymentValue " + currentPaymentValue);
+            var shippingFee = parseInt(0);
+            $('#phiship2').val(shippingFee);
+            var s = $('#phiship2').val();
+            console.log("phiship2 s " + s);
+            var shippingFee = parseInt(0);
+            var totalPayment = currentPaymentValue + shippingFee; // Tính tổng tổng tiền và phí ship
+            $('#Payment').val(totalPayment);
+
+            // Nếu tất cả các select box đều có giá trị được chọn, kích hoạt nút đặt hàng
+            if (citySelected && districtSelected && wardsSelected) {
+                $('#orderButton').prop('disabled', false);
+            } else {
+                // Ngược lại, vô hiệu hóa nút đặt hàng
+                $('#orderButton').prop('disabled', true);
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        // Sự kiện thay đổi khi chọn thành phố
+        $('#city').on('change', function () {
+            updateAddress();
+        });
+
+        // Sự kiện thay đổi khi chọn huyện
+        $('#district').on('change', function () {
+            updateAddress();
+        });
+
+        // Sự kiện thay đổi khi chọn phường/xã
+        $('#wards').on('change', function () {
+            updateAddress();
+        });
+    });
+
+    // Hàm cập nhật giá trị của input "Địa chỉ" dựa trên các giá trị được chọn từ các select box
+    function updateAddress() {
+        var city = $('#city option:selected').text();
+        var district = $('#district option:selected').text();
+        var ward = $('#wards option:selected').text();
+
+        var address = ward + ', ' + district + ', ' + city;
+        $('input[name="Address"]').val(address);
+    }
+
+
+    $(document).ready(function () {
+        $('#voucherSelect').change(function () {
+            var selectedPercent = $(this).find(':selected').data('percent');
+            var totalAmount = $("#tongtiensanphamgiohang").data('tongtiensanphamgiohang');
+            // var totalAmount = $('#tongtiensanphamgiohang').val();
+            if (selectedPercent == null) {
+                selectedPercent = 0;
+                console.log("So tien chua giam gia: " + totalAmount);
+            }
+            var discountAmount = totalAmount * (selectedPercent / 100);
+            var finalAmount = Math.round(totalAmount - discountAmount);
+
+            // Lấy giá trị phí ship
+            var shippingFee = parseInt($('#phiship').text().replace(/\D/g, ''));
+
+            // Tính tổng tiền với phí ship
+            var totalAmountWithShipping = finalAmount + shippingFee;
+            console.log("Phần trăm giảm giá: " + selectedPercent);
+            console.log("Tổng tiền: " + totalAmountWithShipping);
+
+            // Cập nhật giá trị tổng tiền trong input "Payment"
+            $('#Payment').val(totalAmountWithShipping);
+            $('#tongtiensanphamgiohang').val(totalAmountWithShipping);
+            // $("#tongtiensanphamgiohang").data('tongtiensanphamgiohang', totalAmountWithShipping);
+            $('#thanhtien').text(parseInt(totalAmountWithShipping).toLocaleString("vi-VN").replace(/\./g, ',') + "đ");
+        });
+    });
+
+
+
+
+
+
     var phoneNumberInput = document.getElementById('phoneNumberInput');
     var phoneNumberError = document.getElementById('phoneNumberError');
 
@@ -223,26 +559,13 @@
         }
     });
 
+
+
+
+
+
+
 </script>
 
-<script>
-    var phiShip = 40000;
 
-    $(document).ready(function () {
-        $('#voucherSelect').change(function () {
-            var selectedPercent = $(this).find(':selected').data('percent');
-            var totalAmount = $("#tongtiensanpham").data('tongtiensanpham');
-            if (selectedPercent == null) {
-                selectedPercent = 0;
-            }
-            var discountAmount = totalAmount * (selectedPercent / 100);
-            var finalAmount1 = totalAmount - discountAmount + phiShip;
-            var finalAmount = Math.round(totalAmount - discountAmount + phiShip);
-            console.log("Phần trăm giảm giá: " + selectedPercent);
-            console.log("Tổng tiền: " + totalAmount);
 
-            $('#thanhtien').text(finalAmount);
-            $('#Payment').val(finalAmount);
-        });
-    });
-</script>

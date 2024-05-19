@@ -6,25 +6,25 @@ using Shop_Models.Entities;
 
 namespace Shop_Api.Services
 {
-	public class GioHangChiTietServices : IGioHangChiTietServices
-	{
-		private readonly IGioHangChiTietRepository _reposGioHangChiTiet;
-		private readonly IGioHangRepository _reposGioHang;
-		private readonly IChiTietSanPhamRepository _reposSanPhamChiTiet;
-		private readonly UserManager<NguoiDung> _userManager;
-		public GioHangChiTietServices(IGioHangChiTietRepository reposGioHangChiTiet, IGioHangRepository reposGioHang,
-			IChiTietSanPhamRepository reposSanPhamChiTiet, UserManager<NguoiDung> userManager)
-		{
-			_reposGioHangChiTiet = reposGioHangChiTiet;
-			_reposGioHang = reposGioHang;
-			_reposSanPhamChiTiet = reposSanPhamChiTiet;
-			_userManager = userManager;
+    public class GioHangChiTietServices : IGioHangChiTietServices
+    {
+        private readonly IGioHangChiTietRepository _reposGioHangChiTiet;
+        private readonly IGioHangRepository _reposGioHang;
+        private readonly IChiTietSanPhamRepository _reposSanPhamChiTiet;
+        private readonly UserManager<NguoiDung> _userManager;
+        public GioHangChiTietServices(IGioHangChiTietRepository reposGioHangChiTiet, IGioHangRepository reposGioHang,
+            IChiTietSanPhamRepository reposSanPhamChiTiet, UserManager<NguoiDung> userManager)
+        {
+            _reposGioHangChiTiet = reposGioHangChiTiet;
+            _reposGioHang = reposGioHang;
+            _reposSanPhamChiTiet = reposSanPhamChiTiet;
+            _userManager = userManager;
 
 
-		}
-		public async Task<ResponseDto> AddCart(string userName, string codeProductDetail,int? soluong)
-		{
-			try
+        }
+        public async Task<ResponseDto> AddCart(string userName, string codeProductDetail, int? soluong)
+        {
+            try
             {
                 if (soluong == null || soluong == 0)
                 {
@@ -32,145 +32,160 @@ namespace Shop_Api.Services
                 }
                 else soluong = soluong.Value;
 
-                var sanPhamChiTietDTO1 = _reposSanPhamChiTiet.PGetProductDetail(null, codeProductDetail, null, null, null, null, null, null, null, null, null, null, null,null).Result.FirstOrDefault();
-				var sanPhamChiTietDTO = _reposSanPhamChiTiet.GetAllAsync(1).Result.Where(x=>x.MaSanPhamChiTiet==codeProductDetail).FirstOrDefault();
+                var sanPhamChiTietDTO1 = _reposSanPhamChiTiet.PGetProductDetail(null, codeProductDetail, null, null, null, null, null, null, null, null, null, null, null, null).Result.FirstOrDefault();
+                var sanPhamChiTietDTO = _reposSanPhamChiTiet.GetAllAsync(1).Result.Where(x => x.MaSanPhamChiTiet == codeProductDetail).FirstOrDefault();
 
                 var sanPhamChiTiet = await _reposSanPhamChiTiet.GetAsync();
-				var user = await _userManager.FindByNameAsync(userName);
+                var user = await _userManager.FindByNameAsync(userName);
 
-				if (user == null)
-				{
-					return ErrorResponse("Không tìm thấy tài khoản", 404);
-				}
+                if (user == null)
+                {
+                    return ErrorResponse("Không tìm thấy tài khoản", 404);
+                }
 
-				if (sanPhamChiTietDTO == null)
-				{
-					return ErrorResponse("Không tìm thấy sản phẩm", 404);
-				}
-				
-				if (sanPhamChiTietDTO.SoLuongTon < soluong)
-				{
-					return ErrorResponse("Sản phẩm hiện đang hết hàng", 404);
-				}
+                if (sanPhamChiTietDTO == null)
+                {
+                    return ErrorResponse("Không tìm thấy sản phẩm", 404);
+                }
+
+                if (sanPhamChiTietDTO.SoLuongTon < soluong)
+                {
+                    return ErrorResponse("Sản phẩm hiện đang hết hàng", 404);
+                }
 
 
-				var userCart = _reposGioHang.GetByIdGioHang(user.Id).Result;
-				if (userCart.IsSuccess != false)
-				{
-					var checkProductInCart = await _reposGioHangChiTiet.GetAll();
-					var userCartDetail = checkProductInCart.FirstOrDefault(a => a.GioHangId == user.Id && a.ChiTietSanPhamId == sanPhamChiTietDTO.Id);
-					if (userCartDetail != null)
-					{
-						userCartDetail.SoLuong += (int)soluong;
-						if (await _reposGioHangChiTiet.Updatesync(userCartDetail))
-						{
-							return SuccessResponse(userCartDetail, 200, "Thêm sản phẩm vào giỏ hàng thành công");
-						}
-						return ErrorResponse("Không thể cập nhật số lượng sản phẩm trong giỏ hàng", 404);
+                var userCart = _reposGioHang.GetByIdGioHang(user.Id).Result;
+                if (userCart.IsSuccess != false)
+                {
+                    var checkProductInCart = await _reposGioHangChiTiet.GetAll();
+                    var userCartDetail = checkProductInCart.FirstOrDefault(a => a.GioHangId == user.Id && a.ChiTietSanPhamId == sanPhamChiTietDTO.Id);
 
-					}
-					else
-					{
-						var newCartDetail = new GioHangChiTiet
-						{
-							Id = Guid.NewGuid(),
-							ChiTietSanPhamId = sanPhamChiTietDTO.Id,
-							GioHangId = user.Id,
-							SoLuong = 1,
-							TrangThai = 1
-						};
 
-						if (await _reposGioHangChiTiet.CreateAsync(newCartDetail))
-						{
-							return SuccessResponse(newCartDetail, 200, "Thêm sản phẩm vào giỏ hàng thành công");
-						}
+                    if (userCartDetail != null)
+                    {
+                        if (userCartDetail.SoLuong == sanPhamChiTietDTO.SoLuongTon)
+                        {
+                            //return ErrorResponse(new { code = 400, message = "Bạn đã thêm tối đa số lượng" });
+                            return ErrorResponse("Bạn đã thêm tối đa số lượng", 404);
+                        }
 
-						return ErrorResponse("Không thể thêm sản phẩm vào trong giỏ hàng", 404);
-					}
-				}
-				else
-				{
-					var newCart = new GioHang
-					{
-						IdNguoiDung = user.Id,
-						TrangThai = 1,
-					};
-					var createGioHang = await _reposGioHang.CreateGioHang(newCart);
-					if (createGioHang.IsSuccess == true)
-					{
-						var newCartDetail = new GioHangChiTiet
-						{
-							Id = Guid.NewGuid(),
-							ChiTietSanPhamId = sanPhamChiTietDTO.Id,
-							GioHangId = user.Id,
-							SoLuong = 1,
-							TrangThai = 1
-						};
+                        if (userCartDetail.SoLuong + soluong > sanPhamChiTietDTO.SoLuongTon)
+                        {
+                            //return ErrorResponse(new { code = 400, message = "Bạn đã thêm tối đa số lượng" });
+                            return ErrorResponse($"Số lượng + số lượng giỏ hàng={userCartDetail.SoLuong + soluong} vượt quá số lượng tồn:{sanPhamChiTietDTO.SoLuongTon}", 404);
+                        }
+                        userCartDetail.SoLuong += (int)soluong;
 
-						if (await _reposGioHangChiTiet.CreateAsync(newCartDetail))
-						{
-							return SuccessResponse(newCartDetail, 200, "Thêm sản phẩm vào giỏ hàng thành công");
-						}
-					}
+                        if (await _reposGioHangChiTiet.Updatesync(userCartDetail))
+                        {
+                            return SuccessResponse(userCartDetail, 200, "Thêm sản phẩm vào giỏ hàng thành công");
+                        }
+                        return ErrorResponse("Không thể cập nhật số lượng sản phẩm trong giỏ hàng", 404);
 
-					return ErrorResponse("Không thể thêm sản phẩm vào trong giỏ hàng", 404);
-				}
-			}
-			catch (Exception e)
-			{
+                    }
+                    else
+                    {
+                        var newCartDetail = new GioHangChiTiet
+                        {
+                            Id = Guid.NewGuid(),
+                            ChiTietSanPhamId = sanPhamChiTietDTO.Id,
+                            GioHangId = user.Id,
+                            SoLuong = (int)soluong,
+                            TrangThai = 1
+                        };
 
-				return ErrorResponse(e.Message, 500);
-			}
-		}
 
-		private ResponseDto ErrorResponse(string message, int code)
-		{
-			return new ResponseDto
-			{
-				Content = null,
-				IsSuccess = false,
-				Code = code,
-				Message = message
-			};
-		}
+                        if (await _reposGioHangChiTiet.CreateAsync(newCartDetail))
+                        {
+                            return SuccessResponse(newCartDetail, 200, "Thêm sản phẩm vào giỏ hàng thành công");
+                        }
 
-		private ResponseDto SuccessResponse(object result, int code, string message)
-		{
-			return new ResponseDto
-			{
-				Content = null,
-				IsSuccess = true,
-				Code = code,
-				Message = message
-			};
-		}
+                        return ErrorResponse("Không thể thêm sản phẩm vào trong giỏ hàng", 404);
+                    }
+                }
+                else
+                {
+                    var newCart = new GioHang
+                    {
+                        IdNguoiDung = user.Id,
+                        TrangThai = 1,
+                    };
+                    var createGioHang = await _reposGioHang.CreateGioHang(newCart);
+                    if (createGioHang.IsSuccess == true)
+                    {
+                        var newCartDetail = new GioHangChiTiet
+                        {
+                            Id = Guid.NewGuid(),
+                            ChiTietSanPhamId = sanPhamChiTietDTO.Id,
+                            GioHangId = user.Id,
+                            SoLuong = 1,
+                            TrangThai = 1
+                        };
 
-		public async Task<ResponseDto> CongQuantityCartDetail(Guid idCartDetail)
-		{
+                        if (await _reposGioHangChiTiet.CreateAsync(newCartDetail))
+                        {
+                            return SuccessResponse(newCartDetail, 200, "Thêm sản phẩm vào giỏ hàng thành công");
+                        }
+                    }
+
+                    return ErrorResponse("Không thể thêm sản phẩm vào trong giỏ hàng", 404);
+                }
+            }
+            catch (Exception e)
+            {
+
+                return ErrorResponse(e.Message, 500);
+            }
+        }
+
+        private ResponseDto ErrorResponse(string message, int code)
+        {
+            return new ResponseDto
+            {
+                Content = null,
+                IsSuccess = false,
+                Code = code,
+                Message = message
+            };
+        }
+
+        private ResponseDto SuccessResponse(object result, int code, string message)
+        {
+            return new ResponseDto
+            {
+                Content = null,
+                IsSuccess = true,
+                Code = code,
+                Message = message
+            };
+        }
+
+        public async Task<ResponseDto> CongQuantityCartDetail(Guid idCartDetail)
+        {
             return await CongOrTruQuantityCartDetail(idCartDetail, 1);
         }
 
-		public Task<ResponseDto> GetAllCarts()
-		{
-			throw new NotImplementedException();
-		}
+        public Task<ResponseDto> GetAllCarts()
+        {
+            throw new NotImplementedException();
+        }
 
-		public Task<ResponseDto> GetCartById(Guid id)
-		{
-			throw new NotImplementedException();
-		}
+        public Task<ResponseDto> GetCartById(Guid id)
+        {
+            throw new NotImplementedException();
+        }
 
-		public Task<ResponseDto> GetCartJoinForUser(string username)
-		{
-			throw new NotImplementedException();
-		}
+        public Task<ResponseDto> GetCartJoinForUser(string username)
+        {
+            throw new NotImplementedException();
+        }
 
-		public async Task<ResponseDto> TruQuantityCartDetail(Guid idCartDetail)
-		{
+        public async Task<ResponseDto> TruQuantityCartDetail(Guid idCartDetail)
+        {
             return await CongOrTruQuantityCartDetail(idCartDetail, -1);
         }
-		public async Task<ResponseDto> CapNhatSoLuongCartDetail(Guid idCartDetail,int soLuong)
-		{
+        public async Task<ResponseDto> CapNhatSoLuongCartDetail(Guid idCartDetail, int soLuong)
+        {
             try
             {
                 var cartDetailX = await _reposGioHangChiTiet.GetById(idCartDetail);
@@ -184,7 +199,7 @@ namespace Shop_Api.Services
                 GioHangChiTiet cartDetail = new GioHangChiTiet
                 {
                     Id = idCartDetail,
-                    SoLuong =  soLuong
+                    SoLuong = soLuong
                 };
 
                 //if (cartDetail.SoLuong < 0)
@@ -206,8 +221,8 @@ namespace Shop_Api.Services
                 return ErrorResponse(e.Message, 404);
             }
         }
-		public async Task<ResponseDto> DeleteCartDetail(Guid idCartDetail)
-		{
+        public async Task<ResponseDto> DeleteCartDetail(Guid idCartDetail)
+        {
             try
             {
                 var cartDetailX = await _reposGioHangChiTiet.GetById(idCartDetail);

@@ -151,6 +151,7 @@ namespace Shop_Api.Repository
                     from x in _db.HoaDons.AsQueryable().AsNoTracking().Where(a => a.MaHoaDon == invoiceCode)
                     join y in _db.HoaDonChiTiets.AsQueryable().AsNoTracking() on x.Id equals y.HoaDonId
                     join z in _db.ChiTietSanPhams.AsQueryable().AsNoTracking() on y.ChiTietSanPhamId equals z.Id
+                    join m in _db.MauSacs.AsQueryable().AsNoTracking() on z.MauSacId equals m.Guid
                     select new HoaDonChiTietDto
                     {
                         HoaDonId = x.Id,
@@ -158,9 +159,9 @@ namespace Shop_Api.Repository
                         SanPhamChiTietId = y.ChiTietSanPhamId,
                         CodeProductDetail = z.MaSanPham,
                         Quantity = y.SoLuong,
-                        Price = (float)z.GiaThucTe,
+                        Price = (float)z.GiaThucTe, // giá gốc chưa giảm giá
                         PriceBan = (float)y.GiaBan,
-
+                        MauSac = m.TenMauSac
                     }).AsEnumerable();
                 return billDetails;
             }
@@ -359,11 +360,11 @@ namespace Shop_Api.Repository
                 // Hủy đơn hàng
                 else if (HoaDonStatus == (int)TrangThaiGiaoHang.DaGiaoHang)
                 {
-                    if (hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang)
-                    {
-                        // Không thể hủy đơn hàng nếu đang giao hàng
-                        return new ResponseDto { IsSuccess = false, Message = "Không thể hủy đơn hàng khi đang giao hàng", Code = 400 };
-                    }
+                    //if (hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang)
+                    //{
+                    //    // Không thể hủy đơn hàng nếu đang giao hàng
+                    //    return new ResponseDto { IsSuccess = false, Message = "Không thể hủy đơn hàng khi đang giao hàng", Code = 400 };
+                    //}
                     if (hoaDon != null)
                     {
                         foreach (var chiTiet in chiTietHoaDon)

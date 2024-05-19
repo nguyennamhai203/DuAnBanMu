@@ -140,8 +140,14 @@ namespace WebApp.Controllers
                 soluong = 1;
             }
             else soluong = soluong.Value;
+            //var client2 = _httpClientFactory.CreateClient("BeHat");
+            //HttpResponseMessage response2 = await client2.GetAsync($"https://localhost:7050/api/ChiTietSanPham/PGetProductDetail?codeProductDetail={codeProductDetail}&status=1");
+            //var resultString2 = await response2.Content.ReadAsStringAsync();
+            //var product2 = JsonConvert.DeserializeObject<List<SanPhamChiTietDto>>(resultString2.ToString()).FirstOrDefault(x => x.MaSanPhamChiTiet == codeProductDetail);
 
-            //var userName = "user@example1.com";
+
+
+
             var userName = HttpContext.Session.GetString("username");
             if (!string.IsNullOrEmpty(userName))
             {
@@ -177,6 +183,7 @@ namespace WebApp.Controllers
                     var Cart = SessionService.GetObjFromSession(HttpContext.Session, "Cart");
                     GioHangChiTietViewModel s = new GioHangChiTietViewModel();
 
+
                     if (product.SoLuongTon == 0)
                     {
                         return Json(new { code = 400, message = "Sản phẩm hiện đang hết hàng" });
@@ -185,6 +192,15 @@ namespace WebApp.Controllers
                     if (SessionService.CheckObjInList(codeProductDetail, Cart))
                     {
                         GioHangChiTietViewModel ghct = Cart.FirstOrDefault(x => x.MaSPCT == codeProductDetail);
+
+                        if (ghct.SoLuong == product.SoLuongTon)
+                        {
+                            return Json(new { code = 400, message = "Bạn đã thêm tối đa số lượng" });
+                        }
+                        if (ghct.SoLuong + soluong > product.SoLuongTon)
+                        {
+                            return Json(new { code = 400, message = $"Số lượng + số lượng giỏ hàng={ghct.SoLuong + soluong} vượt quá số lượng tồn:{product.SoLuongTon}" });
+                        }
                         int newQuantity = ghct.SoLuong + (int)soluong;
                         if (newQuantity > product.SoLuongTon)
                         {
@@ -442,7 +458,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBill(RequestBillDto request, double? totalAmount, bool useAllPoints)
+        public async Task<IActionResult> CreateBill(RequestBillDto request, double? totalAmount,int? phiship, bool useAllPoints)
         {
             try
             {

@@ -8,7 +8,7 @@ namespace Shop_Models.Dto
 {
     public class HoaDonChiTietDto
     {
-      
+
         public Guid Id { get; set; }
         public Guid HoaDonId { get; set; }
         public int Quantity { get; set; }
@@ -22,6 +22,6 @@ namespace Shop_Models.Dto
         public string? NameColor { get; set; }
         public string? NameProduct { get; set; }
         public string? NameManufacturer { get; set; }
-       
+        public string? MauSac { get; set; }
     }
 }
