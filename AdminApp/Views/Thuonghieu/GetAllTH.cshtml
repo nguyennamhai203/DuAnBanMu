@@ -19,6 +19,10 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
         overflow: auto; /* Cho phép cuộn nếu bảng quá lớn */
     }
+
+    .form-container {
+        display: none; /* Ẩn form ban đầu */
+    }
 </style>
 <div class="container">
     <div class="row">
@@ -31,7 +35,7 @@
                             <table class="table" id="THTable">
                                 <thead>
                                     <tr>
-                                        <th>Mã</th>
+                                        <th>Mã Thương Hiệu</th>
                                         <th>Tên Thương Hiệu</th>
                                         <th>Trạng Thái</th>
                                         <th></th>
@@ -58,8 +62,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                <a asp-area="" asp-controller="Thuonghieu" asp-action="EditTH" asp-route-id="@item.Guid" class="btn btn-primary" title="Sửa"><i class="bx bxs-edit"></i></a>
-                                                <a asp-area="" asp-controller="Thuonghieu" asp-action="DetailTH" asp-route-id="@item.Guid" class="btn btn-success" title="Chi tiết"><i class="bx bxs-detail"></i></a>
+                                                <button class="btn btn-primary edit-btn" data-id="@item.Guid" data-ma="@item.MaThuongHieu" data-ten="@item.TenThuongHieu" data-trangthai="@item.TrangThai" title="Sửa"><i class="bx bxs-edit"></i></button>
                                                 <a asp-area="" asp-controller="Thuonghieu" asp-action="DeleteTH" asp-route-id="@item.Guid" class="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa??')" title="Xóa"><i class="bx bxs-trash-alt"></i></a>
                                                
                                             </td>
@@ -71,21 +74,26 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card" >
+                    <button class="btn btn-success" id="showAddFormBtn">Thêm loại mới</button>
+                    <div class="card form-container" id="addFormContainer">
                         <div class="card-body">
-                            <h2 class="card-title">Thêm Thương Hiệu mới</h2>
-                            <form id="createTHForm" asp-action="CreateTH" method="post">
+                            <h2 class="card-title">Thêm thương hiệu mới</h2>
+                            <form id="createThuongHieuForm" asp-action="CreateTH" method="post">
                                 <div class="form-group">
-                                    <label for="maTH">Mã Thương Hiệu:</label>
-                                    <input type="text" class="form-control" id="maTH" name="MaThuongHieu" />
+                                    <label for="maThuongHieu">Mã thương hiệu:</label>
+                                    <input type="text" class="form-control" id="maThuongHieu" name="MaThuongHieu" />
                                 </div>
                                 <div class="form-group">
-                                    <label for="tenTH">Tên Thương Hiệu:</label>
-                                    <input type="text" class="form-control" id="tenTH" name="TenThuongHieu" />
+                                    <label for="tenThuongHieu">Tên thương hiệu:</label>
+                                    <input type="text" class="form-control" id="tenThuongHieu" name="TenThuongHieu" />
                                 </div>
                                 <div class="form-group">
                                     <label for="Trangthai">Trạng Thái :</label>
-                                    <input type="text" class="form-control" id="Trangthai" name="Trangthai" />
+                                    <select class="form-control" id="Trangthai" name="Trangthai">
+                                        <option value="">-- Chọn trạng thái --</option>
+                                        <option value="1">Hoạt động</option>
+                                        <option value="0">Không hoạt động</option>
+                                    </select>
                                 </div>
                                 <div class="text-center mt-3">
                                     <button type="button" onclick="kiemTraTrungMa()" class="btn btn-success">Thêm</button>
@@ -93,11 +101,36 @@
                             </form>
                         </div>
                     </div>
+                    <div class="card form-container mt-3" id="editFormContainer">
+                        <div class="card-body">
+                            <h2 class="card-title">Chỉnh sửa thương hiệu</h2>
+                            <form id="editThuongHieuForm" asp-action="EditTH" method="post">
+                                <input type="hidden" id="editGuid" name="Guid" />
+                                <div class="form-group">
+                                    <label for="editMaThuongHieu">Mã thương hiệu:</label>
+                                    <input type="text" class="form-control" id="editMaThuongHieu" name="MaThuongHieu" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="editTenThuongHieu">Tên thương hiệu:</label>
+                                    <input type="text" class="form-control" id="editTenThuongHieu" name="TenThuongHieu" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="editTrangthai">Trạng Thái :</label>
+                                    <select class="form-control" id="editTrangthai" name="Trangthai">
+                                        <option value="">-- Chọn trạng thái --</option>
+                                        <option value="1">Hoạt động</option>
+                                        <option value="0">Không hoạt động</option>
+                                    </select>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
 
@@ -115,7 +148,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.jqueryui.min.css">
 <script>
     function kiemTraTrungMa() {
-        var maTH = document.getElementById("maTH").value;
+        var maThuongHieu = document.getElementById("maThuongHieu").value;
         var maTHDaHienThi = [];
 
         // Lấy danh sách các mã đã hiển thị trên giao diện
@@ -124,10 +157,10 @@
         });
 
         // Kiểm tra trùng mã với danh sách các mã đã hiển thị
-        if (maTHDaHienThi.includes(maTH)) {
+        if (maTHDaHienThi.includes(maThuongHieu)) {
             alert("Mã đã tồn tại trong dữ liệu. Vui lòng chọn mã khác.");
         } else {
-            $("#createTHForm").submit(); // Sử dụng jQuery để submit form
+            $("#createThuongHieuForm").submit(); // Sử dụng jQuery để submit form
         }
     }
 
@@ -145,7 +178,26 @@
         }
 
         // Gắn sự kiện onclick cho nút "Thêm"
-        $("#createTHForm button").click(kiemTraTrungMa);
+        $("#createThuongHieuForm button").click(kiemTraTrungMa);
+        $(".edit-btn").click(function () {
+            var guid = $(this).data("id");
+            var maThuongHieu = $(this).data("ma");
+            var tenThuongHieu = $(this).data("ten");
+            var trangthai = $(this).data("trangthai");
+
+            $("#editGuid").val(guid);
+            $("#editMaThuongHieu").val(maThuongHieu);
+            $("#editTenThuongHieu").val(tenThuongHieu);
+            $("#editTrangthai").val(trangthai);
+
+            $("#editFormContainer").show();
+            $("#addFormContainer").hide();
+        });
+
+        $("#showAddFormBtn").click(function () {
+            $("#addFormContainer").show();
+            $("#editFormContainer").hide();
+        });
     });
 </script>
 

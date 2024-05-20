@@ -80,13 +80,13 @@
                             @if (@hoaDon.TrangThaiThanhToan == (int)TrangThaiThanhToan.Chuathanhtoan)
                             {
                                 <span class="text-black">
-                                    <i class="bi bi-x-circle" style="color: red;"></i> Chưa Thanh Toán
+                                     Chưa Thanh Toán
                                 </span>
                             }
                             else if (@hoaDon.TrangThaiThanhToan == (int)TrangThaiThanhToan.Dathanhtoan)
                             {
                                 <span class="text-black">
-                                    <i class="bi bi-check-circle" style="color: green;"></i> Đã Thanh Toán
+                                     Đã Thanh Toán
                                 </span>
                             }
                             else
@@ -97,23 +97,23 @@
                         <td>
                             @if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DaGiaoHang)
                             {
-                                <span class="text-black"><i class="fas fa-check-circle" style="color: green;"></i> Đã giao hàng</span>
+                                <span class="text-black"> Đã giao hàng</span>
                             }
                             else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.DangGiaoHang)
                             {
-                                <span class="text-black"><i class="fas fa-truck-moving" style="color: orange;"></i> Đang giao hàng</span>
+                                <span class="text-black"> Đang giao hàng</span>
                             }
                             else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoGiaoHang)
                             {
-                                <span class="text-black"><i class="fas fa-shipping-fast" style="color: blue;"></i> Chờ giao hàng</span>
+                                <span class="text-black"> Chờ giao hàng</span>
                             }
                             else if (@hoaDon.TrangThaiGiaoHang == (int)TrangThaiGiaoHang.ChoXacNhan)
                             {
-                                <span class="text-black"><i class="fas fa-clock" style="color: yellow;"></i> Chờ xác nhận</span>
+                                <span class="text-black"> Chờ xác nhận</span>
                             }
                             else
                             {
-                                <span class="text-black"><i class="fas fa-times-circle" style="color: red;"></i> Đã hủy</span>
+                                <span class="text-black"> Đã hủy</span>
                             }
                         </td>
                         <td>@hoaDon.LiDoHuy</td>

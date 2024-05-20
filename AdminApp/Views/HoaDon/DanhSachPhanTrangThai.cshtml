@@ -49,7 +49,12 @@
 	}
 </style>
 
-
+<div class="container">
+	<div class="row mb-3">
+		<div class="col-md-3">
+			<input type="text" class="form-control" id="searchInput" placeholder="Nhập từ khóa tìm kiếm...">
+		</div>
+	</div>
 <div id="hoaDonContainer">
 	@if (Model != null && Model.Count() > 0)
 	{
@@ -62,6 +67,9 @@
 					<th>Ngày Ship</th>
 					<th>Ngày Nhận</th>
 					<th>Mô Tả</th>
+					<th>Tên Khách Hàng:</th>
+					<th>Số Điện Thoại:</th>
+					<th>Địa Chỉ Giao Hàng:</th>
 					<th>Tiền Giảm</th>
 					<th>Tiền Ship</th>
 					<th>Tổng Tiền</th>
@@ -81,6 +89,9 @@
 						<td>@hoaDon.NgayShip</td>
 						<td>@hoaDon.NgayNhan</td>
 						<td>@hoaDon.MoTa</td>
+						<td>@hoaDon.TenKhachHang</td>
+						<td>@hoaDon.SoDienThoai</td>
+						<td>@hoaDon.DiaChiGiaoHang</td>
 						<td>@hoaDon.TienGiam</td>
 						<td>@hoaDon.TienShip</td>
 						<td>@hoaDon.TongTien</td>
@@ -148,6 +159,7 @@
 		<p>Không có đơn hàng nào phù hợp với yêu cầu lọc.</p>
 	}
 </div>
+</div>
 
 
 @section scripts {
@@ -206,8 +218,18 @@
 					alert('Đã xảy ra lỗi khi cập nhật trạng thái');
 				});
 		}
-				
 
+		$(document).ready(function () {
+			// Lắng nghe sự kiện khi người dùng nhập vào ô tìm kiếm
+			$('#searchInput').on('keyup', function () {
+				var value = $(this).val().toLowerCase(); // Lấy giá trị nhập vào và chuyển về chữ thường
+
+				// Lặp qua từng hàng trong bảng và ẩn/hiện hàng dựa trên từ khóa tìm kiếm
+				$('#hoaDonContainer table tbody tr').filter(function () {
+					$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+				});
+			});
+		});
 	</script>
 }
 

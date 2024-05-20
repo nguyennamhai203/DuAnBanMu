@@ -17,21 +17,22 @@
                     <br />
                     <span>Mã: @item.MaSanPham</span>
                     <br />
+                    <strong style="color: red;">
+                        Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", @item.GiaBan)
+                    </strong>
                     @{
                         if (item.GiaBan != item.GiaThucTe)
                         {
-                            <span style="color: red;">
-                                Giá:<strike>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", @item.GiaBan)</strike><br>
+                            <span style="color: gray;">
+                                Giá:<strike>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", @item.GiaThucTe)</strike><br>
                             </span>
                         }
                         else
                         {
-                            <br>
+                            
                         }
                     }
-                    <span style="color: red;">
-                        Giá: @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", @item.GiaThucTe)
-                    </span><br>
+                   <br>
                     @{
 
                         <span>Số lượng:</span>

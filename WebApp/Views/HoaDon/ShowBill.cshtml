@@ -218,7 +218,7 @@
                             {
                                 <tr><td></td><td></td><td></td><td>Tiền giảm giá sản phẩm: @(thanhtiengiam-thanhTien)</td></tr>
                             }
-                            <tr><td></td><td></td><td>Giảm Giá Voucher: @ViewBag.Bill.GiamGia %</td><td>Quy Đổi Sang Tiền: @ViewBag.Bill.TienGiam</td></tr>
+                            <tr><td></td><td></td><td>Giảm Giá Voucher: @ViewBag.Bill.GiamGia %</td><td>Quy Đổi Sang Tiền: @(total/100*ViewBag.Bill.GiamGia)</td></tr>
                             <tr><td></td><td></td><td>Phí Ship: @ViewBag.Bill.TienShip</td><td>Tổng tiền phải thanh toán: @ViewBag.Bill.ThanhTien</td></tr>
                         </tbody>
                     </table>

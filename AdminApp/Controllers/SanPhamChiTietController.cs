@@ -226,6 +226,7 @@ namespace AdminApp.Controllers
                 GiaBan = (float)productRequest.GiaBan,
                 GiaThucTe = (float)productRequest.GiaBan,
                 SoLuongTon = productRequest.SoLuongTon,
+                SoLuongDaBan = 0,
                 TrangThaiKhuyenMai = khuyenmai,
                 Mota = editor,
                 TrangThai = 1,
@@ -285,32 +286,50 @@ namespace AdminApp.Controllers
         {
             var accessToken = HttpContext.Session.GetString("AccessToken");
             var accessRole = HttpContext.Session.GetString("Result");
-            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+
+            if (!string.IsNullOrEmpty(accessToken) && (accessRole == "Admin" || accessRole == "NhanVien"))
             {
                 var client = _httpClientFactory.CreateClient("BeHat");
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                string getChatLieu = await client.GetStringAsync($"/api/ChatLieu/GetAll");
-                ViewBag.GetChatLieu = JsonConvert.DeserializeObject<List<ChatLieu>>(getChatLieu);
-                string getLoai = await client.GetStringAsync($"/api/Loai");
-                ViewBag.GetLoai = JsonConvert.DeserializeObject<List<Loai>>(getLoai);
-                string getColor = await client.GetStringAsync($"/Get-All-MauSac");
-                ViewBag.GetColor = JsonConvert.DeserializeObject<List<MauSac>>(getColor);
-                //listColor = JsonConvert.DeserializeObject<List<Color>>(getColor);
-                string getSanPham = await client.GetStringAsync($"/api/SanPham/GetAll");
-                ViewBag.GetSanPham = JsonConvert.DeserializeObject<List<SanPham>>(getSanPham);
-                string getThuongHieu = await client.GetStringAsync($"/api/ThuongHieu");
-                ViewBag.GetThuongHieu = JsonConvert.DeserializeObject<List<ThuongHieu>>(getThuongHieu);
-                //listCpu = JsonConvert.DeserializeObject<List<Cpu>>(getCPU);
-                string getXuatXu = await client.GetStringAsync($"/api/XuatXu/GetAll");
-                ViewBag.GetXuatXu = JsonConvert.DeserializeObject<List<XuatXu>>(getXuatXu);
+
+                // Fetch and filter ChatLieu
+                string getChatLieu = await client.GetStringAsync("/api/ChatLieu/GetAll");
+                var chatLieuList = JsonConvert.DeserializeObject<List<ChatLieu>>(getChatLieu);
+                var where = chatLieuList.Where(cl => cl.TrangThai == 1).ToList();
+                ViewBag.GetChatLieu = chatLieuList.Where(cl => cl.TrangThai == 1).ToList();
+
+                // Fetch and filter Loai
+                string getLoai = await client.GetStringAsync("/api/Loai");
+                var loaiList = JsonConvert.DeserializeObject<List<Loai>>(getLoai);
+                ViewBag.GetLoai = loaiList.Where(l => l.TrangThai == 1).ToList();
+
+                // Fetch and filter MauSac
+                string getColor = await client.GetStringAsync("/Get-All-MauSac");
+                var mauSacList = JsonConvert.DeserializeObject<List<MauSac>>(getColor);
+                ViewBag.GetColor = mauSacList.Where(ms => ms.TrangThai == 1).ToList();
+
+                // Fetch and filter SanPham
+                string getSanPham = await client.GetStringAsync("/api/SanPham/GetAll");
+                var sanPhamList = JsonConvert.DeserializeObject<List<SanPham>>(getSanPham);
+                ViewBag.GetSanPham = sanPhamList.Where(sp => sp.TrangThai == 1).ToList();
+
+                // Fetch and filter ThuongHieu
+                string getThuongHieu = await client.GetStringAsync("/api/ThuongHieu");
+                var thuongHieuList = JsonConvert.DeserializeObject<List<ThuongHieu>>(getThuongHieu);
+                ViewBag.GetThuongHieu = thuongHieuList.Where(th => th.TrangThai == 1).ToList();
+
+                // Fetch and filter XuatXu
+                string getXuatXu = await client.GetStringAsync("/api/XuatXu/GetAll");
+                var xuatXuList = JsonConvert.DeserializeObject<List<XuatXu>>(getXuatXu);
+                ViewBag.GetXuatXu = xuatXuList.Where(xx => xx.TrangThai == 1).ToList();
+
                 return View();
             }
             else
             {
                 return RedirectToAction("Login", "Home");
-
             }
         }
+
 
         public async Task<IActionResult?> _SanPhamUpdatePartialView(Guid idSanPhamChiTiet)
         {
@@ -318,37 +337,48 @@ namespace AdminApp.Controllers
             var lstRelatedProducts = await client.GetAsync($"/api/ChiTietSanPham/DetailSanPhamChiTietDto?Id={idSanPhamChiTiet}");
             if (lstRelatedProducts.IsSuccessStatusCode)
             {
+                // Fetch and filter ChatLieu
+                string getChatLieu = await client.GetStringAsync("/api/ChatLieu/GetAll");
+                var chatLieuList = JsonConvert.DeserializeObject<List<ChatLieu>>(getChatLieu);
+                ViewBag.GetChatLieu = chatLieuList.Where(cl => cl.TrangThai == 1).ToList();
 
+                // Fetch and filter Loai
+                string getLoai = await client.GetStringAsync("/api/Loai");
+                var loaiList = JsonConvert.DeserializeObject<List<Loai>>(getLoai);
+                ViewBag.GetLoai = loaiList.Where(l => l.TrangThai == 1).ToList();
 
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-                string getChatLieu = await client.GetStringAsync($"/api/ChatLieu/GetAll");
-                ViewBag.GetChatLieu = JsonConvert.DeserializeObject<List<ChatLieu>>(getChatLieu);
-                string getLoai = await client.GetStringAsync($"/api/Loai");
-                ViewBag.GetLoai = JsonConvert.DeserializeObject<List<Loai>>(getLoai);
-                string getColor = await client.GetStringAsync($"/Get-All-MauSac");
-                ViewBag.GetColor = JsonConvert.DeserializeObject<List<MauSac>>(getColor);
-                //listColor = JsonConvert.DeserializeObject<List<Color>>(getColor);
-                string getSanPham = await client.GetStringAsync($"/api/SanPham/GetAll");
-                ViewBag.GetSanPham = JsonConvert.DeserializeObject<List<SanPham>>(getSanPham);
-                string getThuongHieu = await client.GetStringAsync($"/api/ThuongHieu");
-                ViewBag.GetThuongHieu = JsonConvert.DeserializeObject<List<ThuongHieu>>(getThuongHieu);
-                //listCpu = JsonConvert.DeserializeObject<List<Cpu>>(getCPU);
-                string getXuatXu = await client.GetStringAsync($"/api/XuatXu/GetAll");
-                ViewBag.GetXuatXu = JsonConvert.DeserializeObject<List<XuatXu>>(getXuatXu);
+                // Fetch and filter MauSac
+                string getColor = await client.GetStringAsync("/Get-All-MauSac");
+                var mauSacList = JsonConvert.DeserializeObject<List<MauSac>>(getColor);
+                ViewBag.GetColor = mauSacList.Where(ms => ms.TrangThai == 1).ToList();
 
+                // Fetch and filter SanPham
+                string getSanPham = await client.GetStringAsync("/api/SanPham/GetAll");
+                var sanPhamList = JsonConvert.DeserializeObject<List<SanPham>>(getSanPham);
+                ViewBag.GetSanPham = sanPhamList.Where(sp => sp.TrangThai == 1).ToList();
+
+                // Fetch and filter ThuongHieu
+                string getThuongHieu = await client.GetStringAsync("/api/ThuongHieu");
+                var thuongHieuList = JsonConvert.DeserializeObject<List<ThuongHieu>>(getThuongHieu);
+                ViewBag.GetThuongHieu = thuongHieuList.Where(th => th.TrangThai == 1).ToList();
+
+                // Fetch and filter XuatXu
+                string getXuatXu = await client.GetStringAsync("/api/XuatXu/GetAll");
+                var xuatXuList = JsonConvert.DeserializeObject<List<XuatXu>>(getXuatXu);
+                ViewBag.GetXuatXu = xuatXuList.Where(xx => xx.TrangThai == 1).ToList();
+
+                // Deserialize the related product details
                 var jsonResponse = await lstRelatedProducts.Content.ReadAsStringAsync();
                 var content = JsonConvert.DeserializeObject<SanPhamChiTietDto>(jsonResponse);
-                // Lấy số lượng bản ghi từ phản hồi và truyền nó qua ViewBag
 
                 return PartialView("/Views/SanPhamChiTiet/_SanPhamUpdatePartialView.cshtml", content);
             }
-
             else
             {
                 return StatusCode((int)lstRelatedProducts.StatusCode, lstRelatedProducts.ReasonPhrase);
             }
-
         }
+
 
         public async Task<IActionResult> Update(SanPhamChiTietDto productRequest, int trangThaiKhuyenMai, string MoTa, [FromForm] List<IFormFile> formFiles)
         {

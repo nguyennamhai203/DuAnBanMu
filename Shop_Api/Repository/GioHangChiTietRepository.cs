@@ -105,7 +105,7 @@ namespace Shop_Api.Repository
                 };
             }
 
-        }  
+        }
         public async Task<IEnumerable<GioHangChiTietViewModel>> GetCartDetailByUserName(string username)
         {
             var cartItem = await GetCartItem(username);
@@ -116,7 +116,7 @@ namespace Shop_Api.Repository
             else
             {
                 return cartItem.ToList();
-               
+
             }
 
         }
@@ -138,6 +138,7 @@ namespace Shop_Api.Repository
                            join a in await _context.ChiTietSanPhams.ToListAsync() on y.ChiTietSanPhamId equals a.Id
                            join loai in await _context.Loais.ToListAsync() on a.LoaiId equals loai.Id
                            join sp in await _context.SanPhams.ToListAsync() on a.SanPhamId equals sp.IdSanPham
+                           join mau in await _context.MauSacs.ToListAsync() on a.MauSacId equals mau.Guid
 
                            select new GioHangChiTietViewModel// Dùng kiểu đối tượng ẩn danh (anonymous type)
                            {
@@ -148,8 +149,11 @@ namespace Shop_Api.Repository
                                ChiTietSanPhamId = a.Id,
                                MaSPCT = a.MaSanPham,
                                SoLuongBanSanPham = (int)a.SoLuongTon,
-                               TenSanPhamChiTiet = a.MaSanPham + " " + sp.TenSanPham + " " + loai.TenLoai, // Kết hợp tên sản phẩm chi tiết
+                               TenSanPhamChiTiet = a.MaSanPham + " | " + sp.TenSanPham + " | " + loai.TenLoai, // Kết hợp tên sản phẩm chi tiết
                                GiaBan = (double)a.GiaBan,
+                               GiaGoc = (double)a.GiaThucTe,
+                               Mau = mau.TenMauSac
+
                            }
                     ).ToList();
                 return (IEnumerable<GioHangChiTietViewModel>)cartItem.Where(x => x.GioHangId == user.Id);// Trả về list với điểu kiện 
@@ -167,7 +171,7 @@ namespace Shop_Api.Repository
         {
             var user = await _context.NguoiDungs.FirstOrDefaultAsync(x => x.UserName == username);
             var scpct = await _context.ChiTietSanPhams.FirstOrDefaultAsync(x => x.MaSanPham == codeproduct);
-            var search =  _context.GioHangChiTiets.Where(x => x.GioHangId == user.Id && x.ChiTietSanPhamId == scpct.Id).First();
+            var search = _context.GioHangChiTiets.Where(x => x.GioHangId == user.Id && x.ChiTietSanPhamId == scpct.Id).First();
             return search;
         }
 
