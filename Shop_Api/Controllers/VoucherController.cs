@@ -46,7 +46,7 @@ namespace Shop_Api.Controllers
             obj.PhanTramGiam = createVoucher.PhanTramGiam;
             obj.NgayBatDau = createVoucher.NgayBatDau;
             obj.NgayHetHan = createVoucher.NgayHetHan;
-            obj.TrangThai = 1;
+            obj.TrangThai = 0;
             if (createVoucher == null)
             {
                 return BadRequest("Du lieu them bi trong");
