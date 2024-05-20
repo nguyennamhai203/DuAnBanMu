@@ -234,6 +234,7 @@ namespace WebApp.Controllers
                         s.SoLuongBanSanPham = (int)product.SoLuongTon;
                         s.GiaBan = (float)(product.GiaBan);
                         s.GiaGoc = (float)(product.GiaThucTe);
+                        s.Mau = product.TenMauSac;
                         Cart.Add(s);
                         SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
                         return Json(new { code = 200, message = "Thêm Vào Giỏ Hàng Thành Công" });
@@ -260,6 +261,7 @@ namespace WebApp.Controllers
                             s.GiaBan = (float)(product.GiaBan);
                             s.SoLuongBanSanPham = (int)product.SoLuongTon;
                             s.GiaGoc = (float)(product.GiaThucTe);
+                            s.Mau = product.TenMauSac;
                             Cart.Add(s);
                             SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
                             return Json(new { code = 200, message = "Thêm Vào Giỏ Hàng Thành Công" });
@@ -294,9 +296,14 @@ namespace WebApp.Controllers
                         // If the product is already in the cart, increase its quantity
                         if (existingProduct != null)
                         {
-                            if (existingProduct.SoLuong > 1)
+                            if (existingProduct.SoLuong > 0)
                             {
                                 existingProduct.SoLuong--;
+                                if (existingProduct.SoLuong == 0)
+                                {
+                                    cart.Remove(existingProduct);
+
+                                }
                             }
                             else
                             {
