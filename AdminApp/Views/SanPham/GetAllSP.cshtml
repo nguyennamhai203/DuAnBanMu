@@ -110,11 +110,11 @@
                                 <div class="form-group">
                                     <label for="editMaSanPham">Mã sản phẩm:</label>
                                     <input type="text" class="form-control" id="editMaSanPham" name="MaSanPham" />
-                                </div>
+                </div>
                                 <div class="form-group">
                                     <label for="editTenSanPham">Tên sản phẩm:</label>
                                     <input type="text" class="form-control" id="editTenSanPham" name="TenSanPham" />
-                                </div>
+            </div>
                                 <div class="form-group">
                                     <label for="editTrangthai">Trạng Thái :</label>
                                     <select class="form-control" id="editTrangthai" name="Trangthai">
@@ -122,7 +122,7 @@
                                         <option value="1">Hoạt động</option>
                                         <option value="0">Không hoạt động</option>
                                     </select>
-                                </div>
+        </div>
                                 <div class="text-center mt-3">
                                     <button type="submit" class="btn btn-primary">Cập nhật</button>
                                 </div>
@@ -153,10 +153,12 @@
     function kiemTraTrungMa() {
         var maSanPham = document.getElementById("maSanPham").value;
         var maSPDaHienThi = [];
+
         // Lấy danh sách các mã đã hiển thị trên giao diện
         $("#SPTable tbody tr").each(function () {
             maSPDaHienThi.push($(this).find("td:first").text().trim());
         });
+
         // Kiểm tra trùng mã với danh sách các mã đã hiển thị
         if (maSPDaHienThi.includes(maSanPham)) {
             alert("Mã đã tồn tại trong dữ liệu. Vui lòng chọn mã khác.");
@@ -164,6 +166,7 @@
             $("#createSanPhamForm").submit(); // Sử dụng jQuery để submit form
         }
     }
+
     $(document).ready(function () {
         var table = $('#SPTable').DataTable();
         if (!table || !$.fn.DataTable.isDataTable('#SPTable')) {

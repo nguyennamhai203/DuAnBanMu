@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shop_Api.Repository;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Entities;
 using Shop_Models.Heplers;
@@ -34,6 +35,7 @@ namespace Shop_Api.Controllers
         [HttpPost("CreateAsync")]
         public async Task<IActionResult> CreateAsync(SanPham obj)
         {
+            obj.IdSanPham = Guid.NewGuid();
             var respon = await _repository.CreateAsync(obj);
             if (respon.IsSuccess == true)
             {
@@ -52,6 +54,16 @@ namespace Shop_Api.Controllers
                 return Ok(respon);
             }
             else return BadRequest(respon);
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ThuongHieu>> GetById(Guid id)
+        {
+            var sanPham = await _repository.GetByIdAsync(id);
+            if (sanPham == null)
+            {
+                return NotFound();
+            }
+            return Ok(sanPham);
         }
 
         //[Authorize(Roles = AppRole.Admin)]

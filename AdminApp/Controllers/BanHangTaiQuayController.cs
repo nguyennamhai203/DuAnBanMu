@@ -54,7 +54,7 @@ namespace AdminApp.Controllers
             else
             {
 
-                return RedirectToAction("Login","Home");
+                return RedirectToAction("Login", "Home");
             }
 
 
@@ -147,16 +147,26 @@ namespace AdminApp.Controllers
             double tongTienGoc = 0;
             double tienPhaiTra = 0;
             string ngayTao = ((DateTime)hoaDonDuocChon.NgayTao).ToString("dd/MM/yyyy HH:mm");
-            foreach (var item in hoaDonDuocChon.hoaDonChiTietDTOs)
+
+            if (hoaDonDuocChon.hoaDonChiTietDTOs.Count() > 0)
             {
-                tongTienGoc += (double)item.Price * (int)item.Quantity;
-                tienPhaiTra += (double)item.PriceBan * (int)item.Quantity;
+                foreach (var item in hoaDonDuocChon.hoaDonChiTietDTOs)
+                {
+                    tongTienGoc += (double)item.Price * (int)item.Quantity;
+                    tienPhaiTra += (double)item.PriceBan * (int)item.Quantity;
+                }
             }
+            double soTienKhuyenMaiGiam = 0;
+            if (tongTienGoc != tienPhaiTra)
+            {
+                 soTienKhuyenMaiGiam = tongTienGoc - tienPhaiTra;
+            }
+
             return Ok(new
             {
                 TongTienGoc = tongTienGoc,
                 TienPhaiTra = tienPhaiTra,
-                SoTienKhuyenMaiGiam = tongTienGoc - tienPhaiTra,
+                SoTienKhuyenMaiGiam = soTienKhuyenMaiGiam,
                 SoTienVoucherGiam = 0,
                 MaHoaDon = hoaDonDuocChon.MaHoaDon,
                 NgayTao = ngayTao,
@@ -289,7 +299,7 @@ namespace AdminApp.Controllers
 
             var tongTienThayDoi = hoaDonDuocChon.Price;//gias thuc te trong spct
             var soTienTraLaiThayDoi = hoaDonDuocChon.PriceBan;// gia ban trog hoa don
-            var SoTienKhyenMaiGiam = tongTienThayDoi - soTienTraLaiThayDoi;
+            var SoTienKhuyenMaiGiam = tongTienThayDoi - soTienTraLaiThayDoi;
             return Ok(new
             {
                 TrangThai = true,
@@ -303,7 +313,7 @@ namespace AdminApp.Controllers
                 MaSanPham = sanPham.MaSanPham,
                 TongTienThayDoi = tongTienThayDoi,
                 SoTienTraLaiThayDoi = soTienTraLaiThayDoi,
-                SoTienKhyenMaiGiam = SoTienKhyenMaiGiam,
+                SoTienKhuyenMaiGiam = SoTienKhuyenMaiGiam,
                 SoTienVoucherGiam = 0,
             });
         }
@@ -326,16 +336,16 @@ namespace AdminApp.Controllers
             {
                 foreach (var item in hoaDonDuocChon)
                 {
-                    tongTienThayDoi += (double)item.PriceBan * (double)item.Quantity;
+                    tongTienThayDoi += (double)item.Price * (double)item.Quantity;
                     soTienTraLaiThayDoi += (double)item.PriceBan * (double)item.Quantity;
                 }
-                var SoTienKhyenMaiGiam = tongTienThayDoi - soTienTraLaiThayDoi;
+                var SoTienKhuyenMaiGiam = tongTienThayDoi - soTienTraLaiThayDoi;
                 return Ok(new
                 {
                     TrangThai = true,
                     TongTienThayDoi = tongTienThayDoi,
                     SoTienTraLaiThayDoi = soTienTraLaiThayDoi,
-                    SoTienKhyenMaiGiam = SoTienKhyenMaiGiam,
+                    SoTienKhuyenMaiGiam = SoTienKhuyenMaiGiam,
                     SoTienVoucherGiam = 0,
                 });
             }
@@ -344,7 +354,7 @@ namespace AdminApp.Controllers
                 TrangThai = false,
                 TongTienThayDoi = 0,
                 SoTienTraLaiThayDoi = 0,
-                SoTienKhyenMaiGiam = 0,
+                SoTienKhuyenMaiGiam = 0,
                 SoTienVoucherGiam = 0,
             });
         }
@@ -406,7 +416,7 @@ namespace AdminApp.Controllers
 
                 var tongTienThayDoi = Convert.ToInt32(soLuongThayDoi) * (double)hoaDonDuocChon.Price;
                 var soTienTraLaiThayDoi = Convert.ToInt32(soLuongThayDoi) * (double)hoaDonDuocChon.PriceBan;
-                var SoTienKhyenMaiGiam = tongTienThayDoi - soTienTraLaiThayDoi;
+                var SoTienKhuyenMaiGiam = tongTienThayDoi - soTienTraLaiThayDoi;
                 //await _sanPhamChiTietService.UpDatSoLuongAynsc(new SanPhamSoLuongDTO()
                 //{
                 //    IdChiTietSanPham = idSanPham,
@@ -422,7 +432,7 @@ namespace AdminApp.Controllers
                         SoLuongConLai = /*Convert.ToInt32(sanPham.SoLuongTon) - Convert.ToInt32(soLuongThayDoi)*/sanPham2.SoLuongTon,
                         TongTienThayDoi = tongTienThayDoi,
                         SoTienTraLaiThayDoi = soTienTraLaiThayDoi,
-                        SoTienKhyenMaiGiam = SoTienKhyenMaiGiam,
+                        SoTienKhuyenMaiGiam = SoTienKhuyenMaiGiam,
                         SoTienVoucherGiam = 0,
 
                     });
@@ -434,7 +444,7 @@ namespace AdminApp.Controllers
                         TrangThai = true,
                         TongTienThayDoi = tongTienThayDoi,
                         SoTienTraLaiThayDoi = soTienTraLaiThayDoi,
-                        SoTienKhyenMaiGiam = SoTienKhyenMaiGiam,
+                        SoTienKhuyenMaiGiam = SoTienKhuyenMaiGiam,
                         SoLuongConLai = "Hết hàng",
                         SoTienVoucherGiam = 0,
 
@@ -608,7 +618,7 @@ namespace AdminApp.Controllers
 
             var tongTienThayDoi = -Convert.ToInt32(soLuongThayDoi) * (double)hoaDon.hoaDonChiTietDTOs.FirstOrDefault(c => c.SanPhamChiTietId == Guid.Parse(idSanPham)).Price;
             var soTienTraLaiThayDoi = -Convert.ToInt32(soLuongThayDoi) * (double)hoaDon.hoaDonChiTietDTOs.FirstOrDefault(c => c.SanPhamChiTietId == Guid.Parse(idSanPham)).PriceBan;
-            var SoTienKhyenMaiGiam = tongTienThayDoi - soTienTraLaiThayDoi;
+            var SoTienKhuyenMaiGiam = tongTienThayDoi - soTienTraLaiThayDoi;
 
 
             //await _sanPhamChiTietService.UpDatSoLuongAynsc(new SanPhamSoLuongDTO()
@@ -631,7 +641,7 @@ namespace AdminApp.Controllers
                 SoLuongConLai = sanPham2.SoLuongTon,
                 TongTienThayDoi = tongTienThayDoi,
                 SoTienTraLaiThayDoi = soTienTraLaiThayDoi,
-                SoTienKhyenMaiGiam = SoTienKhyenMaiGiam,
+                SoTienKhuyenMaiGiam = SoTienKhuyenMaiGiam,
                 SoTienVoucherGiam = 0,
             });
         }

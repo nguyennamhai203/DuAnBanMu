@@ -18,5 +18,7 @@ namespace Shop_Models.Dto
         public double GiaBan { get; set; } /*int*/
         public double GiaGoc { get; set; }/*int*/
         public int TrangThai { get; set; }/*int*/
+        public string? Anh { get; set; }
+        public string? Mau { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Shop_Models.Entities;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -20,9 +21,9 @@ namespace AdminApp.Controllers
             var accessRole = HttpContext.Session.GetString("Result");
             if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                var sp = JsonConvert.DeserializeObject<List<SanPham>>(await (await httpClient.GetAsync("https://localhost:7050/api/SanPham/GetAll")).Content.ReadAsStringAsync());
-                return View(sp);
-            }
+            var sp = JsonConvert.DeserializeObject<List<SanPham>>(await (await httpClient.GetAsync("https://localhost:7050/api/SanPham/GetAll")).Content.ReadAsStringAsync());
+            return View(sp);
+        }
             else
             {
 
@@ -35,35 +36,35 @@ namespace AdminApp.Controllers
             var accessRole = HttpContext.Session.GetString("Result");
             if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                // Make the HTTP GET request
+            // Make the HTTP GET request
                 var response = await httpClient.GetAsync($"https://localhost:7050/api/SanPham/{id}");
 
-            // Check if the request was successful
-            if (!response.IsSuccessStatusCode)
-            {
-                // Handle unsuccessful status code
-                return StatusCode((int)response.StatusCode, "Error fetching data from API");
-            }
+                // Check if the request was successful
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Handle unsuccessful status code
+                    return StatusCode((int)response.StatusCode, "Error fetching data from API");
+                }
 
-            // Read the response content as a string
-            var content = await response.Content.ReadAsStringAsync();
+                // Read the response content as a string
+                var content = await response.Content.ReadAsStringAsync();
 
-            // Deserialize the JSON content to a SanPham object
-            var sanPham = JsonConvert.DeserializeObject<SanPham>(content);
+                // Deserialize the JSON content to a SanPham object
+                var sanPham = JsonConvert.DeserializeObject<SanPham>(content);
 
-            // Check if the deserialized object is not null
-            if (sanPham == null)
-            {
-                // Handle null object
-                return NotFound("Product not found");
-            }
+                // Check if the deserialized object is not null
+                if (sanPham == null)
+                {
+                    // Handle null object
+                    return NotFound("Product not found");
+                }
 
-            // Return the view with the product
-            return View(sanPham);
+                // Return the view with the product
+                return View(sanPham);
             }
             else
             {
-
+           
                 return RedirectToAction("Login", "Home");
             }
 
@@ -75,8 +76,8 @@ namespace AdminApp.Controllers
             var accessRole = HttpContext.Session.GetString("Result");
             if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                return View();
-            }
+            return View();
+        }
             else
             {
 
@@ -90,8 +91,8 @@ namespace AdminApp.Controllers
             var accessRole = HttpContext.Session.GetString("Result");
             if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                // Serialize the Loai object to JSON
-                var jsonContent = JsonConvert.SerializeObject(sanPham);
+            // Serialize the Loai object to JSON
+            var jsonContent = JsonConvert.SerializeObject(sanPham);
 
             // Create a StringContent with the JSON data
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
@@ -107,7 +108,7 @@ namespace AdminApp.Controllers
             {
                 return BadRequest(response);
             }
-            }
+        }
             else
             {
 
@@ -154,8 +155,8 @@ namespace AdminApp.Controllers
             var accessRole = HttpContext.Session.GetString("Result");
             if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                // Corrected URL with a slash before the Id
-                var response = await httpClient.GetAsync($"https://localhost:7050/api/SanPham/{Id}");
+            // Corrected URL with a slash before the Id
+            var response = await httpClient.GetAsync($"https://localhost:7050/api/SanPham/{Id}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -175,7 +176,7 @@ namespace AdminApp.Controllers
             {
                 return NotFound();
             }
-            }
+        }
             else
             {
 
@@ -226,5 +227,6 @@ namespace AdminApp.Controllers
                 return RedirectToAction("Login", "Home");
             }
         }
+
     }
 }

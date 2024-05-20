@@ -61,12 +61,15 @@
                 <h3>[@Model.MaSanPham]  @Model.TenSanPham @Model.LoaiMu</h3>
                 @if (Model.GiaBan == Model.GiaKhuyenMai)
                 {
-                    <h2>$ @Model.GiaBan</h2>
+                    @* <h2>@Model.GiaBan</h2> *@
+                    <h2 style="font-weight: bold">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", Model.GiaBan)</h2>
                 }
                 else
                 {
-                    <h2>$ @Model.GiaKhuyenMai</h2>
-                    <h4 class="l-through">$ @Model.GiaBan</h4>
+                    <h2 style="font-weight: bold">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", Model.GiaKhuyenMai)</h2>
+                    <h4 class="l-through" style="font-weight: bold; color:gray">@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", Model.GiaBan)</h4>
+                    @* <h2>$ @Model.GiaKhuyenMai</h2>
+                    <h4 class="l-through">$ @Model.GiaBan</h4> *@
                 }
                 <ul class="list">
                     <li><a @* class="active" *@ href="#"><span>Loại Mũ</span> : @Model.LoaiMu</a></li>

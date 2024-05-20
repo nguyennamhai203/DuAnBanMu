@@ -79,20 +79,25 @@ namespace WebApp.Controllers
             {
                 var userName = HttpContext.Session.GetString("username");
                 var idnguoidung = HttpContext.Session.GetString("IdNguoiDung");
-                // Cách dùng obj
-                string requestURL =
-                    $"https://localhost:7050/api/SanPhamYeuThich/Them-mot-san-pham-vao-danh-sach-yeu-thich-cua-nguoi-dung?userId={Guid.Parse(idnguoidung)}&productId={Guid.Parse(productId)}"; // truyền bằng object
-                var httpClient = new HttpClient();
-                //var obj = JsonConvert.SerializeObject(spyt);
-                var response = await httpClient.PostAsync(requestURL, null); // lấy response
-                var jsondata = await response.Content.ReadAsStringAsync();                                                           // Đọc từ response chuỗi Json là kết quả của phép trả về
-                if (response.IsSuccessStatusCode)
+                if (!string.IsNullOrEmpty(idnguoidung))
                 {
-                    //return RedirectToAction("Index");
+                    // Cách dùng obj
+                    string requestURL =
+                        $"https://localhost:7050/api/SanPhamYeuThich/Them-mot-san-pham-vao-danh-sach-yeu-thich-cua-nguoi-dung?userId={Guid.Parse(idnguoidung)}&productId={Guid.Parse(productId)}"; // truyền bằng object
+                    var httpClient = new HttpClient();
+                    //var obj = JsonConvert.SerializeObject(spyt);
+                    var response = await httpClient.PostAsync(requestURL, null); // lấy response
+                    var jsondata = await response.Content.ReadAsStringAsync();                                                           // Đọc từ response chuỗi Json là kết quả của phép trả về
+                    if (response.IsSuccessStatusCode)
+                    {
+                        //return RedirectToAction("Index");
 
-                    return Content(jsondata, "application/json");
+                        return Content(jsondata, "application/json");
+                    }
+                    else /*return BadRequest(response);*/ return Content(jsondata, "application/json");
                 }
-                else /*return BadRequest(response);*/ return Content(jsondata, "application/json");
+                else return Json(new { code = 400, message = "Bạn cần phải đăng nhập !" });
+
             }
             catch
             {

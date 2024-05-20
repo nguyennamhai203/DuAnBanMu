@@ -32,8 +32,9 @@
                         <thead>
                             <tr>
                                 <th scope="col">Sản Phẩm</th>
+                                <th scope="col">Màu</th>
                                 <th scope="col">Giá</th>
-                                <th scope="col">Số Lượng Tồn</th>
+                                <th scope="col">Số lượng có thể mua</th>
                                 <th scope="col">Số Lượng Mua</th>
                                 <th scope="col">Tổng Tiền</th>
                             </tr>
@@ -57,7 +58,12 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <h5>$@item.GiaBan</h5>
+                                        <h5>@item.Mau</h5>
+                                    </td>
+                                    <td>
+                                        <h5>
+                                            @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaBan)
+                                        </h5>
                                     </td>
                                     <td>
                                         <h5>@item.SoLuongBanSanPham</h5>
@@ -66,7 +72,7 @@
                                         <div class="product_count">
                                             <input hidden id="codeproduct" type="text" value="@item.MaSPCT">
                                             <input hidden type="number" id="soLuongSPTon" name="soLuongSPTon" data-product-sl="@item.SoLuongBanSanPham" maxlength="3" value="@item.SoLuongBanSanPham" title="Quantity:" max="@item.SoLuongBanSanPham">
-                                            <input type="number" name="qty" data-product-detail="@item.MaSPCT" data-cartdetail-id="@item.Id" maxlength="3" value="@item.SoLuong" title="Quantity:" class="input-text qty" max="@item.SoLuongBanSanPham" onblur="validateQuantity(this)">
+                                            <input type="number" name="qty" min="1" data-product-detail="@item.MaSPCT" data-cartdetail-id="@item.Id" maxlength="3" value="@item.SoLuong" title="Quantity:" class="input-text qty" max="@item.SoLuongBanSanPham" onblur="validateQuantity(this)">
 
                                             <button onclick="increaseQuantity(this);" id="increase" class="increase items-count" data-cartdetail-id="@item.Id" type="button">
                                                 <i class="lnr lnr-chevron-up"></i>
@@ -95,7 +101,7 @@
                             <tr>
                                 <td>
                                     <div class="checkout_btn_inner d-flex align-items-center">
-                                        <a class="gray_btn" @* style="width:245px;height:40.03px" *@ href="#">Tiếp tục mua sắm</a>
+                                        <a class="gray_btn" href="/SanPhamChiTiet/GianHang" @* style="width:245px;height:40.03px" *@>Tiếp tục mua sắm</a>
 
                                     </div>
                                 </td>
