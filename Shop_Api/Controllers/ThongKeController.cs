@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shop_Api.AppDbContext;
 using Shop_Api.Repository.IRepository;
+using Shop_Api.Services.IServices;
 using Shop_Models.Entities;
 using Shop_Models.Heplers;
 
@@ -13,23 +14,22 @@ namespace Shop_Api.Controllers
     public class ThongKeController : ControllerBase
     {
         private readonly IThongKeRepository _repository;
-        private readonly IChiTietSanPhamRepository chiTietSanPhamRepository;
-        private readonly ApplicationDbContext _context;
-        public ThongKeController(IThongKeRepository repository,ApplicationDbContext context)
+        private readonly IThongKeSanPhamServices _service;
+        public ThongKeController(IThongKeRepository repository,IThongKeSanPhamServices service)
         {
             _repository = repository;
-            _context = context;
+            _service = service;
         }
 
-        [HttpGet("Get-all")]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("Get-top-5-san-pham-ban-chay")]
+        public async Task<IActionResult> GetTop5Products()
         {
-            var result = await _repository.GetAll();
+            var result = await _service.GetTop5Products();
             return Ok(result);
         }
 
         [HttpGet("Get")]
-        public async Task<IActionResult> Get(int? status, int page = 1)
+        public async Task<IActionResult> Get(int? status, int page)
         {
             var result = await _repository.GetAsync(status, page);
             return Ok(result);

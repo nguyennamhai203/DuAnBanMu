@@ -136,7 +136,7 @@ namespace Shop_Api.Repository
             return list;
         }
 
-        public async Task<List<ThongKe>> GetAsync(int? status, int page = 1)
+        public async Task<List<ThongKe>> GetAsync(int? status, int page)
         {
             var list = _dbContext.ThongKes.AsQueryable();
             //if (status.HasValue)

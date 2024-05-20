@@ -4,6 +4,6 @@ namespace Shop_Api.Services.IServices
 {
     public interface IThongKeSanPhamServices
     {
-        Task<ResponseDto> GetThongKeSanPhamTheoNgay(DateTime datetime,int? status,int page = 1);
+        public Task<List<SanPhamChiTietDto>> GetTop5Products();
     }
 }

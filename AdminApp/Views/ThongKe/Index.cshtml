@@ -1,70 +1,54 @@
-﻿@model IEnumerable<Shop_Models.Dto.SanPhamChiTietDto>
+﻿@model IEnumerable<Shop_Models.Entities.HoaDon>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Thống kê doanh thu";
+    var sohoadon = Model.Count(); // Count the number of invoices
+    var tongdoanhthu = Convert.ToDecimal(Model.Sum(x => x.TongTien)); // Calculate the total revenue
 }
 
-<h1 style="text-align: center">Thống kê doanh thu</h1>
+<h1 style="text-align: center;">Thống kê doanh thu</h1>
+
+<div class="row">
+    <div class="col mr-2">
+        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1" style="text-align:center;">
+            Số hóa đơn
+        </div>
+        <div class="h5 mb-0 font-weight-bold text-gray-800" style="text-align:center;">
+            @sohoadon <!-- Display the number of invoices -->
+        </div>
+    </div>
+    <div class="col mr-2">
+        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1" style="text-align:center;">
+            Tổng doanh thu
+        </div>
+        <div class="h5 mb-0 font-weight-bold text-gray-800" style="text-align:center;">
+            @tongdoanhthu <!-- Display the total revenue -->
+        </div>
+    </div>
+</div>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                Mã sản phẩm
+                Mã hóa đơn
             </th>
             <th>
-                Giá Nhập
-            </th>
-            <th>
-                Giá bán
-            </th>
-            <th>
-                Số lượng đã bán
-            </th>
-            <th>
-                Tổng doanh thu
+                Doanh thu
             </th>
         </tr>
     </thead>
-
-    @{
-        decimal totalGiaNhap = Convert.ToDecimal(Model.Sum(x => x.GiaNhap));
-        decimal totalGiaBan = Convert.ToDecimal(Model.Sum(x => x.GiaBan));
-        var totalSLDB = Model.Sum(x => x.SoLuongDaBan);
-        decimal totalRevenue = 0;
-    }
-
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.MaSanPham)
+                    @Html.DisplayFor(modelItem => item.MaHoaDon)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.GiaNhap)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GiaBan)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SoLuongDaBan)
-                </td>
-                <td>
-                    @{
-                        decimal revenue = Convert.ToDecimal(item.GiaBan * item.SoLuongDaBan);
-                        totalRevenue += revenue;
-                        @Html.DisplayFor(modelItem => revenue)
-                    }
+                    @Html.DisplayFor(modelItem => item.TongTien)
                 </td>
             </tr>
         }
-        <tr>
-            <td>Tổng: </td>
-            <td>@totalGiaNhap</td>
-            <td>@totalGiaBan</td>
-            <td>@totalSLDB</td>
-            <td>@totalRevenue</td>
-        </tr>
     </tbody>
 </table>
