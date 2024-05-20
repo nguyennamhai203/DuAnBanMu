@@ -73,7 +73,11 @@
             text: 'Top 5 sản phẩm bán chạy'
         },
         xAxis: {
-            categories: @Html.Raw(Json.Serialize(Model.Select(x => x.TenSanPham).ToList()))
+            categories: @Html.Raw(Json.Serialize(Model.Where(x => x.SoLuongDaBan > 0)
+                .OrderByDescending(x => x.SoLuongDaBan)
+                .Select(x => x.MaSanPhamChiTiet)
+                .Take(5)
+                .ToList()))
         },
         yAxis: {
             title: {
@@ -90,7 +94,12 @@
         },
         series: [{
             name: 'Số lượng đã bán',
-            data: @Html.Raw(Json.Serialize(Model.Where(x => x.SoLuongDaBan > 0).Select(x => x.SoLuongDaBan).Take(5).ToList()))
+            data: @Html.Raw(Json.Serialize(Model.Where(x => x.SoLuongDaBan > 0)
+                .OrderByDescending(x => x.SoLuongDaBan)
+                .Select(x => x.SoLuongDaBan)
+                .Take(5)
+                .ToList()))
+
         }]
     });
 </script>
