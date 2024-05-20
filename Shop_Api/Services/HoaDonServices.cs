@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using Shop_Api.AppDbContext;
-using Shop_Api.Migrations;
 using Shop_Api.Repository;
 using Shop_Api.Repository.IRepository;
 using Shop_Api.Services.IServices;
@@ -137,6 +136,8 @@ namespace Shop_Api.Services
 
                             await _hoaDonCTRepository.CreateAsync(billDetail);
                         }
+                        var gioHang = _context.GioHangChiTiets.Where(x => x.GioHangId == user.Id);
+                        _context.RemoveRange(gioHang); _context.SaveChanges();
                     }
                     var pttt = _context.PhuongThucThanhToans.FirstOrDefault(x => x.MaPTThanhToan == requestBill.MaPTTT);
                     if (pttt == null)

@@ -5,7 +5,6 @@ using Shop_Api.AppDbContext;
 using Shop_Models.Dto;
 using static Shop_Models.Heplers.TrangThai;
 using Microsoft.EntityFrameworkCore;
-using Shop_Api.Migrations;
 
 namespace Shop_Api.Repository
 {

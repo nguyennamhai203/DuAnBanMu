@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Shop_Api.Migrations;
+//using Shop_Api.Migrations;
 using Shop_Models.Dto;
 using Shop_Models.Entities;
 using System;

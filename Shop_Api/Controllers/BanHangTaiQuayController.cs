@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Shop_Api.Migrations;
 using Shop_Api.Services.IServices;
 using Shop_Models.Dto;
 using Shop_Models.Entities;

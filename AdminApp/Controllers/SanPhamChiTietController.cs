@@ -295,7 +295,7 @@ namespace AdminApp.Controllers
                 string getChatLieu = await client.GetStringAsync("/api/ChatLieu/GetAll");
                 var chatLieuList = JsonConvert.DeserializeObject<List<ChatLieu>>(getChatLieu);
                 var where = chatLieuList.Where(cl => cl.TrangThai == 1).ToList();
-                ViewBag.GetChatLieu = chatLieuList.Where(cl => cl.TrangThai == 1).ToList();
+                ViewBag.GetChatLieu = chatLieuList.Where(cl => cl.TrangThai == 0).ToList();
 
                 // Fetch and filter Loai
                 string getLoai = await client.GetStringAsync("/api/Loai");
