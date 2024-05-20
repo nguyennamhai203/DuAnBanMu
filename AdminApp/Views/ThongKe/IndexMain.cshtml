@@ -1,10 +1,10 @@
-﻿@using Newtonsoft.Json
-@using Shop_Models.Entities
-@model IEnumerable<Shop_Models.Dto.SanPhamChiTietDto>
+﻿@model IEnumerable<Shop_Models.Dto.SanPhamChiTietDto>
 
 @{
     ViewData["Title"] = "IndexMain";
 }
+
+<h1 style="text-align:center;">Thống kê sản phẩm bán chạy</h1>
 
 <!-- Include Highcharts libraries -->
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -13,19 +13,6 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- Highcharts container -->
-<div class="btn-group dropend">
-    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        Thống kê sản phẩm theo
-    </button>
-    <ul class="dropdown-menu">
-        <!-- Dropdown menu links -->
-        <li><a class="dropdown-item" href="#" onclick="filterBy('Loai')">Loại</a></li>
-        <li><a class="dropdown-item" href="#" onclick="filterBy('ThuongHieu')">Thương hiệu</a></li>
-        <li><a class="dropdown-item" href="#" onclick="filterBy('XuatXu')">Xuất xứ</a></li>
-        <li><a class="dropdown-item" href="#" onclick="filterBy('MauSac')">Màu sắc</a></li>
-        <li><a class="dropdown-item" href="#" onclick="filterBy('ChatLieu')">Chất liệu</a></li>
-    </ul>
-</div>
 <figure class="highcharts-figure">
     <div id="container"></div>
 </figure>
@@ -78,51 +65,32 @@
 
 <!-- Script to render the Highcharts chart and handle filtering -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        renderChart(@Html.Raw(Json.Serialize(Model.Select(x => x.TenSanPham).ToList())), @Html.Raw(Json.Serialize(Model.Select(x => x.SoLuongDaBan).ToList())));
-    });
-
-    function renderChart(categories, data) {
-        Highcharts.chart('container', {
-            chart: {
-                type: 'line'
-            },
+    Highcharts.chart('container', {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Top 5 sản phẩm bán chạy'
+        },
+        xAxis: {
+            categories: @Html.Raw(Json.Serialize(Model.Select(x => x.TenSanPham).ToList()))
+        },
+        yAxis: {
             title: {
-                text: 'Thống kê sản phẩm bán chạy'
-            },
-            xAxis: {
-                categories: categories
-            },
-            yAxis: {
-                title: {
-                    text: 'Số lượng đã bán'
-                }
-            },
-            plotOptions: {
-                line: {
-                    dataLabels: {
-                        enabled: true
-                    },
-                    enableMouseTracking: false
-                }
-            },
-            series: [{
-                name: 'Sản phẩm',
-                data: data
-            }]
-        });
-    }
-
-    function filterBy(criteria) {
-        $.ajax({
-            url: '@Url.Action("FilterProducts", "Product")',
-            type: 'GET',
-            data: { filterCriteria: criteria },
-            success: function (result) {
-                var categories = result.map(item => item.TenSanPham);
-                var data = result.map(item => item.SoLuongDaBan);
-                renderChart(categories, data);
+                text: 'Số lượng đã bán'
             }
-        });
-    }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: 'Số lượng đã bán',
+            data: @Html.Raw(Json.Serialize(Model.Where(x => x.SoLuongDaBan > 0).Select(x => x.SoLuongDaBan).Take(5).ToList()))
+        }]
+    });
 </script>

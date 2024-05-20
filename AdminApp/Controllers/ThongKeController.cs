@@ -72,13 +72,13 @@ namespace AdminApp.Controllers
         public async Task<IActionResult> Index()
         {
             // Để call được API thì chúng ta cần lấy được URL request
-            string requestURL = "https://localhost:7050/api/ChiTietSanPham/GetAllDto";
+            string requestURL = "https://localhost:7050/Get-All-HoaDon";
             var httpClient = new HttpClient();
             var response = await httpClient.GetAsync(requestURL); // lấy response
             // Đọc từ response chuỗi Json là kết quả của phép trả về
             string apiData = await response.Content.ReadAsStringAsync();
             // Có data rồi thì ta sẽ convert về dữ liệu mình cần để đưa sang view
-            var thongkes = JsonConvert.DeserializeObject<List<SanPhamChiTietDto>>(apiData);
+            var thongkes = JsonConvert.DeserializeObject<List<HoaDon>>(apiData);
             return View(thongkes);
         }
 
