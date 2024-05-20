@@ -14,6 +14,10 @@
         overflow: auto; /* Cho phép cuộn nếu bảng quá lớn */
 
     }
+
+    .form-container {
+        display: none; /* Ẩn form ban đầu */
+    }
 </style>
 <div class="container">
     <div class="row">
@@ -54,8 +58,7 @@
                                             }
                                         </td>
                                         <td>
-                                            <a asp-area="" asp-controller="Loai" asp-action="EditLoai" asp-route-id="@item.Id" class="btn btn-primary" title="Sửa"><i class="bx bxs-edit"></i></a>
-                                            <a asp-area="" asp-controller="Loai" asp-action="DetailLoai" asp-route-id="@item.Id" class="btn btn-success" title="Chi tiết"><i class="bx bxs-detail"></i></a>
+                                            <button class="btn btn-primary edit-btn" data-id="@item.Id  " data-ma="@item.MaLoai" data-ten="@item.TenLoai" data-trangthai="@item.TrangThai" title="Sửa"><i class="bx bxs-edit"></i></button>
                                             <a asp-area="" asp-controller="Loai" asp-action="DeleteLoai" asp-route-id="@item.Id" class="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa?')" title="Xóa"><i class="bx bxs-trash-alt"></i></a>
                                         </td>
                                     </tr>
@@ -67,10 +70,11 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
+            <button class="btn btn-success" id="showAddFormBtn">Thêm loại mới</button>
+            <div class="card form-container" id="addFormContainer">
                 <div class="card-body">
                     <h2 class="card-title">Thêm loại mới</h2>
-                    <form id="createloaiForm" asp-action="CreateLoai" method="post" >
+                    <form id="createloaiForm" asp-action="CreateLoai" method="post">
                         <div class="form-group">
                             <label for="maLoai">Mã loại:</label>
                             <input type="text" class="form-control" id="maLoai" name="MaLoai" />
@@ -81,10 +85,41 @@
                         </div>
                         <div class="form-group">
                             <label for="Trangthai">Trạng Thái :</label>
-                            <input type="text" class="form-control" id="Trangthai" name="Trangthai" />
+                            <select class="form-control" id="Trangthai" name="Trangthai">
+                                <option value="">-- Chọn trạng thái --</option>
+                                <option value="1">Hoạt động</option>
+                                <option value="0">Không hoạt động</option>
+                            </select>
                         </div>
                         <div class="text-center mt-3">
                             <button type="button" onclick="kiemTraTrungMa()" class="btn btn-success">Thêm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card form-container mt-3" id="editFormContainer">
+                <div class="card-body">
+                    <h2 class="card-title">Chỉnh sửa loại</h2>
+                    <form id="editLoaiForm" asp-action="EditLoai" method="post">
+                        <input type="hidden" id="editId" name="Id" />
+                        <div class="form-group">
+                            <label for="editMaLoai">Mã loại:</label>
+                            <input type="text" class="form-control" id="editMaLoai" name="MaLoai" />
+                        </div>
+                        <div class="form-group">
+                            <label for="editTenLoai">Tên loại:</label>
+                            <input type="text" class="form-control" id="editTenLoai" name="TenLoai" />
+                        </div>
+                        <div class="form-group">
+                            <label for="editTrangthai">Trạng Thái :</label>
+                            <select class="form-control" id="editTrangthai" name="Trangthai">
+                                <option value="">-- Chọn trạng thái --</option>
+                                <option value="1">Hoạt động</option>
+                                <option value="0">Không hoạt động</option>
+                            </select>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
                         </div>
                     </form>
                 </div>
@@ -138,5 +173,24 @@
 
         // Gắn sự kiện onclick cho nút "Thêm" bên trong phạm vi của $(document).ready()
         $("#createloaiForm button").click(kiemTraTrungMa);
+        $(".edit-btn").click(function () {
+            var Id = $(this).data("id");
+            var maLoai = $(this).data("ma");
+            var tenLoai = $(this).data("ten");
+            var trangthai = $(this).data("trangthai");
+
+            $("#editId").val(Id);
+            $("#editMaLoai").val(maLoai);
+            $("#editTenLoai").val(tenLoai);
+            $("#editTrangthai").val(trangthai);
+
+            $("#editFormContainer").show();
+            $("#addFormContainer").hide();
+        });
+
+        $("#showAddFormBtn").click(function () {
+            $("#addFormContainer").show();
+            $("#editFormContainer").hide();
+        });
     });
 </script>

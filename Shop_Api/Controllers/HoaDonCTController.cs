@@ -11,9 +11,12 @@ namespace Shop_Api.Controllers
     public class HoaDonCTController : ControllerBase
     {
         public readonly IHoaDonChiTietRepository HDCTREpository;
-        public HoaDonCTController(IHoaDonChiTietRepository hDCTREpository)
+        public readonly IHoaDonRepository _hoaDonRepository;
+
+        public HoaDonCTController(IHoaDonChiTietRepository hDCTREpository, IHoaDonRepository hoaDonRepository)
         {
             HDCTREpository = hDCTREpository;
+            _hoaDonRepository = hoaDonRepository;
         }
         [HttpGet]
         public async Task<ActionResult<List<HoaDonChiTiet>>> GetAll()
@@ -32,7 +35,16 @@ namespace Shop_Api.Controllers
             }
             return Ok(HDCT);
         }
-
+        [HttpGet("GetAllByInvoiceCode")]
+        public async Task<ActionResult<HoaDonChiTiet>> GetAllByInvoiceCode(string mahoadon)
+        {
+            var HDCT = await _hoaDonRepository.GetBillDetailByInvoiceCode(mahoadon);
+            if (HDCT == null)
+            {
+                return NotFound();
+            }
+            return Ok(HDCT);
+        }
         [HttpPost]
         public async Task<ActionResult<ResponseDto>> Create(HoaDonChiTiet HDCT)
         {

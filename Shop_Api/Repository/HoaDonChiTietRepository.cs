@@ -57,6 +57,15 @@ namespace Shop_Api.Repository
         {
             return await dbContext.Set<HoaDonChiTiet>().FindAsync(id);
         }
+        public async Task<List<HoaDonChiTiet>> GetAllById(Guid id)
+        {
+            //var find = dbContext.HoaDonChiTiets.ToList().Where(x => x.HoaDonId == id);
+            //var result = find.Select(x=> new HoaDonChiTietDto
+            //{
+
+            //});
+            throw new NotImplementedException();
+        }
 
         public async Task<ResponseDto> UpdateAsync(Guid id, HoaDonChiTiet HDCT)
         {
