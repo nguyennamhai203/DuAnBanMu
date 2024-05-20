@@ -57,6 +57,8 @@
                             <del>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaGoc)</del>
                         </div>
                     }
+                    <span>Số lượng: @item.SoLuongTon</span>
+
                     <a href="@Url.Action("Details","SanPhamChiTiet", new {  sumguid=item.IdChiTietSp })" class="dropdown-item" style="color: orange;">Xem Mũ</a>
 
                 </div>
@@ -72,14 +74,14 @@
                         <span class="lnr lnr-heart"></span>
                         <p class="hover-text">Thêm vào yêu thích</p>
                     </a>
-                    <a href="" class="social-info">
+                   @*  <a href="" class="social-info">
                         <span class="lnr lnr-sync"></span>
                         <p class="hover-text">compare</p>
                     </a>
                     <a href="" class="social-info">
                         <span class="lnr lnr-move" id="btnFetchData2"></span>
                         <p class="hover-text">view more</p>
-                    </a>
+                    </a> *@
                 </div>
             </div>
         </div>

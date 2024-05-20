@@ -206,7 +206,7 @@
         console.log(maxQuantity3); // Kiểm tra xem maxQuantity3 có được lấy chính xác không
 
         if (!isNaN(value)) {
-            if (value > 0) {
+            if (value > 1) {
                 input.value = value - 1;
                 var codeProductDetail = codeProduct;
                 $.ajax({
@@ -226,22 +226,22 @@
             } else {
                 debugger;
                 console.log('dừng lại nhanh');
-                input.value = 0;
+                input.value = 1;
 
-                $.ajax({
-                    url: '/Cart/delete',
-                    type: 'GET',
-                    data: { idCartDetail: idCartDetail },
-                    success: function (response) {
-                        // Sau khi giảm số lượng, cập nhật lại nội dung của div.carts
-                        updateCart();
-                        console.log('Quantity decrease successfully');
-                        console.log(response);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error decrease quantity:', error);
-                    }
-                });
+                // $.ajax({
+                //     url: '/Cart/delete',
+                //     type: 'GET',
+                //     data: { idCartDetail: idCartDetail },
+                //     success: function (response) {
+                //         // Sau khi giảm số lượng, cập nhật lại nội dung của div.carts
+                //         updateCart();
+                //         console.log('Quantity decrease successfully');
+                //         console.log(response);
+                //     },
+                //     error: function (xhr, status, error) {
+                //         console.error('Error decrease quantity:', error);
+                //     }
+                // });
 
 
             }
