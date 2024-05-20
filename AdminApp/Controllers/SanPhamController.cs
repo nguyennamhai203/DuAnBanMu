@@ -17,11 +17,25 @@ namespace AdminApp.Controllers
 
         public async Task<IActionResult> GetAllSP()
         {
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
             var sp = JsonConvert.DeserializeObject<List<SanPham>>(await (await httpClient.GetAsync("https://localhost:7050/api/SanPham/GetAll")).Content.ReadAsStringAsync());
             return View(sp);
         }
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+        }
         public async Task<IActionResult> DetailTH(Guid id)
         {
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
             // Make the HTTP GET request
                 var response = await httpClient.GetAsync($"https://localhost:7050/api/SanPham/{id}");
 
@@ -47,16 +61,36 @@ namespace AdminApp.Controllers
 
                 // Return the view with the product
                 return View(sanPham);
+            }
+            else
+            {
            
+                return RedirectToAction("Login", "Home");
+            }
+
         }
 
         public ActionResult CreateSP()
         {
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
             return View();
+        }
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
         }
         [HttpPost]
         public async Task<IActionResult> CreateSP(SanPham sanPham)
         {
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
             // Serialize the Loai object to JSON
             var jsonContent = JsonConvert.SerializeObject(sanPham);
 
@@ -75,10 +109,18 @@ namespace AdminApp.Controllers
                 return BadRequest(response);
             }
         }
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+        }
 
         public async Task<IActionResult> DeleteSP(Guid id)
         {
-            try
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
                 var response = await httpClient.DeleteAsync($"https://localhost:7050/api/SanPham/DeleteAsync?Id={id}");
 
@@ -100,15 +142,19 @@ namespace AdminApp.Controllers
                     return RedirectToAction("GetAllSP");
                 }
             }
-            catch (Exception ex)
+            else
             {
-                // Xử lý ngoại lệ
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+
+                return RedirectToAction("Login", "Home");
             }
         }
 
         public async Task<IActionResult> EditSP(Guid Id)
         {
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
+            {
             // Corrected URL with a slash before the Id
             var response = await httpClient.GetAsync($"https://localhost:7050/api/SanPham/{Id}");
 
@@ -131,12 +177,20 @@ namespace AdminApp.Controllers
                 return NotFound();
             }
         }
+            else
+            {
+
+                return RedirectToAction("Login", "Home");
+            }
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditSP(SanPham sanpham)
         {
-            try
+            var accessToken = HttpContext.Session.GetString("AccessToken");
+            var accessRole = HttpContext.Session.GetString("Result");
+            if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
                 if (sanpham == null)
                 {
@@ -167,9 +221,10 @@ namespace AdminApp.Controllers
                     }
                 }
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+
+                return RedirectToAction("Login", "Home");
             }
         }
 

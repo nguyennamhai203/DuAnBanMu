@@ -139,16 +139,28 @@ namespace AdminApp.Controllers
                     var hoaDonContent = await hoaDonResponse.Content.ReadAsStringAsync();
                     var hoaDon = JsonConvert.DeserializeObject<HoaDon>(hoaDonContent);
 
-                    var chiTietResponse = await _httpClient.GetAsync($"https://localhost:7050/api/HoaDonCT?hoaDonId={id}");
+                    var chiTietResponse = await _httpClient.GetAsync($"https://localhost:7050/api/HoaDonCT/GetAllByInvoiceCode?mahoadon={hoaDon.MaHoaDon}");
+
                     if (!chiTietResponse.IsSuccessStatusCode)
                     {
                         return RedirectToAction("DanhSachHoaDon");
                     }
 
                     var chiTietContent = await chiTietResponse.Content.ReadAsStringAsync();
-                    var chiTietHoaDon = JsonConvert.DeserializeObject<List<HoaDonChiTiet>>(chiTietContent);
-
-                    var viewModel = new Tuple<HoaDon, List<HoaDonChiTiet>>(hoaDon, chiTietHoaDon);
+                    var chiTietHoaDon = JsonConvert.DeserializeObject<List<HoaDonChiTietDto>>(chiTietContent);
+                    //foreach (var chiTiet in chiTietHoaDon)
+                    //{
+                    //    var chiTietSanPhamResponse = await _httpClient.GetAsync($"https://localhost:7050/api/ChiTietSanPham?id={chiTiet.ChiTietSanPhamId}");
+                    //    if (chiTietSanPhamResponse.IsSuccessStatusCode)
+                    //    {
+                    //        var chiTietSanPhamContent = await chiTietSanPhamResponse.Content.ReadAsStringAsync();
+                    //        var chiTietSanPham = JsonConvert.DeserializeObject<ChiTietSanPham>(chiTietSanPhamContent);
+                    //        // Trích xuất thông tin mã sản phẩm và sử dụng nó
+                    //        var maSanPham = chiTietSanPham.MaSanPham;
+                    //        // Sử dụng mã sản phẩm ở đây
+                    //    }
+                    //}
+                        var viewModel = new Tuple<HoaDon, List<HoaDonChiTietDto>>(hoaDon, chiTietHoaDon);
 
 
                     return View(viewModel);

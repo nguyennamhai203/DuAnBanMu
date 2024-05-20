@@ -188,6 +188,10 @@ namespace Shop_Api.Repository
                 {
                     return new ResponseDto { Code = 500, Message = "Không thể hủy đơn hàng khi đã giao hàng." };
                 }
+                else if ((TrangThaiGiaoHang)hoaDon.TrangThaiGiaoHang == TrangThaiGiaoHang.DaHuy)
+                {
+                    return new ResponseDto { Code = 500, Message = "Không thể hủy đơn đã hủy." };
+                }
                 // Lấy ra chi tiết hóa đơn để hoàn lại số lượng
                 var chiTietHoaDon = await _db.HoaDonChiTiets
                     .Include(ct => ct.ChiTietSanPham)

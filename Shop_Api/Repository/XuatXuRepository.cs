@@ -88,7 +88,7 @@ namespace Shop_Api.Repository
                 idupdate.MaXuatXu = update.MaXuatXu;
                 idupdate.TenXuatXu = update.TenXuatXu;
                 idupdate.TrangThai = update.TrangThai;
-                contextXX.XuatXus.Update(update);
+                contextXX.XuatXus.Update(idupdate);
                 await contextXX.SaveChangesAsync();
                 return new ResponseDto
                 {

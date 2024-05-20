@@ -31,7 +31,7 @@ namespace Shop_Api.Controllers
             return Ok(result);
         }
 
-
+        //[Authorize(Roles = AppRole.Admin)]
         [HttpPost("CreateAsync")]
         public async Task<IActionResult> CreateAsync(SanPham obj)
         {
@@ -44,7 +44,7 @@ namespace Shop_Api.Controllers
             else return BadRequest(respon);
         }
 
-
+        //[Authorize(Roles = AppRole.Admin)]
         [HttpPut("UpdateAsync")]
         public async Task<IActionResult> UpdateAsync(SanPham obj)
         {
@@ -66,6 +66,7 @@ namespace Shop_Api.Controllers
             return Ok(sanPham);
         }
 
+        //[Authorize(Roles = AppRole.Admin)]
         [HttpDelete("DeleteAsync")]
         public async Task<IActionResult> DeleteAsync(Guid Id)
         {

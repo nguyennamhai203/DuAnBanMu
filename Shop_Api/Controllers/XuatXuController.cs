@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Asn1.Cmp;
 using Shop_Api.AppDbContext;
+using Shop_Api.Migrations;
 using Shop_Api.Repository;
 using Shop_Api.Repository.IRepository;
 using Shop_Models.Entities;
@@ -61,8 +62,10 @@ namespace Shop_Api.Controllers
             }
             try
             {
+                //await res.CreateXX(obj);
+                //return CreatedAtAction(nameof(GetXuatXuAsync),obj);
                 await res.CreateXX(obj);
-                return CreatedAtAction(nameof(GetXuatXuAsync),obj);
+                return Ok(obj);
             }
             catch (Exception ex)
             {

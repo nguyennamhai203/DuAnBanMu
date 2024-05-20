@@ -21,6 +21,9 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
         overflow: auto; /* Cho phép cuộn nếu bảng quá lớn */
     }
+    .form-container {
+        display: none; /* Ẩn form ban đầu */
+    }
 </style>
 <div class="container">
     <div class="row">
@@ -60,8 +63,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                <a asp-area="" asp-controller="SanPham" asp-action="EditSP" asp-route-id="@item.IdSanPham" class="btn btn-primary" title="Sửa"><i class="bx bxs-edit"></i></a>
-                                                <a asp-area="" asp-controller="SanPham" asp-action="DetailTH" asp-route-id="@item.IdSanPham" class="btn btn-success" title="Chi tiết"><i class="bx bxs-detail"></i></a>
+                                                <button class="btn btn-primary edit-btn" data-id="@item.IdSanPham" data-ma="@item.MaSanPham" data-ten="@item.TenSanPham" data-trangthai="@item.TrangThai" title="Sửa"><i class="bx bxs-edit"></i></button>
                                                 <a asp-area="" asp-controller="SanPham" asp-action="DeleteSP" asp-route-id="@item.IdSanPham" class="btn btn-danger" onclick="return confirm('Bạn chắc chắn có muốn xóa??')" title="Xóa"><i class="bx bxs-trash-alt"></i></a>
 
                                             </td>
@@ -73,24 +75,56 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card">
+                    <button class="btn btn-success" id="showAddFormBtn">Thêm loại mới</button>
+                    <div class="card form-container" id="addFormContainer">
                         <div class="card-body">
                             <h2 class="card-title">Thêm sản phẩm mới</h2>
-                            <form id="createSPForm" asp-action="CreateSP" method="post">
+                            <form id="createSanPhamForm" asp-action="CreateSP" method="post">
                                 <div class="form-group">
-                                    <label for="maSP">Mã Sản Phẩm:</label>
-                                    <input type="text" class="form-control" id="maSP" name="MaSanPham" />
+                                    <label for="maSanPham">Mã sản phẩm:</label>
+                                    <input type="text" class="form-control" id="maSanPham" name="MaSanPham" />
                                 </div>
                                 <div class="form-group">
-                                    <label for="tenSP">Tên Sản Phẩm:</label>
-                                    <input type="text" class="form-control" id="tenSP" name="TenSanPham" />
+                                    <label for="tenSanPham">Tên sản phẩm:</label>
+                                    <input type="text" class="form-control" id="tenSanPham" name="TenSanPham" />
                                 </div>
                                 <div class="form-group">
                                     <label for="Trangthai">Trạng Thái :</label>
-                                    <input type="text" class="form-control" id="Trangthai" name="Trangthai" />
+                                    <select class="form-control" id="Trangthai" name="Trangthai">
+                                        <option value="">-- Chọn trạng thái --</option>
+                                        <option value="1">Hoạt động</option>
+                                        <option value="0">Không hoạt động</option>
+                                    </select>
                                 </div>
                                 <div class="text-center mt-3">
                                     <button type="button" onclick="kiemTraTrungMa()" class="btn btn-success">Thêm</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card form-container mt-3" id="editFormContainer">
+                        <div class="card-body">
+                            <h2 class="card-title">Chỉnh sửa sản phẩm</h2>
+                            <form id="editSanPhamForm" asp-action="EditSP" method="post">
+                                <input type="hidden" id="editIdSanPham" name="IdSanPham" />
+                                <div class="form-group">
+                                    <label for="editMaSanPham">Mã sản phẩm:</label>
+                                    <input type="text" class="form-control" id="editMaSanPham" name="MaSanPham" />
+                </div>
+                                <div class="form-group">
+                                    <label for="editTenSanPham">Tên sản phẩm:</label>
+                                    <input type="text" class="form-control" id="editTenSanPham" name="TenSanPham" />
+            </div>
+                                <div class="form-group">
+                                    <label for="editTrangthai">Trạng Thái :</label>
+                                    <select class="form-control" id="editTrangthai" name="Trangthai">
+                                        <option value="">-- Chọn trạng thái --</option>
+                                        <option value="1">Hoạt động</option>
+                                        <option value="0">Không hoạt động</option>
+                                    </select>
+        </div>
+                                <div class="text-center mt-3">
+                                    <button type="submit" class="btn btn-primary">Cập nhật</button>
                                 </div>
                             </form>
                         </div>
@@ -117,7 +151,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.jqueryui.min.css">
 <script>
     function kiemTraTrungMa() {
-        var maSP = document.getElementById("maSP").value;
+        var maSanPham = document.getElementById("maSanPham").value;
         var maSPDaHienThi = [];
 
         // Lấy danh sách các mã đã hiển thị trên giao diện
@@ -126,10 +160,10 @@
         });
 
         // Kiểm tra trùng mã với danh sách các mã đã hiển thị
-        if (maSPDaHienThi.includes(maSP)) {
+        if (maSPDaHienThi.includes(maSanPham)) {
             alert("Mã đã tồn tại trong dữ liệu. Vui lòng chọn mã khác.");
         } else {
-            $("#createSPForm").submit(); // Sử dụng jQuery để submit form
+            $("#createSanPhamForm").submit(); // Sử dụng jQuery để submit form
         }
     }
 
@@ -145,8 +179,26 @@
                 "renderer": "jqueryui" // Sử dụng renderer của jQuery UI
             });
         }
-
         // Gắn sự kiện onclick cho nút "Thêm"
-        $("#createSPForm button").click(kiemTraTrungMa);
+        $("#createSanPhamForm button").click(kiemTraTrungMa);
+         $(".edit-btn").click(function () {
+            var IdSanPham = $(this).data("id");
+            var maSanPham = $(this).data("ma");
+            var tenSanPham = $(this).data("ten");
+            var trangthai = $(this).data("trangthai");
+
+            $("#editIdSanPham").val(IdSanPham);
+            $("#editMaSanPham").val(maSanPham);
+            $("#editTenSanPham").val(tenSanPham);
+            $("#editTrangthai").val(trangthai);
+
+            $("#editFormContainer").show();
+            $("#addFormContainer").hide();
+        });
+
+        $("#showAddFormBtn").click(function() {
+            $("#addFormContainer").show();
+            $("#editFormContainer").hide();
+        });
     });
 </script>

@@ -113,7 +113,7 @@
                                     </td>
                                     <td>@Html.DisplayFor(modelItem => item.LiDoHuy)</td>
                                     <td>
-                                        <a asp-area="" asp-controller="HoaDon" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary" title="Sửa"><i class="bx bxs-edit"></i></a>
+                                        @*<a asp-area="" asp-controller="HoaDon" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary" title="Sửa"><i class="bx bxs-edit"></i></a>*@
                                         <a asp-area="" asp-controller="HoaDon" asp-action="Details" asp-route-id="@item.Id" class="btn btn-success" title="Chi tiết"><i class="bx bxs-detail"></i></a>
                                         @*<a asp-area="" asp-controller="HoaDon" asp-action="CancelOrder" asp-route-id="@item.Id" class="btn btn-danger" title="Hủy đơn hàng"><i class="bx bxs-trash-alt"></i></a>*@
                                         <a href="/HoaDon/CancelOrder?id=@item.Id" class="btn btn-danger" title="Hủy đơn hàng"><i class="bx bxs-trash-alt"></i></a>

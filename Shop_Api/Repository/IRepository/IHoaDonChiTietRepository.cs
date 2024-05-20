@@ -10,5 +10,6 @@ namespace Shop_Api.Repository.IRepository
         public Task<HoaDonChiTiet> GetByIdAsync(Guid id);
         public Task<ResponseDto> UpdateAsync(Guid id, HoaDonChiTiet HDCT);
         public Task<ResponseDto> DeleteAsync(Guid id);
+        public Task<List<HoaDonChiTiet>> GetAllById(Guid id);
     }
 }

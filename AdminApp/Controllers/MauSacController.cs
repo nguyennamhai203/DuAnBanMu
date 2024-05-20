@@ -61,6 +61,7 @@ namespace AdminApp.Controllers
         }
 
         // GET: HomeController1/Details/5
+        [HttpGet]
         public IActionResult Create()
         {
 
@@ -80,7 +81,7 @@ namespace AdminApp.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> CreateMauSac(MauSac a)
+        public async Task<IActionResult> Create(MauSac a)
         {
 
 
@@ -91,7 +92,7 @@ namespace AdminApp.Controllers
                 var url = $"https://localhost:7050/Create-MauSac?MaMau={a.MaMauSac}&tenMau={a.TenMauSac}&TrangThai={a.TrangThai}";
                 var response = await httpClient.PostAsync(url, null);
                 if (response.IsSuccessStatusCode)
-                    return RedirectToAction("GetAllMauSac");
+                    return RedirectToAction("GetAll");
                 return View();
             }
             else
@@ -129,18 +130,19 @@ namespace AdminApp.Controllers
 
 
         // GET: HomeController1/Edit/5
-        public async Task<IActionResult> EditMauSac(Guid a)
+        [HttpGet]
+        public async Task<IActionResult> EditMauSac(Guid id)
         {
-         
+
 
             var accessToken = HttpContext.Session.GetString("AccessToken");
             var accessRole = HttpContext.Session.GetString("Result");
             if (!string.IsNullOrEmpty(accessToken) && accessRole == "Admin" || !string.IsNullOrEmpty(accessToken) && accessRole == "NhanVien")
             {
-                var url = $"https://localhost:7050/Get-MauSac?a={a}";
-                var response = await httpClient.PostAsync(url, null);
+                var url = $"https://localhost:7050/Get-All-MauSac";
+                var response = await httpClient.GetAsync(url);
                 var apiData = await response.Content.ReadAsStringAsync();
-                var MS = JsonConvert.DeserializeObject<MauSac>(apiData);
+                var MS = JsonConvert.DeserializeObject<List<MauSac>>(apiData).FirstOrDefault(x => x.Guid == id);
                 return View(MS);
             }
             else
@@ -154,7 +156,7 @@ namespace AdminApp.Controllers
         [HttpPost]
         public async Task<IActionResult> EditMauSac(MauSac a)
         {
-        
+
 
 
             var accessToken = HttpContext.Session.GetString("AccessToken");
@@ -164,7 +166,7 @@ namespace AdminApp.Controllers
                 var url = $"https://localhost:7050/Update-MS?id={a.Guid}&MaMau={a.MaMauSac}&tenMau={a.TenMauSac}&TrangThai={a.TrangThai}";
                 var response = await httpClient.PostAsync(url, null);
                 if (response.IsSuccessStatusCode)
-                    return RedirectToAction("GetAllMauSac");
+                    return RedirectToAction("GetAll");
 
                 return View();
             }
@@ -179,13 +181,13 @@ namespace AdminApp.Controllers
 
 
         // GET: HomeController1/Delete/5
-        public async Task<IActionResult> DeleteMauSac(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var url = $"https://localhost:7050/delete-MS?id={id}";
             var response = await httpClient.DeleteAsync(url);
 
             if (response.IsSuccessStatusCode)
-                return RedirectToAction("GetAllMauSac");
+                return RedirectToAction("GetAll");
 
             return View();
         }
