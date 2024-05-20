@@ -61,7 +61,7 @@ namespace Shop_Api.Controllers
                 chatLieu.Guid = Guid.NewGuid();
                 chatLieu.MaChatLieu = obj.MaChatLieu;
                 chatLieu.TenChatLieu = obj.TenChatLieu;
-                chatLieu.TrangThai = 1;
+                chatLieu.TrangThai = 0;
                 await _repository.CreateAsync(chatLieu);
                 return CreatedAtAction("Get", "ChatLieu", chatLieu);
             }

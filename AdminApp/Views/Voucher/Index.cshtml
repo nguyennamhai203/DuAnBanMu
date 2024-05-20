@@ -511,13 +511,16 @@
                     '<tbody>';
                 if (data && data.length > 0) {
                     data.forEach(function (item) {
+                        var ngayBatDau = new Date(item.ngayBatDau).toLocaleDateString('vi-VN');
+                        var ngayHetHan = new Date(item.ngayHetHan).toLocaleDateString('vi-VN');
+
                         var newRow = '<tr>' +
                             '<td>' + item.maVoucher + '</td>' +
                             '<td>' + item.tenVoucher + '</td>' +
                             '<td>' + item.phanTramGiam + '</td>' +
                             '<td>' + item.soLuong + '</td>' +
-                            '<td>' + item.ngayBatDau  + '</td>' +
-                            '<td>' + item.ngayHetHan + '</td>' +
+                            '<td>' + ngayBatDau  + '</td>' +
+                            '<td>' + ngayHetHan + '</td>' +
                             '<td>' + (item.trangThai === 0 ? 'Hoạt Động' : 'Hết Hạn') + '</td>' +
                             '<td>' +
                             '<a href="/Voucher/Index/' + item.guid + '" class="btn btn-success" title="Chi tiết" style="margin-right: 10px;">' +
