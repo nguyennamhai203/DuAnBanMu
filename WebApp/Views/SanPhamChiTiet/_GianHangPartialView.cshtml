@@ -57,6 +57,8 @@
                             <del>@string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:C0}", item.GiaGoc)</del>
                         </div>
                     }
+                    <span>Số lượng: @item.SoLuongTon</span>
+
                     <a href="@Url.Action("Details","SanPhamChiTiet", new {  sumguid=item.IdChiTietSp })" class="dropdown-item" style="color: orange;">Xem Mũ</a>
 
                 </div>
