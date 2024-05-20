@@ -119,6 +119,7 @@ namespace WebApp.Controllers
                     {
                         // Cập nhật thông tin sản phẩm trong session
                         product.GiaBan = (double)productDetail.GiaBan;
+                        product.GiaGoc = (double)productDetail.GiaThucTe;
                         product.SoLuongBanSanPham = (int)productDetail.SoLuongTon;
                         // Hoặc các thuộc tính khác của sản phẩm
                     }
@@ -207,12 +208,13 @@ namespace WebApp.Controllers
                             ghct.SoLuong = (int)product.SoLuongTon;
                             ghct.SoLuongBanSanPham = (int)product.SoLuongTon;
                             ghct.GiaBan = (int)product.GiaBan;
+                            ghct.GiaGoc = (int)product.GiaThucTe;
                         }
                         else
                         {
                             ghct.SoLuong = newQuantity;
                             ghct.GiaBan = (int)product.GiaBan; ghct.SoLuongBanSanPham = (int)product.SoLuongTon;
-
+                            ghct.GiaGoc = (int)product.GiaThucTe;
                         }
                         SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
                         //return RedirectToAction("Index");
@@ -231,6 +233,7 @@ namespace WebApp.Controllers
                         s.SoLuong = (int)soluong;
                         s.SoLuongBanSanPham = (int)product.SoLuongTon;
                         s.GiaBan = (float)(product.GiaBan);
+                        s.GiaGoc = (float)(product.GiaThucTe);
                         Cart.Add(s);
                         SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
                         return Json(new { code = 200, message = "Thêm Vào Giỏ Hàng Thành Công" });
@@ -243,6 +246,7 @@ namespace WebApp.Controllers
                             GioHangChiTietViewModel ghct = Cart.FirstOrDefault(x => x.MaSPCT == codeProductDetail);
                             ghct.SoLuong += (int)soluong;
                             s.GiaBan = (float)(product.GiaBan);
+                            s.GiaGoc = (float)(product.GiaThucTe);
                             s.SoLuongBanSanPham = (int)product.SoLuongTon;
                             SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
                             return Json(new { code = 200, message = "Thêm Vào Giỏ Hàng Thành Công" });
@@ -255,6 +259,7 @@ namespace WebApp.Controllers
                             s.SoLuong = (int)soluong;
                             s.GiaBan = (float)(product.GiaBan);
                             s.SoLuongBanSanPham = (int)product.SoLuongTon;
+                            s.GiaGoc = (float)(product.GiaThucTe);
                             Cart.Add(s);
                             SessionService.SetObjToSession(HttpContext.Session, "Cart", Cart);
                             return Json(new { code = 200, message = "Thêm Vào Giỏ Hàng Thành Công" });
@@ -458,7 +463,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBill(RequestBillDto request, double? totalAmount,int? phiship, bool useAllPoints)
+        public async Task<IActionResult> CreateBill(RequestBillDto request, double? totalAmount, int? phiship, bool useAllPoints)
         {
             try
             {

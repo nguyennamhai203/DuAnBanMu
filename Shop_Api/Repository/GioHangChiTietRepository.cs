@@ -150,6 +150,7 @@ namespace Shop_Api.Repository
                                SoLuongBanSanPham = (int)a.SoLuongTon,
                                TenSanPhamChiTiet = a.MaSanPham + " " + sp.TenSanPham + " " + loai.TenLoai, // Kết hợp tên sản phẩm chi tiết
                                GiaBan = (double)a.GiaBan,
+                               GiaGoc = (double)a.GiaThucTe,
                            }
                     ).ToList();
                 return (IEnumerable<GioHangChiTietViewModel>)cartItem.Where(x => x.GioHangId == user.Id);// Trả về list với điểu kiện 

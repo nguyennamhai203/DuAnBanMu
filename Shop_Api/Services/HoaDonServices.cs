@@ -54,20 +54,26 @@ namespace Shop_Api.Services
                 //    return NotFoundResponse("Không có sản phẩm trong giỏ hàng");
                 //}
                 var tongTienSanPham = 0;
+                var tongTienSanPhamSauGiamGia = 0;
                 foreach (var x in requestBill.CartItem)
                 {
 
                     tongTienSanPham = (int)(x.GiaBan * x.SoLuong);
+                    if (x.GiaBan != x.GiaGoc)
+                    {
+                        tongTienSanPhamSauGiamGia = (int)(x.GiaGoc * x.SoLuong);
 
+                    }
                 }
+                var tienGiamGiaSanPham = tongTienSanPhamSauGiamGia - tongTienSanPham;
                 var listVoucher = await _voucherRepository.GetAll();
                 var voucherX = listVoucher.FirstOrDefault(x => x.MaVoucher == requestBill.CodeVoucher);
-                var tienGiam = 0;
+                var tienGiamVoucher = 0;
                 if (voucherX != null)
                 {
-                    tienGiam = (tongTienSanPham / 100) * voucherX.PhanTramGiam.Value;
+                    tienGiamVoucher = (tongTienSanPham / 100) * voucherX.PhanTramGiam.Value;
                 }
-                else tienGiam = 0;
+                else tienGiamVoucher = 0;
                 var bill = new HoaDon
                 {
                     Id = Guid.NewGuid(),
@@ -84,9 +90,9 @@ namespace Shop_Api.Services
                     DiaChiGiaoHang = requestBill.Address,
                     NguoiDungId = user != null ? user.Id : null,
                     TongTien = requestBill.Payment /*- tienGiam + 40000*/,
-                    TienGiam = tienGiam,
+                    TienGiam = tienGiamVoucher + tienGiamGiaSanPham,
                     TienShip = requestBill.phiship2, // mặc định ship
-                    VoucherId = voucherX != null ? voucherX.Guid : (Guid?)null
+                    VoucherId = voucherX != null ? voucherX.Guid : (Guid?)null,
                 };
                 if (requestBill.trangthaithanhtoan == 1)
                 {
@@ -332,6 +338,18 @@ namespace Shop_Api.Services
             //{
             //    var tienGiamVoucher = _
             //}
+            var countHoaDonCho = GetAllHDTaiQuay().ToList().Count();
+            if (countHoaDonCho == 5)
+            {
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    
+                    Message = "Chỉ tạo được tối đa 5 hóa đơn chờ"
+                };
+            }
+
             HoaDon hdtq = new HoaDon()
             {
                 Id = Guid.NewGuid(),
@@ -414,6 +432,7 @@ namespace Shop_Api.Services
                         {
                             var spct = _reposSanPhamChiTiet.GetAsync().Result.Where(x => x.Id == sanPhamChiTietDTO.Id).FirstOrDefault();
                             spct.SoLuongTon = sanPhamChiTietDTO.SoLuongTon - 1;
+                            spct.SoLuongDaBan = sanPhamChiTietDTO.SoLuongDaBan + 1;
                             _context.ChiTietSanPhams.Update(spct);
                             _context.SaveChanges();
                             return new ResponseDto { Content = update.Content, IsSuccess = true, Code = 200, Message = "Cập sản phẩm vào giỏ hàng thành công" };
@@ -440,6 +459,7 @@ namespace Shop_Api.Services
 
                         var spct = _reposSanPhamChiTiet.GetAsync().Result.Where(x => x.Id == sanPhamChiTietDTO.Id).FirstOrDefault();
                         spct.SoLuongTon = sanPhamChiTietDTO.SoLuongTon - 1;
+                        spct.SoLuongDaBan = sanPhamChiTietDTO.SoLuongDaBan + 1;
                         _context.ChiTietSanPhams.Update(spct);
                         _context.SaveChanges();
                         var create = Create(newBillDetail);
@@ -549,6 +569,8 @@ namespace Shop_Api.Services
                 //{
 
                 spct.SoLuongTon = sanPhamChiTietDTO.SoLuongTon - SLThayDoi;
+                spct.SoLuongDaBan = sanPhamChiTietDTO.SoLuongDaBan + SLThayDoi;
+
                 //};
                 _context.ChiTietSanPhams.Update(spct);
                 _context.SaveChanges();
